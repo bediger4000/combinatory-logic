@@ -1,0 +1,20 @@
+#!/usr/bin/ksh
+
+for TNAME in tests.in/test.???
+do
+	OUTPUT=$(basename $TNAME)
+	print "Running test $OUTPUT"
+	./cl < $TNAME > tests.output/$OUTPUT
+	DESIRED=tests.out/$OUTPUT
+	if [[ -r $DESIRED ]]
+	then
+		if diff $DESIRED tests.output/$OUTPUT > /dev/null
+		then
+			:
+		else
+			print "Test $OUTPUT failed"
+		fi
+	else
+		print "No desired output specified for $OUTPUT"
+	fi
+done
