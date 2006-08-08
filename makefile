@@ -1,15 +1,18 @@
 CC = cc
 CFLAGS = -g -I.
 
+LEX = flex
+YACC = byacc
+
 all: cl
 
 OBJS = node.o atom.o hashtable.o graph.o
 
-y.tab.c y.tab.h: cl-grammar-2.y
-	yacc -v -d cl-grammar-2.y
+y.tab.c y.tab.h: grammar.y
+	$(YACC) -v -d grammar.y
 
 lex.yy.c: lex.l
-	lex lex.l
+	$(LEX) lex.l
 
 lex.yy.o: lex.yy.c y.tab.h atom.h hashtable.h
 

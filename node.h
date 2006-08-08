@@ -1,6 +1,7 @@
 enum nodeType { UNTYPED, UNALLOCATED, APPLICATION, COMBINATOR };
 
 struct node {
+	int sn;
 	enum nodeType typ;
 	int refcnt;
 	const char *name;

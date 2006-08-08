@@ -5,6 +5,9 @@
 #include <hashtable.h>
 #include <atom.h>
 #include <graph.h>
+
+int debug_reduction = 0;
+int elaborate_output = 0;
 %}
 
 %union{
@@ -29,15 +32,10 @@ program
 stmnt
 	: expression TK_EOL
 		{
-			struct node *d1, *d2, *d3;
-			d1 = d2 = d3 = NULL;
 			print_graph($1.node); 
-			reduce_graph(&($1.node), &d1, &d2, &d3);
+			reduce_graph($1.node, NULL, NULL, NULL);
 			if ($1.node && $1.node->typ == APPLICATION)
-			{
-				d1 = d2 = d3 = NULL;
-				reduce_graph(&($1.node), &d1, &d2, &d3);
-			}
+				reduce_graph($1.node, NULL, NULL, NULL);
 			print_graph($1.node);
 			free_node($1.node);
 		}
@@ -69,9 +67,24 @@ constant
 int
 main(int ac, char **av)
 {
-	int r;
+	int c, r;
 	struct hashtable *h = init_hashtable(64, 10);
 	extern int yyparse();
+
+	while (-1 != (c = getopt(ac, av, "de")))
+	{
+		switch (c)
+		{
+		case 'd':
+			printf("Turning on debug_reduction\n");
+			debug_reduction = 1;
+			break;
+		case 'e':
+			printf("Turning on elaborate_output\n");
+			elaborate_output = 1;
+			break;
+		}
+	}
 
 	setup_atom_table(h);
 
