@@ -5,8 +5,6 @@
 
 #include <node.h>
 
-extern int elaborate_output;
-
 static struct node *free_node_list = NULL;
 static int malloced_node_count = 0;
 
@@ -48,30 +46,25 @@ print_tree(struct node *node)
 	case APPLICATION:
 		putc('(', stdout);
 		print_tree(node->left);
-		if (elaborate_output)
-			printf(" {%d}[%d] ", node->sn, node->refcnt);
-		else
-			putc(' ', stdout);
+		/* putc(' ', stdout); */
+		printf(" {%p}[%d] ", node, node->refcnt);
 		print_tree(node->right);
 		putc(')', stdout);
 		break;
 	case COMBINATOR:
-		if (elaborate_output)
-			printf("%s{%d}[%d]", node->name, node->sn, node->refcnt);
-		else
-			printf("%s", node->name);
+		printf("%s{%p}[%d]", node->name, node, node->refcnt);
 		break;
 	case UNALLOCATED:
-		printf("UNALLOCATED {%d}[%d]",
-			node->sn, node->refcnt);
+		printf("UNALLOCATED {%p}[%d]",
+			node, node->refcnt);
 		break;
 	case UNTYPED:
-		printf("UNTYPED {%d}[%d]",
-			node->sn, node->refcnt);
+		printf("UNTYPED {%p}[%d]",
+			node, node->refcnt);
 		break;
 	default:
-		printf("Unknown %d {%d}[%d]",
-			node->typ, node->sn, node->refcnt);
+		printf("Unknown %d {%p}[%d]",
+			node->typ, node, node->refcnt);
 		break;
 	}
 }
@@ -88,7 +81,6 @@ new_node(void)
 	} else {
 		r = malloc(sizeof(*r));
 		++malloced_node_count;
-		r->sn = malloced_node_count;
 	}
 
 	r->left = NULL;
@@ -100,7 +92,6 @@ new_node(void)
 void
 free_node(struct node *old_node)
 {
-	return;
 	if (NULL == old_node)
 		return;
 
@@ -108,12 +99,9 @@ free_node(struct node *old_node)
 
 	if (old_node->refcnt < 0)
 	{
-		int tmp = elaborate_output;
 		fprintf(stderr, "Freeing tree already freed:\n");
-		elaborate_output = 1;
 		print_tree(old_node);
 		putc('\n', stdout);
-		elaborate_output = tmp;
 		abort();
 	}
 
@@ -141,17 +129,17 @@ free_all_nodes(void)
 	{
 		struct node *tmp = free_node_list->left;
 
-		if (free_node_list->typ != UNALLOCATED)
-		{
-			fprintf(stderr, "Found free node on list with type %d\n", free_node_list->typ);
-			abort();
-		}
-		if (free_node_list->refcnt != 0)
-		{
-			fprintf(stderr, "Found free node on list with type %d, ref cnt %d\n",
-				free_node_list->typ, free_node_list->refcnt);
-			abort();
-		}
+if (free_node_list->typ != UNALLOCATED)
+{
+	fprintf(stderr, "Found free node on list with type %d\n", free_node_list->typ);
+	abort();
+}
+if (free_node_list->refcnt != 0)
+{
+	fprintf(stderr, "Found free node on list with type %d, ref cnt %d\n",
+		free_node_list->typ, free_node_list->refcnt);
+	abort();
+}
 		free(free_node_list);
 		++freed_node_count;
 		free_node_list = tmp;
