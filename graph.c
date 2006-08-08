@@ -41,6 +41,7 @@ reduce_graph(
 				n1->right = tmp->right;
 				n1->name = tmp->name;
 				n1->typ = tmp->typ;
+				n1->refcnt = tmp->refcnt;
 				free_node(n0);
 				tmp->right = tmp->left = NULL;
 				free_node(tmp);
