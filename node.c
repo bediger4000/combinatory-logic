@@ -4,12 +4,15 @@
 #include <stdlib.h>
 
 #include <node.h>
+#include <arena.h>
 
-static struct node *free_node_list = NULL;
+extern int elaborate_output;
+
+static struct memory_arena *arena = NULL;
+
 static int malloced_node_count = 0;
 
 struct node *new_node(void);
-void free_node(struct node *old_node);
 
 struct node *
 new_application(struct node *left_child, struct node *right_child)
@@ -20,7 +23,6 @@ new_application(struct node *left_child, struct node *right_child)
 	r->name = NULL;
 	r->right = right_child;
 	r->left  = left_child;
-	r->refcnt = 1;
 
 	return r;
 }
@@ -33,7 +35,6 @@ new_combinator(const char *name)
 	r->typ = COMBINATOR;
 	r->name = name;  /* assumes name allocated as Atom_t */
 	r->right = r->left = NULL;
-	r->refcnt = 1;
 
 	return r;
 }
@@ -46,25 +47,25 @@ print_tree(struct node *node)
 	case APPLICATION:
 		putc('(', stdout);
 		print_tree(node->left);
-		/* putc(' ', stdout); */
-		printf(" {%p}[%d] ", node, node->refcnt);
+		if (elaborate_output)
+			printf(" {%d} ", node->sn);
+		else
+			putc(' ', stdout);
 		print_tree(node->right);
 		putc(')', stdout);
 		break;
 	case COMBINATOR:
-		printf("%s{%p}[%d]", node->name, node, node->refcnt);
+		if (elaborate_output)
+			printf("%s{%d}", node->name, node->sn);
+		else
+			printf("%s", node->name);
 		break;
-	case UNALLOCATED:
-		printf("UNALLOCATED {%p}[%d]",
-			node, node->refcnt);
 		break;
 	case UNTYPED:
-		printf("UNTYPED {%p}[%d]",
-			node, node->refcnt);
+		printf("UNTYPED {%d}", node->sn);
 		break;
 	default:
-		printf("Unknown %d {%p}[%d]",
-			node->typ, node, node->refcnt);
+		printf("Unknown %d {%d}", node->typ, node->sn);
 		break;
 	}
 }
@@ -74,14 +75,9 @@ new_node(void)
 {
 	struct node *r = NULL;
 
-	if (free_node_list)
-	{
-		r = free_node_list;
-		free_node_list = r->left;
-	} else {
-		r = malloc(sizeof(*r));
-		++malloced_node_count;
-	}
+	r = arena_alloc(arena, sizeof(*r));
+	++malloced_node_count;
+	r->sn = malloced_node_count;
 
 	r->left = NULL;
 	r->typ = UNTYPED;
@@ -90,62 +86,19 @@ new_node(void)
 }
 
 void
-free_node(struct node *old_node)
+free_all_nodes(void)
 {
-	if (NULL == old_node)
-		return;
-
-	--old_node->refcnt;
-
-	if (old_node->refcnt < 0)
-	{
-		fprintf(stderr, "Freeing tree already freed:\n");
-		print_tree(old_node);
-		putc('\n', stdout);
-		abort();
-	}
-
-	if (old_node->refcnt > 0)
-		return;
-
-	if (APPLICATION == old_node->typ)
-	{
-		free_node(old_node->left);
-		free_node(old_node->right);
-	}
-
-	old_node->left = free_node_list;
-	free_node_list = old_node;
-	free_node_list->typ = UNALLOCATED;
-	free_node_list->right = NULL;
-	free_node_list->name = NULL;
+	deallocate_arena(arena);
 }
 
 void
-free_all_nodes(void)
+init_node_allocation(void)
 {
-	int freed_node_count = 0;
-	while (free_node_list)
-	{
-		struct node *tmp = free_node_list->left;
-
-if (free_node_list->typ != UNALLOCATED)
-{
-	fprintf(stderr, "Found free node on list with type %d\n", free_node_list->typ);
-	abort();
+	arena = new_arena();
 }
-if (free_node_list->refcnt != 0)
-{
-	fprintf(stderr, "Found free node on list with type %d, ref cnt %d\n",
-		free_node_list->typ, free_node_list->refcnt);
-	abort();
-}
-		free(free_node_list);
-		++freed_node_count;
-		free_node_list = tmp;
-	}
 
-	if (freed_node_count != malloced_node_count)
-		fprintf(stderr, "Malloc %d nodes, free %d\n",
-			malloced_node_count, freed_node_count);
+void
+reset_node_allocation(void)
+{
+	free_arena_contents(arena);
 }

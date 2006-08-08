@@ -24,20 +24,20 @@ int elaborate_output = 0;
 %%
 
 program
-	: stmnt 
-	| program stmnt 
+	: stmnt { reset_node_allocation(); }
+	| program stmnt  { reset_node_allocation(); }
 	| error  /* magic token - yacc unwinds to here on syntax error */
+		{ reset_node_allocation(); }
 	;
 
 stmnt
 	: expression TK_EOL
 		{
 			print_graph($1.node); 
-			reduce_graph($1.node, NULL, NULL, NULL);
+			reduce_graph($1.node, NULL, NULL, NULL, 0);
 			if ($1.node && $1.node->typ == APPLICATION)
-				reduce_graph($1.node, NULL, NULL, NULL);
+				reduce_graph($1.node, NULL, NULL, NULL, 0);
 			print_graph($1.node);
-			free_node($1.node);
 		}
 	| TK_EOL  /* blank lines */
 	;
@@ -87,6 +87,7 @@ main(int ac, char **av)
 	}
 
 	setup_atom_table(h);
+	init_node_allocation();
 
 	r =  yyparse();
 
