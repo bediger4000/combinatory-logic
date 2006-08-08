@@ -8,6 +8,7 @@
 
 int debug_reduction = 0;
 int elaborate_output = 0;
+int trace_reduction = 0;
 %}
 
 %union{
@@ -33,10 +34,14 @@ program
 stmnt
 	: expression TK_EOL
 		{
+			int affected, looping = 1;
 			print_graph($1.node); 
-			reduce_graph($1.node, NULL, NULL, NULL, 0);
-			if ($1.node && $1.node->typ == APPLICATION)
-				reduce_graph($1.node, NULL, NULL, NULL, 0);
+			while (looping)
+			{
+				affected = reduce_graph($1.node, NULL, NULL, NULL, 0);
+				if (0 != affected)
+					looping = 0;
+			}
 			print_graph($1.node);
 		}
 	| TK_EOL  /* blank lines */
@@ -71,17 +76,18 @@ main(int ac, char **av)
 	struct hashtable *h = init_hashtable(64, 10);
 	extern int yyparse();
 
-	while (-1 != (c = getopt(ac, av, "de")))
+	while (-1 != (c = getopt(ac, av, "det")))
 	{
 		switch (c)
 		{
 		case 'd':
-			printf("Turning on debug_reduction\n");
 			debug_reduction = 1;
 			break;
 		case 'e':
-			printf("Turning on elaborate_output\n");
 			elaborate_output = 1;
+			break;
+		case 't':
+			trace_reduction = 1;
 			break;
 		}
 	}

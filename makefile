@@ -1,8 +1,8 @@
 CC = cc
 CFLAGS = -g -I.
 
-LEX = flex
-YACC = byacc
+LEX = lex
+YACC = yacc
 
 all: cl
 

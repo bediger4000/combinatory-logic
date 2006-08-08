@@ -2,7 +2,7 @@
 
 for TNAME in tests.in/test.???
 do
-	OUTPUT=$(basename $TNAME)
+	OUTPUT=`basename $TNAME`
 	echo "Running test $OUTPUT"
 	./cl < $TNAME > tests.output/$OUTPUT
 	DESIRED=tests.out/$OUTPUT

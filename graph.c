@@ -13,6 +13,14 @@ void print_graph(struct node *node)
 
 /* reduce_graph() can change
  * n0, n1, n2 and n3's type and children.
+ * It returns an int:
+ *  0: n0, the node currently in-work, didn't change
+ * -1: n0 not affected, but rather needs some work.
+ *  N: N > 0.  n0 for this ply, and N - 1 plys "up",
+ *  got invalidated (removed from tree or something),
+ *  and the program has to back up the stack N plys to
+ *  get to a stack frame where n0 has a value that it
+ *  can work from.
  */
 int
 reduce_graph(
@@ -23,7 +31,7 @@ reduce_graph(
 	int ply
 )
 {
-	int retry_n0 = 1;
+	int uplevels_affected = -1;
 	int looping = 1;
 
 	if (debug_reduction)
@@ -38,18 +46,37 @@ reduce_graph(
 
 	while (looping && APPLICATION == n0->typ)
 	{
+		int affected;
 		if (debug_reduction)
 			printf("ply %d, current node {%d} has appliction type, reducing left child {%d}\n",
 				ply, n0->sn, n0->left->sn);
-		looping = reduce_graph(n0->left, n0, n1, n2, ply+1);
+		affected = reduce_graph(n0->left, n0, n1, n2, ply+1);
+
+		if (affected < 0)
+			looping = 0;
+
+		if (affected > 0)
+		{
+			if (debug_reduction)
+				printf("leave reduce_graph(%d, %d, %d, %d, %d), return %d\n",
+					n0? n0->sn: 0,
+					n1? n1->sn: 0,
+					n2? n2->sn: 0,
+					n3? n3->sn: 0,
+					ply, affected - 1
+				);
+			return affected - 1;
+		}
 	}
 
 	if (COMBINATOR == n0->typ)
 	{
-		if (debug_reduction)
-			printf("ply %d, current node {%d} has combinator type, performing operation\n",
-				ply, n0->sn);
 		const char *name = n0->name;
+
+		if (debug_reduction)
+			printf("ply %d, current node {%d} has combinator type \"%s\", performing operation\n",
+				ply, n0->sn, name? name: "null");
+
 		if (!strcmp(name, "I"))
 		{
 			if (n1)
@@ -62,7 +89,7 @@ reduce_graph(
 					print_tree(n3? n3: n2? n2: n1);
 					putc('\n', stdout);
 					printf("n1 {%d}, n1->left {%d}, n1->right {%d}, n1->name \"%s\"\n",
-						n1->sn, n1->left? n1->left->sn: 0, n1->right? n1->right->sn: 0, n1->name);
+						n1->sn, n1->left? n1->left->sn: 0, n1->right? n1->right->sn: 0, n1->name? n1->name: "null");
 				}
 
 				n1->left = tmp->left;
@@ -70,7 +97,7 @@ reduce_graph(
 				n1->name = tmp->name;
 				n1->typ = tmp->typ;
 
-				retry_n0 = 0;
+				uplevels_affected = 1;
 
 				if (debug_reduction)
 				{
@@ -96,7 +123,7 @@ reduce_graph(
 				n2->name  = tmp->name;
 				n2->typ   = tmp->typ;
 
-				retry_n0 = 0;
+				uplevels_affected = 2;
 
 				if (debug_reduction)
 				{
@@ -123,7 +150,7 @@ reduce_graph(
 				n2->right = n3->right;
 				n3->left = n1;
 				n3->right = n2;
-				retry_n0 = 0;
+				uplevels_affected = 3;
 
 				if (debug_reduction)
 				{
@@ -146,7 +173,7 @@ reduce_graph(
 				n2->left = n2->right;
 				n2->right = n3->right;
 				n3->right = n2;
-				retry_n0 = 0;
+				uplevels_affected = 3;
 
 				if (debug_reduction)
 				{
@@ -162,22 +189,39 @@ reduce_graph(
 				n2->left = n1->right;
 				n2->right = n3->right;
 				n3->right = tmp;
-				retry_n0 = 0;
+				uplevels_affected = 3;
 			} 
 		}
 	} else
 		if (debug_reduction)
 			printf("ply %d, current node {%d} does not have combinator type\n",
 				ply, n0->sn);
+
+	looping = 1;
+
+	while (looping && APPLICATION == n0->typ && COMBINATOR != n0->right->typ)
+	{
+		int affected;
+		if (debug_reduction)
+			printf("ply %d, current node {%d} has appliction type, reducing right child {%d}\n",
+				ply, n0->sn, n0->right->sn);
+		affected = reduce_graph(n0->right, n0, n1, n2, ply+1);
+
+		if (affected < 0)
+			looping = 0;
+		else if (affected > 0)
+			uplevels_affected = affected - 1;
+	}
 		 
 	if (debug_reduction)
-		printf("leave reduce_graph(%d, %d, %d, %d, %d)\n",
+		printf("leave reduce_graph(%d, %d, %d, %d, %d), return %d\n",
 			n0? n0->sn: 0,
 			n1? n1->sn: 0,
 			n2? n2->sn: 0,
 			n3? n3->sn: 0,
-			ply
+			ply,
+			uplevels_affected
 		);
 
-	return retry_n0;
+	return uplevels_affected;
 }
