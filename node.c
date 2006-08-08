@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include <node.h>
 
@@ -30,7 +31,7 @@ new_combinator(const char *name)
 	struct node *r = new_node();
 
 	r->typ = COMBINATOR;
-	r->name = strdup(name);
+	r->name = name;  /* assumes name allocated as Atom_t */
 	r->right = r->left = NULL;
 	r->refcnt = 1;
 
@@ -45,12 +46,25 @@ print_tree(struct node *node)
 	case APPLICATION:
 		putc('(', stdout);
 		print_tree(node->left);
-		putc(' ', stdout);
+		/* putc(' ', stdout); */
+		printf(" {%p}[%d] ", node, node->refcnt);
 		print_tree(node->right);
 		putc(')', stdout);
 		break;
 	case COMBINATOR:
-		printf("%s", node->name);
+		printf("%s{%p}[%d]", node->name, node, node->refcnt);
+		break;
+	case UNALLOCATED:
+		printf("UNALLOCATED {%p}[%d]",
+			node, node->refcnt);
+		break;
+	case UNTYPED:
+		printf("UNTYPED {%p}[%d]",
+			node, node->refcnt);
+		break;
+	default:
+		printf("Unknown %d {%p}[%d]",
+			node->typ, node, node->refcnt);
 		break;
 	}
 }
@@ -83,6 +97,14 @@ free_node(struct node *old_node)
 
 	--old_node->refcnt;
 
+	if (old_node->refcnt < 0)
+	{
+		fprintf(stderr, "Freeing tree already freed:\n");
+		print_tree(old_node);
+		putc('\n', stdout);
+		abort();
+	}
+
 	if (old_node->refcnt > 0)
 		return;
 
@@ -108,10 +130,16 @@ free_all_nodes(void)
 		struct node *tmp = free_node_list->left;
 
 if (free_node_list->typ != UNALLOCATED)
-	printf("Found free node on list with type %d\n", free_node_list->typ);
+{
+	fprintf(stderr, "Found free node on list with type %d\n", free_node_list->typ);
+	abort();
+}
 if (free_node_list->refcnt != 0)
-	printf("Found free node on list with type %d, ref cnt %d\n",
+{
+	fprintf(stderr, "Found free node on list with type %d, ref cnt %d\n",
 		free_node_list->typ, free_node_list->refcnt);
+	abort();
+}
 		free(free_node_list);
 		++freed_node_count;
 		free_node_list = tmp;
