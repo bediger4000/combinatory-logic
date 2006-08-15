@@ -1,0 +1,24 @@
+1. Signal handler
+2. Timer
+3. Optionally, step through reductions, quitting on appropriate input
+3a. Optionally, print out whole tree after every reduction
+4. add "define" and associated storage and cleanup
+5. Make a CL expression into lambda term.
+6. Make lambda calculator that compiles into CL, runs it using
+   graph reduction, then converts back.
+7. Make it "autotool-able".
+8. Convert back to explicit free-ing of nodes.
+	- Doesn't help.  Maximum graph size exists after the
+	parse finished.  reduce_graph() never calls new_combinator()
+	or new_application().
+
+Sun Aug 13 11:52:34 MDT 2006
+
+PROGRAM
+1. Add signal handler
+2. Add time reduction command to interpreter
+3. Add "define" and associated storage and cleanup
+4. Create ackermann or addition or something, and do some timings
+5. Implement some of Koopman's TIGRE-style optimizations.
+	(a) non-recursive reduce_graph()
+6. Compare before and after timings.
