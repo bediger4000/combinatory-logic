@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ ! -x ./cl ]
+then
+	echo Compile ./cl first
+	exit 1
+fi
+
 for TNAME in tests.in/test.???
 do
 	OUTPUT=`basename $TNAME`
