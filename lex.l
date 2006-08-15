@@ -38,6 +38,8 @@
 \n		    { return TK_EOL; }
 \(		    { return TK_LPAREN; }
 \)		    { return TK_RPAREN; }
+"def"       { return TK_DEF; }
+"define"    { return TK_DEF; }
 [SKICB] { yylval.identifier = Atom_string(yytext); return TK_PRIMITIVE; }
 [a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }
 .		    { /* Just eat it. */ }

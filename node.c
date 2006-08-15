@@ -102,3 +102,41 @@ reset_node_allocation(void)
 {
 	free_arena_contents(arena);
 }
+
+struct node *
+arena_copy_graph(struct node *p)
+{
+	struct node *r = NULL;
+
+	if (!p)
+		return r;
+
+	r = arena_alloc(arena, sizeof(*r));
+	r->typ = p->typ;
+	r->sn = -667;
+
+	switch (p->typ)
+	{
+	case APPLICATION:
+		r->name = NULL;
+		r->left = arena_copy_graph(p->left);
+		r->right = arena_copy_graph(p->right);
+		break;
+	case COMBINATOR:
+		r->name = p->name;
+		r->left = r->right = NULL;
+		break;
+	case UNTYPED:
+		printf("Copying an UNTYPED node\n");
+		r->name = NULL;
+		r->left = r->right = NULL;
+		break;
+	default:
+		printf("Copying n node of unknown (%d) type\n", p->typ);
+		r->name = NULL;
+		r->left = arena_copy_graph(p->left);
+		r->right = arena_copy_graph(p->right);
+		break;
+	}
+	return r;
+}

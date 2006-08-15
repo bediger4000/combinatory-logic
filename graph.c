@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>  /* malloc() and free() */
+#include <string.h>  /* strcmp(), eliminate this soon */
 
 #include <node.h>
 #include <graph.h>
@@ -224,4 +226,57 @@ reduce_graph(
 		);
 
 	return uplevels_affected;
+}
+
+struct node *
+copy_graph(struct node *p)
+{
+	struct node *r = NULL;
+
+	if (!p)
+		return r;
+
+	r = malloc(sizeof(*r));
+	r->typ = p->typ;
+	r->sn = -666;
+
+	switch (p->typ)
+	{
+	case APPLICATION:
+		r->name = NULL;
+		r->left = copy_graph(p->left);
+		r->right = copy_graph(p->right);
+		break;
+	case COMBINATOR:
+		r->name = p->name;
+		r->left = r->right = NULL;
+		break;
+	case UNTYPED:
+		printf("Copying an UNTYPED node\n");
+		r->name = NULL;
+		r->left = r->right = NULL;
+		break;
+	default:
+		printf("Copying n node of unknown (%d) type\n", p->typ);
+		r->name = NULL;
+		r->left = copy_graph(p->left);
+		r->right = copy_graph(p->right);
+		break;
+	}
+	return r;
+}
+
+void
+free_graph(struct node *p)
+{
+	if (!p) return;
+
+	free_graph(p->left);
+	free_graph(p->right);
+
+	p->name = NULL;
+	p->left = p->right = NULL;
+	p->typ = -1;
+
+	free(p);
 }

@@ -18,6 +18,7 @@ PROGRAM
 1. Add signal handler
 2. Add time reduction command to interpreter
 3. Add "define" and associated storage and cleanup
+	2006-08-14
 4. Create ackermann or addition or something, and do some timings
 5. Implement some of Koopman's TIGRE-style optimizations.
 	(a) non-recursive reduce_graph()

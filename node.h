@@ -15,3 +15,6 @@ void init_node_allocation(void);
 void reset_node_allocation(void);
 void print_tree(struct node *root);
 void free_all_nodes(void);
+
+struct node * arena_copy_graph(struct node *root);
+

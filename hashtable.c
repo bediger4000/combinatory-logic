@@ -24,6 +24,9 @@
 
 #include <hashtable.h>
 
+#include <node.h>
+#include <graph.h>
+
 unsigned int hash_djb2(const char *s);
 void rehash_hashtable(struct hashtable *h);
 void reallocate_buckets(struct hashtable *h);
@@ -304,8 +307,7 @@ void free_hashtable(struct hashtable *h)
 			}
 			if (chain->data)
 			{
-				/* XXX - loose the data pointer */
-				chain->data = NULL;
+				free_graph(chain->data);
 			}
 			free(chain);
 			chain = tmp;

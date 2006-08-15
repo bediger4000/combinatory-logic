@@ -1,10 +1,12 @@
 %{
 #include <stdio.h>
+#include <unistd.h>  /* getopt() */
 
 #include <node.h>
 #include <hashtable.h>
 #include <atom.h>
 #include <graph.h>
+#include <abbreviations.h>
 
 int debug_reduction = 0;
 int elaborate_output = 0;
@@ -21,6 +23,7 @@ int trace_reduction = 0;
 %token TK_LPAREN TK_RPAREN 
 %token TK_IDENTIFIER
 %token TK_PRIMITIVE
+%token TK_DEF
 
 %%
 
@@ -44,6 +47,11 @@ stmnt
 			}
 			print_graph($1.node);
 		}
+	| TK_DEF TK_IDENTIFIER expression TK_EOL
+		{
+			struct node *prev = abbreviation_add($2.identifier, $3.node);
+			if (prev) free_graph(prev);
+		}
 	| TK_EOL  /* blank lines */
 	;
 
@@ -59,7 +67,12 @@ application
 
 term
 	: constant                         { $$ = $1; }
-	| TK_IDENTIFIER                    { $$.node = new_combinator($1.identifier); }
+	| TK_IDENTIFIER
+		{
+			$$.node = abbreviation_lookup($1.identifier);
+			if (!$$.node)
+				$$.node = new_combinator($1.identifier);
+		}
 	| TK_LPAREN application TK_RPAREN  { $$ = $2; }
 	;
 
@@ -92,6 +105,7 @@ main(int ac, char **av)
 		}
 	}
 
+	setup_abbreviation_table(h);
 	setup_atom_table(h);
 	init_node_allocation();
 
