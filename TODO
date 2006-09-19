@@ -16,10 +16,42 @@ Sun Aug 13 11:52:34 MDT 2006
 
 PROGRAM
 1. Add signal handler
+	done
 2. Add time reduction command to interpreter
+	done
 3. Add "define" and associated storage and cleanup
 	2006-08-14
 4. Create ackermann or addition or something, and do some timings
 5. Implement some of Koopman's TIGRE-style optimizations.
 	(a) non-recursive reduce_graph()
+	(b) lexer knows which combinator it finds - parser throws this away.
 6. Compare before and after timings.
+
+
+Mon Sep 11 22:28:18 MDT 2006
+
+To Do
+a) Load file(s) from command line (as lc does)
+	done Sat Sep 16 13:47:19 MDT 2006
+b) Add ability to turn off C, B, I combinators on cmomand line
+c) Add W combinator, and ability to turn it off
+d) Single step reductions via interpreter command (on/off)
+e) Add "reduce" interpreter keyword to get reduced expressions
+   into environment (analogous to lc's "normalize")
+		-- done 2006-09-15
+f) Add "delete" interpreter command to remove expressions
+   from environment (add to lc as well?).
+g) Add ability to convert CL expression to a lambda term
+h) Add "lccl" algorithms to lc
+i) Add ability to save dotty-format graph of CL expression
+j)Add ability to save whole environment to text file
+	(add to lc as well?)
+k) better garbage collection of used combinators
+   and application nodes via reference counting
+	-- need to add some kind of memory use stats printout
+		to tell if this had an effect or not.
+l) Add combinator(s) for some other weird basis.
+m) Make a random CL-expression generator (python?)
+	based on BNF grammar.  Use it to make some test cases.
+n) Count number of reductions (by combinator?) to check
+	the "lazy" evaluation

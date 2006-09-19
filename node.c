@@ -46,13 +46,26 @@ print_tree(struct node *node)
 	{
 	case APPLICATION:
 		putc('(', stdout);
-		print_tree(node->left);
+
+		if (node != node->left)
+			print_tree(node->left);
+		else
+			printf("Left application loop: {%d}->{%d}\n",
+				node->sn, node->left->sn);
+		
 		if (elaborate_output)
 			printf(" {%d} ", node->sn);
 		else
 			putc(' ', stdout);
-		print_tree(node->right);
+
+		if (node != node->right)
+			print_tree(node->right);
+		else
+			printf("Right application loop: {%d}->{%d}\n",
+				node->sn, node->right->sn);
+
 		putc(')', stdout);
+
 		break;
 	case COMBINATOR:
 		if (elaborate_output)
@@ -103,6 +116,8 @@ reset_node_allocation(void)
 	free_arena_contents(arena);
 }
 
+static int copy_sn = 0;
+
 struct node *
 arena_copy_graph(struct node *p)
 {
@@ -113,7 +128,7 @@ arena_copy_graph(struct node *p)
 
 	r = arena_alloc(arena, sizeof(*r));
 	r->typ = p->typ;
-	r->sn = -667;
+	r->sn = --copy_sn;
 
 	switch (p->typ)
 	{
