@@ -6,6 +6,7 @@
 #include <graph.h>
 
 extern int debug_reduction;
+extern int elaborate_output;
 
 void print_graph(struct node *node)
 {
@@ -35,6 +36,14 @@ reduce_graph(
 {
 	int uplevels_affected = -1;
 	int looping = 1;
+
+	if (n0 == n1)
+	{
+		fprintf(stderr, "Simple child-parent loop in tree\n");
+		if (elaborate_output)
+			fprintf(stderr, "Loop: {%d}->{%d}\n", n1->sn, n0->sn);
+		abort();
+	}
 
 	if (debug_reduction)
 		printf("enter reduce_graph(%d, %d, %d, %d, %d)\n",
@@ -146,18 +155,14 @@ reduce_graph(
 					putc('\n', stdout);
 				}
 
-				n1->left = n1->right;
-				n1->right = n3->right;
-				n2->left = n2->right;
-				n2->right = n3->right;
-				n3->left = n1;
-				n3->right = n2;
+				n3->left = new_application(n1->right, n3->right);
+				n3->right = new_application(n2->right, n3->right);
 				uplevels_affected = 3;
 
 				if (debug_reduction)
 				{
 					printf("S reduction, After:\n");
-					print_tree(n3);
+					/* if (n3 != n3->left) print_tree(n3); */
 					putc('\n', stdout);
 				}
 			}
@@ -172,9 +177,7 @@ reduce_graph(
 				}
 
 				n3->left = n1->right;
-				n2->left = n2->right;
-				n2->right = n3->right;
-				n3->right = n2;
+				n3->right = new_application(n2->right, n3->right);
 				uplevels_affected = 3;
 
 				if (debug_reduction)
@@ -187,11 +190,23 @@ reduce_graph(
 		} else if (!strcmp(name, "C")) {
 			if (n1 && n2 && n3)
 			{
-				struct node *tmp = n2->right;
-				n2->left = n1->right;
-				n2->right = n3->right;
-				n3->right = tmp;
+				if (debug_reduction)
+				{
+					printf("C reduction {%d}, before:\n", n3->sn);
+					print_tree(n3);
+					putc('\n', stdout);
+				}
+
+				n3->left = new_application(n1->right, n3->right);
+				n3->right = n2->right;
 				uplevels_affected = 3;
+
+				if (debug_reduction)
+				{
+					printf("C reduction {%d}, after:\n", n3->sn);
+					print_tree(n3);
+					putc('\n', stdout);
+				}
 			} 
 		}
 	} else
@@ -207,7 +222,7 @@ reduce_graph(
 		if (debug_reduction)
 			printf("ply %d, current node {%d} has appliction type, reducing right child {%d}\n",
 				ply, n0->sn, n0->right->sn);
-		affected = reduce_graph(n0->right, n0, n1, n2, ply+1);
+		affected = reduce_graph(n0->right, NULL, NULL, NULL, ply+1);
 
 		if (affected < 0)
 			looping = 0;
