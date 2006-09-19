@@ -1,0 +1,4 @@
+(((S B) I) ((S B) I))
+((B ((S B) I)) ((S B) I))
+((((S B) I) ((S B) I)) (((S B) I) ((S B) I)))
+((B ((B ((B ((S B) I)) ((S B) I))) ((B ((S B) I)) ((S B) I)))) ((B ((B ((S B) I)) ((S B) I))) ((B ((S B) I)) ((S B) I))))
