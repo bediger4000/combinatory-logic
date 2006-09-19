@@ -1,0 +1,8 @@
+# This caused some kind of weird child-parent loop
+# in the graph named "C4" below.  Segmentation violation
+# when C4 a b gets reduced.
+def C2 ((S B) I)
+C2
+def C4 (C2 C2)
+C4
+C4 a b

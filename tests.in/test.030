@@ -1,0 +1,4 @@
+# Church numeral for 3, \f.\n.f (f (f n))
+# This caused a non-copying-of-application nodes rearrangement
+# in the "S" combinator code to cause a child-parent loop.
+S (S I I) I
