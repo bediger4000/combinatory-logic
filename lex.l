@@ -28,6 +28,7 @@
 
 #include <hashtable.h>
 #include <atom.h>
+#include <node.h>
 
 #include "y.tab.h"
 int lineno = 0;
@@ -58,13 +59,18 @@ void set_yyin_stdin(void);
 
 \#.*$		{ return TK_EOL; }
 \n		    { return TK_EOL; }
+\\\n	    { /* Just eat it. */ }
 \(		    { return TK_LPAREN; }
 \)		    { return TK_RPAREN; }
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
 "timer"    { return TK_TIME; }
-[SKICB] { yylval.identifier = Atom_string(yytext); return TK_PRIMITIVE; }
+S { yylval.cn = COMB_S; return TK_PRIMITIVE; }
+K { yylval.cn = COMB_K; return TK_PRIMITIVE; }
+I { yylval.cn = COMB_I; return TK_PRIMITIVE; }
+B { yylval.cn = COMB_B; return TK_PRIMITIVE; }
+C { yylval.cn = COMB_C; return TK_PRIMITIVE; }
 [a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }
 .		    { /* Just eat it. */ }
 

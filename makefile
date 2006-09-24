@@ -14,7 +14,7 @@ y.tab.c y.tab.h: grammar.y
 lex.yy.c: lex.l
 	$(LEX) lex.l
 
-lex.yy.o: lex.yy.c y.tab.h atom.h hashtable.h
+lex.yy.o: lex.yy.c y.tab.h atom.h hashtable.h node.h
 
 y.tab.o: y.tab.c y.tab.h node.h atom.h hashtable.h graph.h abbreviations.h
 

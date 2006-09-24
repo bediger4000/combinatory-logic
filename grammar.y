@@ -38,12 +38,12 @@ void set_yyin_stdin(void);
 void set_yyin(const char *filename); 
 void reset_yyin(void);
 
-
 %}
 
 %union{
 	const char *identifier;
 	struct node *node;
+	enum combinatorName cn;
 }
 
 
@@ -95,13 +95,13 @@ term
 		{
 			$$.node = abbreviation_lookup($1.identifier);
 			if (!$$.node)
-				$$.node = new_combinator($1.identifier);
+				$$.node = new_term($1.identifier);
 		}
 	| TK_LPAREN application TK_RPAREN  { $$ = $2; }
 	;
 
 constant
-	: TK_PRIMITIVE  { $$.node = new_combinator($1.identifier); }
+	: TK_PRIMITIVE  { $$.node = new_combinator($1.cn); }
 	;
 
 %%

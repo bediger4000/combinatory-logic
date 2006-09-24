@@ -21,6 +21,7 @@ new_application(struct node *left_child, struct node *right_child)
 
 	r->typ = APPLICATION;
 	r->name = NULL;
+	r->cn = COMB_NONE;
 	r->right = right_child;
 	r->left  = left_child;
 
@@ -28,12 +29,26 @@ new_application(struct node *left_child, struct node *right_child)
 }
 
 struct node *
-new_combinator(const char *name)
+new_combinator(enum combinatorName cn)
 {
 	struct node *r = new_node();
 
 	r->typ = COMBINATOR;
-	r->name = name;  /* assumes name allocated as Atom_t */
+	r->cn = cn;
+	r->right = r->left = NULL;
+	r->name = (cn == COMB_S)? "S": (cn == COMB_K)? "K": (cn == COMB_I)? "I": (cn == COMB_B)? "B": (cn == COMB_C)? "C": "none";
+
+	return r;
+}
+
+struct node *
+new_term(const char *name)
+{
+	struct node *r = new_node();
+
+	r->typ = COMBINATOR;
+	r->cn = COMB_NONE;
+	r->name = name;
 	r->right = r->left = NULL;
 
 	return r;
@@ -73,7 +88,6 @@ print_tree(struct node *node)
 		else
 			printf("%s", node->name);
 		break;
-		break;
 	case UNTYPED:
 		printf("UNTYPED {%d}", node->sn);
 		break;
@@ -94,6 +108,7 @@ new_node(void)
 
 	r->left = NULL;
 	r->typ = UNTYPED;
+	r->cn  = COMB_NONE;
 
 	return r;
 }
@@ -129,6 +144,7 @@ arena_copy_graph(struct node *p)
 	r = arena_alloc(arena, sizeof(*r));
 	r->typ = p->typ;
 	r->sn = --copy_sn;
+	r->cn = COMB_NONE;
 
 	switch (p->typ)
 	{
@@ -138,6 +154,7 @@ arena_copy_graph(struct node *p)
 		r->right = arena_copy_graph(p->right);
 		break;
 	case COMBINATOR:
+		r->cn   = p->cn;
 		r->name = p->name;
 		r->left = r->right = NULL;
 		break;

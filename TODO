@@ -22,6 +22,7 @@ PROGRAM
 3. Add "define" and associated storage and cleanup
 	2006-08-14
 4. Create ackermann or addition or something, and do some timings
+	2006-09-18
 5. Implement some of Koopman's TIGRE-style optimizations.
 	(a) non-recursive reduce_graph()
 	(b) lexer knows which combinator it finds - parser throws this away.
@@ -44,6 +45,7 @@ f) Add "delete" interpreter command to remove expressions
 g) Add ability to convert CL expression to a lambda term
 h) Add "lccl" algorithms to lc
 i) Add ability to save dotty-format graph of CL expression
+	This should do dashed-lines to show reference counts
 j)Add ability to save whole environment to text file
 	(add to lc as well?)
 k) better garbage collection of used combinators
@@ -55,3 +57,6 @@ m) Make a random CL-expression generator (python?)
 	based on BNF grammar.  Use it to make some test cases.
 n) Count number of reductions (by combinator?) to check
 	the "lazy" evaluation
+o) change lexer to just eat "\\n" so that it looks like
+	whitespace and allows multi-line expressions.
+	done - Thu Sep 21 13:57:10 MDT 2006, needs test case(s)

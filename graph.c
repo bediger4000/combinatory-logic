@@ -82,13 +82,11 @@ reduce_graph(
 
 	if (COMBINATOR == n0->typ)
 	{
-		const char *name = n0->name;
-
 		if (debug_reduction)
-			printf("ply %d, current node {%d} has combinator type \"%s\", performing operation\n",
-				ply, n0->sn, name? name: "null");
+			printf("ply %d, current node {%d} has combinator type, performing reduction\n",
+				ply, n0->sn);
 
-		if (!strcmp(name, "I"))
+		if (COMB_I == n0->cn)
 		{
 			if (n1)
 			{
@@ -100,13 +98,17 @@ reduce_graph(
 					print_tree(n3? n3: n2? n2: n1);
 					putc('\n', stdout);
 					printf("n1 {%d}, n1->left {%d}, n1->right {%d}, n1->name \"%s\"\n",
-						n1->sn, n1->left? n1->left->sn: 0, n1->right? n1->right->sn: 0, n1->name? n1->name: "null");
+						n1->sn,
+						n1->left? n1->left->sn: 0,
+						n1->right? n1->right->sn: 0,
+						n1->name? n1->name: "null");
 				}
 
 				n1->left = tmp->left;
 				n1->right = tmp->right;
 				n1->name = tmp->name;
 				n1->typ = tmp->typ;
+				n1->cn = tmp->cn;
 
 				uplevels_affected = 1;
 
@@ -117,7 +119,7 @@ reduce_graph(
 					putc('\n', stdout);
 				}
 			}
-		} else if (!strcmp(name, "K")) {
+		} else if (COMB_K == n0->cn) {
 			if (n1 && n2)
 			{
 				struct node *tmp = n1->right;
@@ -133,6 +135,7 @@ reduce_graph(
 				n2->right = tmp->right;
 				n2->name  = tmp->name;
 				n2->typ   = tmp->typ;
+				n2->cn    = tmp->cn;
 
 				uplevels_affected = 2;
 
@@ -145,7 +148,7 @@ reduce_graph(
 
 			}
 
-		} else if (!strcmp(name, "S")) {
+		} else if (COMB_S == n0->cn) {
 			if (n1 && n2 && n3)
 			{
 				if (debug_reduction)
@@ -166,7 +169,7 @@ reduce_graph(
 					putc('\n', stdout);
 				}
 			}
-		} else if (!strcmp(name, "B")) {
+		} else if (COMB_B == n0->cn) {
 			if (n1 && n2 && n3)
 			{
 				if (debug_reduction)
@@ -187,7 +190,7 @@ reduce_graph(
 					putc('\n', stdout);
 				}
 			}
-		} else if (!strcmp(name, "C")) {
+		} else if (COMB_C == n0->cn) {
 			if (n1 && n2 && n3)
 			{
 				if (debug_reduction)
@@ -254,6 +257,7 @@ copy_graph(struct node *p)
 	r = malloc(sizeof(*r));
 	r->typ = p->typ;
 	r->sn = -666;
+	r->cn = COMB_NONE;
 
 	switch (p->typ)
 	{
@@ -264,6 +268,7 @@ copy_graph(struct node *p)
 		break;
 	case COMBINATOR:
 		r->name = p->name;
+		r->cn = p->cn;
 		r->left = r->right = NULL;
 		break;
 	case UNTYPED:
