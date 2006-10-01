@@ -8,6 +8,8 @@
 #include <setjmp.h>   /* setjmp(), longjmp(), jmp_buf */
 #include <sys/time.h> /* gettimeofday(), struct timeval */
 
+extern char *optarg;
+
 #include <node.h>
 #include <hashtable.h>
 #include <atom.h>
