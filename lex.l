@@ -65,7 +65,15 @@ void set_yyin_stdin(void);
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
-"timer"    { return TK_TIME; }
+"timer"     { return TK_TIME; }
+"load"      { return TK_LOAD; }
+\"(\\.|[^\\"])*\" {
+	char *tmp;
+	tmp = unescape_string(yytext);
+	yylval.string_constant = Atom_string(tmp);
+	free(tmp);
+	return(STRING_CONSTANT);
+}
 S { yylval.cn = COMB_S; return TK_PRIMITIVE; }
 K { yylval.cn = COMB_K; return TK_PRIMITIVE; }
 I { yylval.cn = COMB_I; return TK_PRIMITIVE; }

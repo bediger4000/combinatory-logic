@@ -42,6 +42,7 @@ e) Add "reduce" interpreter keyword to get reduced expressions
 		-- done 2006-09-15
 f) Add "delete" interpreter command to remove expressions
    from environment (add to lc as well?).
+	- have to add delete to "big" hashtable implementation.
 g) Add ability to convert CL expression to a lambda term
 h) Add "lccl" algorithms to lc
 i) Add ability to save dotty-format graph of CL expression
@@ -60,3 +61,4 @@ n) Count number of reductions (by combinator?) to check
 o) change lexer to just eat "\\n" so that it looks like
 	whitespace and allows multi-line expressions.
 	done - Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
+p) Add "prompting", also to lc

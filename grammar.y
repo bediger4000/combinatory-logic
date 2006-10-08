@@ -36,14 +36,16 @@ struct filename_node {
 };
 
 /* from lex.l */
-void set_yyin_stdin(void); 
-void set_yyin(const char *filename); 
-void reset_yyin(void);
+extern void set_yyin_stdin(void); 
+extern void set_yyin(const char *filename); 
+extern void reset_yyin(void);
+extern void  push_and_open(const char *filename);
 
 %}
 
 %union{
 	const char *identifier;
+	const char *string_constant;
 	struct node *node;
 	enum combinatorName cn;
 }
@@ -51,9 +53,12 @@ void reset_yyin(void);
 
 %token TK_EOL
 %token TK_LPAREN TK_RPAREN 
-%token TK_IDENTIFIER
-%token TK_PRIMITIVE
-%token TK_DEF TK_TIME TK_REDUCE
+%token <identifier> TK_IDENTIFIER
+%token <cn> TK_PRIMITIVE
+%token <string_constant> STRING_CONSTANT
+%token TK_DEF TK_TIME TK_REDUCE TK_LOAD
+
+%type <node> expression stmnt application term constant
 
 %%
 
@@ -67,43 +72,44 @@ program
 stmnt
 	: expression TK_EOL
 		{
-			print_graph($1.node); 
-			reduce_tree($1.node);
-			print_graph($1.node);
+			print_graph($1); 
+			reduce_tree($1);
+			print_graph($1);
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL
 		{
-			struct node *prev = abbreviation_add($2.identifier, $3.node);
+			struct node *prev = abbreviation_add($2, $3);
 			if (prev) free_graph(prev);
 		}
 	| TK_TIME TK_EOL { reduction_timer = 1; }
+	| TK_LOAD STRING_CONSTANT TK_EOL { push_and_open($2); }
 	| TK_EOL  /* blank lines */
 	;
 
 expression
-	: application
-	| term
-	| TK_REDUCE expression { reduce_tree($2.node); $$.node = $2.node; }
+	: application          { $$ = $1; }
+	| term                 { $$ = $1; }
+	| TK_REDUCE expression { reduce_tree($2); $$ = $2; }
 	;
 
 application
-	: term term        { $$.node = new_application($1.node, $2.node); }
-	| application term { $$.node = new_application($1.node, $2.node); }
+	: term term        { $$ = new_application($1, $2); }
+	| application term { $$ = new_application($1, $2); }
 	;
 
 term
 	: constant                         { $$ = $1; }
 	| TK_IDENTIFIER
 		{
-			$$.node = abbreviation_lookup($1.identifier);
-			if (!$$.node)
-				$$.node = new_term($1.identifier);
+			$$ = abbreviation_lookup($1);
+			if (!$$)
+				$$ = new_term($1);
 		}
 	| TK_LPAREN application TK_RPAREN  { $$ = $2; }
 	;
 
 constant
-	: TK_PRIMITIVE  { $$.node = new_combinator($1.cn); }
+	: TK_PRIMITIVE  { $$ = new_combinator($1); }
 	;
 
 %%
