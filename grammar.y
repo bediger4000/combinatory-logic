@@ -72,9 +72,9 @@ program
 stmnt
 	: expression TK_EOL
 		{
-			print_graph($1); 
+			print_graph($1, 0, 0); 
 			reduce_tree($1);
-			print_graph($1);
+			print_graph($1, 0, 0);
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL
 		{
@@ -233,16 +233,9 @@ reduce_tree(struct node *root)
 
 	if (!(cc = setjmp(in_reduce_graph)))
 	{
-		int affected, looping = 1;
-
 		alarm(reduction_timeout);
 		gettimeofday(&before, NULL);
-		while (looping)
-		{
-			affected = reduce_graph(root, NULL, NULL, NULL, 0);
-			if (0 != affected)
-				looping = 0;
-		}
+		reduce_graph(root);
 		alarm(0);
 		gettimeofday(&after, NULL);
 	} else {

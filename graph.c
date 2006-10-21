@@ -1,249 +1,148 @@
 #include <stdio.h>
 #include <stdlib.h>  /* malloc() and free() */
-#include <string.h>  /* strcmp(), eliminate this soon */
 
 #include <node.h>
 #include <graph.h>
+#include <spine_stack.h>
 
 extern int debug_reduction;
 extern int elaborate_output;
 
-void print_graph(struct node *node)
+void print_graph(struct node *node, int sn_to_reduce, int current_sn)
 {
-	print_tree(node);
+	print_tree(node, sn_to_reduce, current_sn);
 	putc('\n', stdout);
 }
 
-/* reduce_graph() can change
- * n0, n1, n2 and n3's type and children.
- * It returns an int:
- *  0: n0, the node currently in-work, didn't change
- * -1: n0 not affected, but rather needs some work.
- *  N: N > 0.  n0 for this ply, and N - 1 plys "up",
- *  got invalidated (removed from tree or something),
- *  and the program has to back up the stack N plys to
- *  get to a stack frame where n0 has a value that it
- *  can work from.
- */
-int
-reduce_graph(
-	struct node *n0,
-	struct node *n1,  /* parent of n0 */
-	struct node *n2,  /* parent of n1 */
-	struct node *n3,  /* parent of n2 */
-	int ply
-)
+void
+reduce_graph(struct node *root)
 {
-	int uplevels_affected = -1;
-	int looping = 1;
+	struct spine_stack *stack = NULL;
 
-	if (n0 == n1)
-	{
-		fprintf(stderr, "Simple child-parent loop in tree\n");
-		if (elaborate_output)
-			fprintf(stderr, "Loop: {%d}->{%d}\n", n1->sn, n0->sn);
-		abort();
-	}
+	push_spine_stack(&stack);
 
-	if (debug_reduction)
-		printf("enter reduce_graph(%d, %d, %d, %d, %d)\n",
-			n0? n0->sn: 0,
-			n1? n1->sn: 0,
-			n2? n2->sn: 0,
-			n3? n3->sn: 0,
-			ply
-		);
-	
+	PUSHNODE(stack, root);
 
-	while (looping && APPLICATION == n0->typ)
-	{
-		int affected;
-		if (debug_reduction)
-			printf("ply %d, current node {%d} has appliction type, reducing left child {%d}\n",
-				ply, n0->sn, n0->left->sn);
-		affected = reduce_graph(n0->left, n0, n1, n2, ply+1);
+	do {
 
-		if (affected < 0)
-			looping = 0;
 
-		if (affected > 0)
+		while (STACK_NOT_EMPTY(stack))
 		{
-			if (debug_reduction)
-				printf("leave reduce_graph(%d, %d, %d, %d, %d), return %d\n",
-					n0? n0->sn: 0,
-					n1? n1->sn: 0,
-					n2? n2->sn: 0,
-					n3? n3->sn: 0,
-					ply, affected - 1
-				);
-			return affected - 1;
+			switch (TOPNODE(stack)->typ)
+			{
+			case APPLICATION:
+				if (!LEFT_BRANCH_TRAVERSED(TOPNODE(stack)))
+				{
+					MARK_LEFT_BRANCH_TRAVERSED(TOPNODE(stack));
+					PUSHNODE(stack, TOPNODE(stack)->left);
+				} else if (!RIGHT_BRANCH_TRAVERSED(TOPNODE(stack))) {
+					struct node *tmp = TOPNODE(stack)->right;
+					MARK_RIGHT_BRANCH_TRAVERSED(TOPNODE(stack));
+					push_spine_stack(&stack);
+					PUSHNODE(stack, tmp);
+printf("push right branch on new stack\n");
+				} else
+					POP(stack, 1);
+				break;
+			case COMBINATOR:
+				switch (TOPNODE(stack)->cn)
+				{
+				case COMB_I:
+printf("I combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 1)
+					{
+printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);
+						PARENTNODE(stack, 2)->left = PARENTNODE(stack, 1)->right;
+						PARENTNODE(stack, 2)->examined = 0;
+						POP(stack, 2);
+printf("I reduction, after (%d): ", TOPNODE(stack)->sn); print_graph(root, 0, TOPNODE(stack)->sn);
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_K:
+printf("K combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 2)
+					{
+printf("K reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);
+						copy_node_attrs(PARENTNODE(stack, 2),
+							PARENTNODE(stack, 1)->right);
+						PARENTNODE(stack, 2)->examined = 0;
+						POP(stack, 2);
+printf("K reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_S:
+printf("S combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 3)
+					{
+						struct node *n3 = PARENTNODE(stack, 3);
+printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);
+						n3->left = new_application(
+								PARENTNODE(stack, 1)->right,
+								n3->right
+							);
+						n3->right = new_application(
+								PARENTNODE(stack, 2)->right,
+								n3->right
+							);
+						n3->examined = 0;
+						POP(stack, 3);
+printf("S reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_B:
+printf("B combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 3)
+					{
+printf("B reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);
+						PARENTNODE(stack, 3)->left
+							= PARENTNODE(stack, 1)->right;
+						PARENTNODE(stack, 3)->right
+							= new_application(
+								PARENTNODE(stack, 2)->right,
+								PARENTNODE(stack, 3)->right
+							);
+						PARENTNODE(stack, 3)->examined = 0;
+						POP(stack, 3);
+printf("B reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_C:
+printf("C combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 3)
+					{
+printf("C reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);
+						PARENTNODE(stack, 3)->left
+							= new_application(
+								PARENTNODE(stack, 1)->right,
+								PARENTNODE(stack, 3)->right
+							);
+						PARENTNODE(stack, 3)->right
+							= PARENTNODE(stack, 2)->right;
+						PARENTNODE(stack, 3)->examined = 0;
+						POP(stack, 3);
+printf("C reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_NONE:
+					POP(stack, 1);
+					break;
+				}
+				break;  /* end of case COMBINATOR */
+			case UNTYPED:
+				POP(stack, 1);
+				break;
+			}
 		}
-	}
 
-	if (COMBINATOR == n0->typ)
-	{
-		if (debug_reduction)
-			printf("ply %d, current node {%d} has combinator type, performing reduction\n",
-				ply, n0->sn);
+		pop_spine_stack(&stack);
+printf("pop spine stack\n");
 
-		if (COMB_I == n0->cn)
-		{
-			if (n1)
-			{
-				struct node *tmp = n1->right;
-
-				if (debug_reduction)
-				{
-					printf("I reduction {%d}, before:\n", n0->sn);
-					print_tree(n3? n3: n2? n2: n1);
-					putc('\n', stdout);
-					printf("n1 {%d}, n1->left {%d}, n1->right {%d}, n1->name \"%s\"\n",
-						n1->sn,
-						n1->left? n1->left->sn: 0,
-						n1->right? n1->right->sn: 0,
-						n1->name? n1->name: "null");
-				}
-
-				n1->left = tmp->left;
-				n1->right = tmp->right;
-				n1->name = tmp->name;
-				n1->typ = tmp->typ;
-				n1->cn = tmp->cn;
-
-				uplevels_affected = 1;
-
-				if (debug_reduction)
-				{
-					printf("I reduction, after:\n");
-					print_tree(n3? n3: n2? n2: n1);
-					putc('\n', stdout);
-				}
-			}
-		} else if (COMB_K == n0->cn) {
-			if (n1 && n2)
-			{
-				struct node *tmp = n1->right;
-
-				if (debug_reduction)
-				{
-					printf("K reduction, before:\n");
-					print_tree(n3? n3: n2);
-					putc('\n', stdout);
-				}
-
-				n2->left  = tmp->left;
-				n2->right = tmp->right;
-				n2->name  = tmp->name;
-				n2->typ   = tmp->typ;
-				n2->cn    = tmp->cn;
-
-				uplevels_affected = 2;
-
-				if (debug_reduction)
-				{
-					printf("K reduction, after:\n");
-					print_tree(n3? n3: n2);
-					putc('\n', stdout);
-				}
-
-			}
-
-		} else if (COMB_S == n0->cn) {
-			if (n1 && n2 && n3)
-			{
-				if (debug_reduction)
-				{
-					printf("S reduction {%d}, before:\n", n0->sn);
-					print_tree(n3);
-					putc('\n', stdout);
-				}
-
-				n3->left = new_application(n1->right, n3->right);
-				n3->right = new_application(n2->right, n3->right);
-				uplevels_affected = 3;
-
-				if (debug_reduction)
-				{
-					printf("S reduction, After:\n");
-					/* if (n3 != n3->left) print_tree(n3); */
-					putc('\n', stdout);
-				}
-			}
-		} else if (COMB_B == n0->cn) {
-			if (n1 && n2 && n3)
-			{
-				if (debug_reduction)
-				{
-					printf("B reduction {%d}, before:\n", n3->sn);
-					print_tree(n3);
-					putc('\n', stdout);
-				}
-
-				n3->left = n1->right;
-				n3->right = new_application(n2->right, n3->right);
-				uplevels_affected = 3;
-
-				if (debug_reduction)
-				{
-					printf("B reduction {%d}, after:\n", n3->sn);
-					print_tree(n3);
-					putc('\n', stdout);
-				}
-			}
-		} else if (COMB_C == n0->cn) {
-			if (n1 && n2 && n3)
-			{
-				if (debug_reduction)
-				{
-					printf("C reduction {%d}, before:\n", n3->sn);
-					print_tree(n3);
-					putc('\n', stdout);
-				}
-
-				n3->left = new_application(n1->right, n3->right);
-				n3->right = n2->right;
-				uplevels_affected = 3;
-
-				if (debug_reduction)
-				{
-					printf("C reduction {%d}, after:\n", n3->sn);
-					print_tree(n3);
-					putc('\n', stdout);
-				}
-			} 
-		}
-	} else
-		if (debug_reduction)
-			printf("ply %d, current node {%d} does not have combinator type\n",
-				ply, n0->sn);
-
-	looping = 1;
-
-	while (looping && APPLICATION == n0->typ && COMBINATOR != n0->right->typ)
-	{
-		int affected;
-		if (debug_reduction)
-			printf("ply %d, current node {%d} has appliction type, reducing right child {%d}\n",
-				ply, n0->sn, n0->right->sn);
-		affected = reduce_graph(n0->right, NULL, NULL, NULL, ply+1);
-
-		if (affected < 0)
-			looping = 0;
-		else if (affected > 0)
-			uplevels_affected = affected - 1;
-	}
-		 
-	if (debug_reduction)
-		printf("leave reduce_graph(%d, %d, %d, %d, %d), return %d\n",
-			n0? n0->sn: 0,
-			n1? n1->sn: 0,
-			n2? n2->sn: 0,
-			n3? n3->sn: 0,
-			ply,
-			uplevels_affected
-		);
-
-	return uplevels_affected;
+	} while (stack);
 }
 
 struct node *
@@ -265,6 +164,7 @@ copy_graph(struct node *p)
 		r->name = NULL;
 		r->left = copy_graph(p->left);
 		r->right = copy_graph(p->right);
+		r->examined = 0;
 		break;
 	case COMBINATOR:
 		r->name = p->name;
