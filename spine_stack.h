@@ -12,7 +12,7 @@ void pop_spine_stack(struct spine_stack **ss);
 
 #define TOPNODE(ss) ((ss)->stack[(ss)->top - 1])
 #define PARENTNODE(ss, N) ((ss)->stack[((ss)->top)-1-N])
-#define PUSHNODE(ss,n)  (ss)->stack[((ss)->top)++]=n
-#define POP(ss, n)  (((ss)->top)-=n)
+#define PUSHNODE(ss,node)  ((ss)->stack[((ss)->top)] = node); ++(ss)->top
+#define POP(ss, N)  (((ss)->top)-=N)
 #define STACK_SIZE(ss)  ((ss)->top)
 #define STACK_NOT_EMPTY(ss) ((ss)->top > 0)

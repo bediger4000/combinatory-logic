@@ -51,12 +51,13 @@ extern void  push_and_open(const char *filename);
 }
 
 
-%token TK_EOL
+%token <node> TK_EOL
 %token TK_LPAREN TK_RPAREN 
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
 %token <string_constant> STRING_CONSTANT
-%token TK_DEF TK_TIME TK_REDUCE TK_LOAD
+%token TK_DEF TK_TIME TK_LOAD
+%token <node> TK_REDUCE
 
 %type <node> expression stmnt application term constant
 
