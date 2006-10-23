@@ -1,2 +1,2 @@
-(((B (I P)) (I Q)) (I R))
-(P (Q R))
+B (I P) (I Q) (I R)
+P (Q R)

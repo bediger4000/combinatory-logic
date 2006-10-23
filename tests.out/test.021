@@ -1,2 +1,2 @@
-(((S P) Q) R)
-((P R) (Q R))
+S P Q R
+P R (Q R)
