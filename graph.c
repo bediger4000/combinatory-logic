@@ -5,10 +5,15 @@
 #include <graph.h>
 #include <spine_stack.h>
 
+void read_line(void);
+
 extern int debug_reduction;
 extern int elaborate_output;
+extern int single_step;
 
 #define D if(debug_reduction)
+
+#define SS if (single_step) read_line();
 
 void print_graph(struct node *node, int sn_to_reduce, int current_sn)
 {
@@ -58,6 +63,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 1)
 					{
 						D {printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
+						SS;
 						copy_node_attrs(PARENTNODE(stack, 1),
 							PARENTNODE(stack, 1)->right);
 						PARENTNODE(stack, 1)->examined = 0;
@@ -71,6 +77,7 @@ reduce_graph(struct node *root)
 						D{printf("I reduction, before pop (%d): ", STACK_SIZE(stack)); print_graph(root, 0, TOPNODE(stack)->sn);}
 						POP(stack, 1);
 						D{printf("I reduction, after (%d): ", STACK_SIZE(stack)); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -79,12 +86,14 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 2)
 					{
 						D {printf("K reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						SS;
 						copy_node_attrs(PARENTNODE(stack, 2),
 							PARENTNODE(stack, 1)->right);
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						POP(stack, 2);
 						D {printf("K reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -94,6 +103,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *n3 = PARENTNODE(stack, 3);
 						D {printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
+						SS;
 						n3->left = new_application(
 								PARENTNODE(stack, 1)->right,
 								n3->right
@@ -107,6 +117,7 @@ reduce_graph(struct node *root)
 						n3->examined = 0;
 						POP(stack, 3);
 						D {printf("S reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -115,6 +126,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						D {printf("B reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						SS;
 						PARENTNODE(stack, 3)->left
 							= PARENTNODE(stack, 1)->right;
 						PARENTNODE(stack, 3)->right
@@ -127,6 +139,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 3)->examined = 0;
 						POP(stack, 3);
 						D {printf("B reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -135,6 +148,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						D {printf("C reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						SS;
 						PARENTNODE(stack, 3)->left
 							= new_application(
 								PARENTNODE(stack, 1)->right,
@@ -147,6 +161,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 3)->examined = 0;
 						POP(stack, 3);
 						D{printf("C reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -221,4 +236,15 @@ free_graph(struct node *p)
 	p->typ = -1;
 
 	free(p);
+}
+
+void
+read_line(void)
+{
+	char buf[64];
+	printf("continue? ");
+	fflush(stdout);
+	fgets(buf, sizeof(buf), stdin);
+	if (*buf == 'n') exit(0);
+	if (*buf == 'c') single_step = 0;
 }

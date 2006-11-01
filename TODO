@@ -25,7 +25,9 @@ PROGRAM
 	2006-09-18
 5. Implement some of Koopman's TIGRE-style optimizations.
 	(a) non-recursive reduce_graph()
+		- initial version, 2006-10-23
 	(b) lexer knows which combinator it finds - parser throws this away.
+		- done
 6. Compare before and after timings.
 
 
@@ -34,6 +36,7 @@ Mon Sep 11 22:28:18 MDT 2006
 To Do
 a) Load file(s) from command line (as lc does)
 	done Sat Sep 16 13:47:19 MDT 2006
+	- also via "load" interpreter command
 b) Add ability to turn off C, B, I combinators on cmomand line
 c) Add W combinator, and ability to turn it off
 d) Single step reductions via interpreter command (on/off)
@@ -54,11 +57,15 @@ k) better garbage collection of used combinators
 	-- need to add some kind of memory use stats printout
 		to tell if this had an effect or not.
 l) Add combinator(s) for some other weird basis.
+	- JB Rosser's I and J?
 m) Make a random CL-expression generator (python?)
 	based on BNF grammar.  Use it to make some test cases.
+		- Done, 2006-10-28, but in Perl.  See file "evil.expressions"
+		for CL expressions that cause problems.
 n) Count number of reductions (by combinator?) to check
 	the "lazy" evaluation
 o) change lexer to just eat "\\n" so that it looks like
 	whitespace and allows multi-line expressions.
 	done - Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
 p) Add "prompting", also to lc
+	- use command line flag to turn it off, for testing.

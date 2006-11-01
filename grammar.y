@@ -21,6 +21,7 @@ int debug_reduction  = 0;
 int elaborate_output = 0;
 int trace_reduction  = 0;
 int reduction_timer  = 0;
+int single_step      = 0;
 
 int reduction_timeout = 0;  /* how long to let a series of reductions run, seconds */
 
@@ -127,7 +128,7 @@ main(int ac, char **av)
 	setup_atom_table(h);
 	init_node_allocation();
 
-	while (-1 != (c = getopt(ac, av, "deL:t")))
+	while (-1 != (c = getopt(ac, av, "deL:st")))
 	{
 		switch (c)
 		{
@@ -146,6 +147,9 @@ main(int ac, char **av)
 			load_tail = p;
 			if (!load_files)
 				load_files = p;
+			break;
+		case 's':
+			single_step = 1;
 			break;
 		case 't':
 			trace_reduction = 1;
