@@ -8,13 +8,17 @@ struct node {
 	const char *name;
 	struct node *left;
 	struct node *right;
+	struct node **updateable;
+	int branch_marker;
 	int examined;
 };
 
-#define LEFT_BRANCH_TRAVERSED(n) ((n)->examined & 0x01)
-#define MARK_LEFT_BRANCH_TRAVERSED(n) ((n)->examined |= 0x01)
-#define RIGHT_BRANCH_TRAVERSED(n) ((n)->examined & 0x02)
-#define MARK_RIGHT_BRANCH_TRAVERSED(n) ((n)->examined |= 0x02)
+#define LEFT  0x01
+#define RIGHT 0x02
+#define LEFT_BRANCH_TRAVERSED(n) ((n)->examined & LEFT)
+#define MARK_LEFT_BRANCH_TRAVERSED(n) ((n)->examined |= LEFT)
+#define RIGHT_BRANCH_TRAVERSED(n) ((n)->examined & RIGHT)
+#define MARK_RIGHT_BRANCH_TRAVERSED(n) ((n)->examined |= RIGHT)
 
 struct node *new_application(struct node *left_child, struct node *right_child);
 struct node *new_combinator(enum combinatorName cn);

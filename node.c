@@ -86,15 +86,19 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 
 		if (node != node->right)
 		{
-			int print_right_paren = 0;
-			if (APPLICATION == node->right->typ)
+			if (node->right)
 			{
-				putc('(', stdout);
-				print_right_paren = 1;
-			}
-			print_tree(node->right, reduction_node_sn, current_node_sn);
-			if (print_right_paren)
-				putc(')', stdout);
+				int print_right_paren = 0;
+				if (APPLICATION == node->right->typ)
+				{
+					putc('(', stdout);
+					print_right_paren = 1;
+				}
+				print_tree(node->right, reduction_node_sn, current_node_sn);
+				if (print_right_paren)
+					putc(')', stdout);
+			} else if (elaborate_output)
+				printf(" {%d}", node->sn);
 		} else
 			printf("Right application loop: {%d}->{%d}\n",
 				node->sn, node->right->sn);
@@ -133,6 +137,8 @@ new_node(void)
 	r->typ = UNTYPED;
 	r->cn  = COMB_NONE;
 	r->examined = 0;
+	r->updateable = NULL;
+	r->branch_marker = 0;
 
 	return r;
 }
@@ -153,17 +159,6 @@ void
 reset_node_allocation(void)
 {
 	free_arena_contents(arena);
-}
-
-void
-copy_node_attrs(struct node *to, struct node *from)
-{
-	to->typ   = from->typ;
-	to->cn    = from->cn;
-	to->name  = from->name;
-	to->left  = from->left;
-	to->right = from->right;
-	to->examined = from->examined;
 }
 
 static int copy_sn = 0;

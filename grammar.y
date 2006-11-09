@@ -28,7 +28,7 @@ int reduction_timeout = 0;  /* how long to let a series of reductions run, secon
 void sigint_handler(int signo);
 jmp_buf in_reduce_graph;
 
-void reduce_tree(struct node *root);
+struct node *reduce_tree(struct node *root);
 float elapsed_time(struct timeval before, struct timeval after);
 
 struct filename_node {
@@ -75,8 +75,8 @@ stmnt
 	: expression TK_EOL
 		{
 			print_graph($1, 0, 0); 
-			reduce_tree($1);
-			print_graph($1, 0, 0);
+			$$ = reduce_tree($1);
+			print_graph($$->left, 0, 0);
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL
 		{
@@ -91,7 +91,7 @@ stmnt
 expression
 	: application          { $$ = $1; }
 	| term                 { $$ = $1; }
-	| TK_REDUCE expression { reduce_tree($2); $$ = $2; }
+	| TK_REDUCE expression { $$ = reduce_tree($2); $$ = $$->left; }
 	;
 
 application
@@ -225,13 +225,16 @@ sigint_handler(int signo)
  * at the topmost level.  It wraps with setting signal handlers,
  * taking before & after timestamps, setting jmp_buf structs, etc.
  */
-void
-reduce_tree(struct node *root)
+struct node *
+reduce_tree(struct node *real_root)
 {
 	void (*old_sigint_handler)(int);
 	void (*old_sigalm_handler)(int);
 	struct timeval before, after;
 	int cc;
+	struct node *new_root = new_application(real_root, NULL);
+
+	MARK_RIGHT_BRANCH_TRAVERSED(new_root);
 
 	old_sigint_handler = signal(SIGINT, sigint_handler);
 	old_sigalm_handler = signal(SIGALRM, sigint_handler);
@@ -240,7 +243,7 @@ reduce_tree(struct node *root)
 	{
 		alarm(reduction_timeout);
 		gettimeofday(&before, NULL);
-		reduce_graph(root);
+		reduce_graph(new_root);
 		alarm(0);
 		gettimeofday(&after, NULL);
 	} else {
@@ -254,6 +257,8 @@ reduce_tree(struct node *root)
 
 	if (reduction_timer)
 		printf("elapsed time %.3f seconds\n", elapsed_time(before, after));
+
+	return new_root;
 }
 
 /* utility function elapsed_time() */

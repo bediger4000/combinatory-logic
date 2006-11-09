@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -g -I.  -Wall 
+CC = lcc
+CFLAGS = -g -I. 
 
 LEX = flex
 YACC = byacc
