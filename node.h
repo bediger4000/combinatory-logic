@@ -11,6 +11,7 @@ struct node {
 	struct node **updateable;
 	int branch_marker;
 	int examined;
+	int refcnt;
 };
 
 #define LEFT  0x01
@@ -24,10 +25,11 @@ struct node *new_application(struct node *left_child, struct node *right_child);
 struct node *new_combinator(enum combinatorName cn);
 struct node *new_term(const char *name);
 
-void init_node_allocation(void);
+void init_node_allocation(int memory_info_flag);
 void reset_node_allocation(void);
 void print_tree(struct node *root, int reduction_node_sn, int current_node_sn);
-void free_all_nodes(void);
+void free_all_nodes(int memory_info_flag);
+void free_node(struct node *root);
 
 struct node * arena_copy_graph(struct node *root);
 
