@@ -15,7 +15,8 @@ extern int single_step;
 #define D if(debug_reduction)
 #define T if(trace_reduction)
 
-#define SS single_step && read_line()
+/* can't do single_step && read_line() - compilers optimize it away */
+#define SS if (single_step) read_line()
 
 void print_graph(struct node *node, int sn_to_reduce, int current_sn)
 {
