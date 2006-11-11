@@ -15,6 +15,7 @@ extern char *optarg;
 #include <atom.h>
 #include <graph.h>
 #include <abbreviations.h>
+#include <spine_stack.h>
 
 /* flags, binary on/off for various outputs */
 int debug_reduction  = 0;
@@ -22,6 +23,7 @@ int elaborate_output = 0;
 int trace_reduction  = 0;
 int reduction_timer  = 0;
 int single_step      = 0;
+int memory_info      = 0;
 
 int reduction_timeout = 0;  /* how long to let a series of reductions run, seconds */
 
@@ -57,10 +59,10 @@ extern void  push_and_open(const char *filename);
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
 %token <string_constant> STRING_CONSTANT
-%token TK_DEF TK_TIME TK_LOAD
+%token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
 %token <node> TK_REDUCE
 
-%type <node> expression stmnt application term constant
+%type <node> expression stmnt application term constant interpreter_command
 
 %%
 
@@ -77,21 +79,40 @@ stmnt
 			print_graph($1, 0, 0); 
 			$$ = reduce_tree($1);
 			print_graph($$->left, 0, 0);
+			free_node($$);
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL
 		{
 			struct node *prev = abbreviation_add($2, $3);
 			if (prev) free_graph(prev);
+			++$3->refcnt;
+			free_node($3);
 		}
-	| TK_TIME TK_EOL { reduction_timer = 1; }
+	| interpreter_command
+	| TK_EOL  { $$ = NULL; /* blank lines */ }
+	;
+
+interpreter_command
+	: TK_TIME TK_EOL { reduction_timer ^= 1; }
+	| TK_ELABORATE TK_EOL { elaborate_output ^= 1; }
+	| TK_DEBUG TK_EOL { debug_reduction ^= 1; }
+	| TK_TRACE TK_EOL { trace_reduction ^= 1; }
+	| TK_SINGLE_STEP TK_EOL { single_step ^= 1; }
 	| TK_LOAD STRING_CONSTANT TK_EOL { push_and_open($2); }
-	| TK_EOL  /* blank lines */
 	;
 
 expression
 	: application          { $$ = $1; }
 	| term                 { $$ = $1; }
-	| TK_REDUCE expression { $$ = reduce_tree($2); $$ = $$->left; }
+	| TK_REDUCE expression
+		{
+			struct node *tmp;
+			tmp = reduce_tree($2);
+			--tmp->left->refcnt;
+			$$ = tmp->left;
+			tmp->left = NULL;
+			free_node(tmp);
+		}
 	;
 
 application
@@ -126,9 +147,8 @@ main(int ac, char **av)
 
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
-	init_node_allocation();
 
-	while (-1 != (c = getopt(ac, av, "deL:st")))
+	while (-1 != (c = getopt(ac, av, "deL:mstT")))
 	{
 		switch (c)
 		{
@@ -148,14 +168,22 @@ main(int ac, char **av)
 			if (!load_files)
 				load_files = p;
 			break;
+		case 'm':
+			memory_info = 1;
+			break;
 		case 's':
 			single_step = 1;
+			break;
+		case 'T':
+			reduction_timer = 1;
 			break;
 		case 't':
 			trace_reduction = 1;
 			break;
 		}
 	}
+
+	init_node_allocation(memory_info);
 
 	if (load_files)
 	{
@@ -196,8 +224,10 @@ main(int ac, char **av)
 		r =  yyparse();
 	} while (r);
 
-	free_all_nodes();
+	if (memory_info) fprintf(stderr, "Memory usage indicators:\n");
+	free_all_nodes(memory_info);
 	free_hashtable(h);
+	free_all_spine_stacks(memory_info);
 
 	return r;
 }
@@ -233,6 +263,8 @@ reduce_tree(struct node *real_root)
 	struct timeval before, after;
 	int cc;
 	struct node *new_root = new_application(real_root, NULL);
+
+	++new_root->refcnt;
 
 	MARK_RIGHT_BRANCH_TRAVERSED(new_root);
 
