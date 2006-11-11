@@ -40,6 +40,10 @@ a) Load file(s) from command line (as lc does)
 b) Add ability to turn off C, B, I combinators on cmomand line
 c) Add W combinator, and ability to turn it off
 d) Single step reductions via interpreter command (on/off)
+		-- via command line flag, 11/2006
+		-- interpreter command, 2006-11-08
+d.1) Use longjmp to get out of single-stepping and back to main
+	read-reduce-print loop, also add a "quit interpreter" variant.
 e) Add "reduce" interpreter keyword to get reduced expressions
    into environment (analogous to lc's "normalize")
 		-- done 2006-09-15
@@ -69,3 +73,8 @@ o) change lexer to just eat "\\n" so that it looks like
 	done - Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
 p) Add "prompting", also to lc
 	- use command line flag to turn it off, for testing.
+q) all command-line flags should have "interpreter command"
+	counterparts.
+r) spine stack - push-a-node (PUSHNODE macro right now) should
+	maybe check stack->stack's depth to avoid array overruns.
+	This might constitute a big performance hit, though.
