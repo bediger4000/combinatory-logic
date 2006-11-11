@@ -66,6 +66,10 @@ void set_yyin_stdin(void);
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
 "timer"     { return TK_TIME; }
+"debug"     { return TK_DEBUG; }
+"step"      { return TK_SINGLE_STEP; }
+"trace"     { return TK_TRACE; }
+"elaborate" { return TK_ELABORATE; }
 "load"      { return TK_LOAD; }
 \"(\\.|[^\\"])*\" {
 	char *tmp;
