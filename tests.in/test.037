@@ -1,0 +1,6 @@
+# S B I -> \f.\n.f(f n): lambda calculus church numeral "2".
+# (\f.\n.f(f n))(\f.\n.f(f n)) -> 2**2 -> 4
+# The CL expression does 4**4 -> 256, but it should reduce 2**2 only
+# once.  I can only think of counting reductions as a way to check this,
+# however.
+S (S K K I) (S K I I) (S B I (S B I)) f n

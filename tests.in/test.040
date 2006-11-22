@@ -1,0 +1,2 @@
+# W with 2 arguments: should trigger a reduction
+W p q
