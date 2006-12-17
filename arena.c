@@ -29,6 +29,7 @@ struct memory_arena {
 	int remaining;              /* how many bytes remain in allocation */
 	struct memory_arena *next;
 	int usage_info;
+	int sn;                     /* serial number: malloc order */
 };
 
 static int pagesize = 0;
@@ -60,6 +61,7 @@ new_arena(int memory_info_flag)
 	ra->first_allocation = ra->next_allocation = NULL;
 	ra->next = NULL;
 	ra->usage_info = memory_info_flag;
+	ra->sn = 0;
 
 	return ra;
 }
@@ -94,10 +96,39 @@ deallocate_arena(struct memory_arena *ma, int memory_info_flag)
 void
 free_arena_contents(struct memory_arena *ma)
 {
-	int memory_info_flag = ma->usage_info;
+	int last_sn = ma->sn;
+	int max_sn = ma->sn;
+	int arena_count = 0;
+
 	ma = ma->next; /* dummy head node */
 	while (ma)
 	{
+		++arena_count;
+
+		if (ma->sn >= last_sn + 1)
+		{
+			fprintf(stderr, "Loop in chain of allocations: S/N %d, next S/N %d\n",
+				last_sn, ma->sn);
+			fprintf(stderr, "Allocated %d arenas\n", max_sn);
+			break;
+		} else
+			last_sn = ma->sn;
+
+		if (ma->sn > max_sn)
+		{
+			fprintf(stderr, "Chain of allocations out of order: max S/N %d, S/N %d\n",
+				max_sn, ma->sn);
+			fprintf(stderr, "Allocated %d arenas\n", max_sn);
+			break;
+		}
+
+		if (arena_count > max_sn)
+		{
+			fprintf(stderr, "Found at least %d allocations on chain, should only have %d\n",
+				arena_count, max_sn);
+			break;
+		}
+
 		ma->remaining = ma->sz;
 		ma->next_allocation = ma->first_allocation;
 		ma = ma->next;
@@ -134,12 +165,21 @@ arena_alloc(struct memory_arena *ma, size_t size)
 		size_t arena_size = roundup((nsize + headersize), pagesize);
 
 		ca = malloc(arena_size);
+
 		ca->first_allocation = ((char *)ca) + headersize;
 		ca->next_allocation = ca->first_allocation;
 		ca->sz = arena_size - headersize;
 		ca->remaining = ca->sz;
 
-		ca->usage_info = ma->usage_info;
+		/* Each struct arena gets a unique serial number,
+		 * and the dummy "head" node sn field has a count of
+		 * how many structs arena reside in the list.
+		 */
+		ca->sn = ++ma->sn;
+
+		/* since the next 2 lines make a FIFO stack of structs
+		 * arena, the serial numbers must decrease by one 
+		 * as you walk the stack. */
 		ca->next = ma->next;
 		ma->next = ca;
 	}
