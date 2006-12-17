@@ -38,12 +38,15 @@ a) Load file(s) from command line (as lc does)
 	done Sat Sep 16 13:47:19 MDT 2006
 	- also via "load" interpreter command
 b) Add ability to turn off C, B, I combinators on cmomand line
+	-- Done 2006-11-20, S, K, I, B, C, W all can get turned off
 c) Add W combinator, and ability to turn it off
+	-- Done 2006-11-20
 d) Single step reductions via interpreter command (on/off)
 		-- via command line flag, 11/2006
 		-- interpreter command, 2006-11-08
 d.1) Use longjmp to get out of single-stepping and back to main
 	read-reduce-print loop, also add a "quit interpreter" variant.
+		-- done 2006-11-21
 e) Add "reduce" interpreter keyword to get reduced expressions
    into environment (analogous to lc's "normalize")
 		-- done 2006-09-15
@@ -52,14 +55,20 @@ f) Add "delete" interpreter command to remove expressions
 	- have to add delete to "big" hashtable implementation.
 g) Add ability to convert CL expression to a lambda term
 h) Add "lccl" algorithms to lc
+		-- Also, see item (t) below.
 i) Add ability to save dotty-format graph of CL expression
 	This should do dashed-lines to show reference counts
-j)Add ability to save whole environment to text file
+j) Add ability to save whole environment to text file
 	(add to lc as well?)
-k) better garbage collection of used combinators
-   and application nodes via reference counting
+k) Better garbage collection of used combinators and
+   application nodes via reference counting.
 	-- need to add some kind of memory use stats printout
 		to tell if this had an effect or not.
+			-- done 2006-11-15 or thereabouts
+	-- Done 2006-11-10
+	-- May not actually collect as aggressively as possible,
+		need to step through a complicated reduction to see if
+		every unused application & combinator gets dereferenced.
 l) Add combinator(s) for some other weird basis.
 	- JB Rosser's I and J?
 m) Make a random CL-expression generator (python?)
@@ -67,10 +76,10 @@ m) Make a random CL-expression generator (python?)
 		- Done, 2006-10-28, but in Perl.  See file "evil.expressions"
 		for CL expressions that cause problems.
 n) Count number of reductions (by combinator?) to check
-	the "lazy" evaluation
+	the "lazy" evaluation.  See also item (s) below.
 o) change lexer to just eat "\\n" so that it looks like
 	whitespace and allows multi-line expressions.
-	done - Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
+	-- done Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
 p) Add "prompting", also to lc
 	- use command line flag to turn it off, for testing.
 q) all command-line flags should have "interpreter command"
@@ -78,3 +87,20 @@ q) all command-line flags should have "interpreter command"
 r) spine stack - push-a-node (PUSHNODE macro right now) should
 	maybe check stack->stack's depth to avoid array overruns.
 	This might constitute a big performance hit, though.
+		-- Done 2006-11-15 or so.  Still need to check if performance hit.
+		-- see item (u) below.
+s) Add a max number of reductions (cmd line flag) to prevent getting
+	stuck evaluating terms with no normal form.
+		-- also see item (n) above
+t) Add variety of bracket abstraction algorithms to cl
+	-- 2006-11-21, Curry-Feys simple algorithm
+	-- 2006-11-27, Turner algorithm
+	- Need to add John Tromp's 9-rule algorithm
+	- Need to add the old BCKW algorithm
+	- Need to add test cases
+u) Might need to put a limit (changeable from cmd line?) on the max
+	spine stack stack size that it can allocate.  Probably need to use
+	the longjmp mechanism to quit out of the reduction at that point.
+v) Need to write (X)HTML-format document to describe the whole thing,
+	especially the reference-counting and arena memory allocation.
+	- Perhaps use txt2tags to do this?
