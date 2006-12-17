@@ -19,6 +19,9 @@ static int reused_node_count = 0;
 static int allocated_node_count = 0;  /* Not total. In a particular arena. */
 static int new_node_cnt;
 
+extern int interpreter_interrupted;
+extern int reduction_interrupted;
+
 static struct node *node_free_list = NULL;
 
 struct node *new_node(void);
@@ -40,6 +43,11 @@ new_application(struct node *left_child, struct node *right_child)
 	return r;
 }
 
+/* Why doesn't this use Atoms to do combinator names?
+ * It potentially complicates comparing (for example)
+ * the name of an "S" combinator from the Atom table,
+ * and the name of an "S" combintor allocated here.
+ */
 struct node *
 new_combinator(enum combinatorName cn)
 {
@@ -47,7 +55,13 @@ new_combinator(enum combinatorName cn)
 
 	r->typ = COMBINATOR;
 	r->cn = cn;
-	r->name = (cn == COMB_S)? "S": (cn == COMB_K)? "K": (cn == COMB_I)? "I": (cn == COMB_B)? "B": (cn == COMB_C)? "C": "none";
+	r->name = (cn == COMB_S)? "S":
+		(cn == COMB_K)? "K":
+		(cn == COMB_I)? "I":
+		(cn == COMB_B)? "B":
+		(cn == COMB_C)? "C":
+		(cn == COMB_W)? "W":
+		"none";
 
 	return r;
 }
@@ -169,7 +183,7 @@ free_all_nodes(int memory_info_flag)
 
 	if (memory_info_flag)
 	{
-		fprintf(stderr, "Allocated %d nodes of %d bytes each in toto.\n",
+		fprintf(stderr, "Gave out %d nodes of %d bytes each in toto.\n",
 			new_node_cnt, sizeof(struct node));
 		fprintf(stderr, "%d nodes allocated from arena, %d from free list\n",
 			sn_counter, reused_node_count);
@@ -187,24 +201,27 @@ init_node_allocation(int memory_info_flag)
 void
 reset_node_allocation(void)
 {
-	int free_list_cnt = 0;
-	struct node *p = node_free_list;
-
-	while (p)
+	if (!reduction_interrupted)
 	{
-		++free_list_cnt;
-		if (debug_reduction)
-			fprintf(stderr, "Node %d, ref cnt %d on free list\n",
-				p->sn, p->refcnt);
-		p = p->right;
-		if (free_list_cnt > allocated_node_count) break;
-	}
+		int free_list_cnt = 0;
+		struct node *p = node_free_list;
 
-	if (free_list_cnt != allocated_node_count)
-		fprintf(stderr, "Allocated %d nodes, but found %s %d on free list\n",
-			allocated_node_count,
-			free_list_cnt >allocated_node_count? "at least": "only",
-			free_list_cnt);
+		while (p)
+		{
+			++free_list_cnt;
+			if (debug_reduction)
+				fprintf(stderr, "Node %d, ref cnt %d on free list\n",
+					p->sn, p->refcnt);
+			p = p->right;
+			if (free_list_cnt > allocated_node_count) break;
+		}
+
+		if (free_list_cnt != allocated_node_count)
+			fprintf(stderr, "Allocated %d nodes, but found %s %d on free list\n",
+				allocated_node_count,
+				free_list_cnt >allocated_node_count? "at least": "only",
+				free_list_cnt);
+	}
 
 	node_free_list = 0;
 	allocated_node_count = 0;
