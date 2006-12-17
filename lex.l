@@ -53,6 +53,14 @@ struct stream_node *file_stack = NULL;
 
 void set_yyin_stdin(void);
 
+extern int S_as_combinator;
+extern int K_as_combinator;
+extern int I_as_combinator;
+extern int B_as_combinator;
+extern int C_as_combinator;
+extern int W_as_combinator;
+
+
 %}
 
 %%
@@ -62,27 +70,47 @@ void set_yyin_stdin(void);
 \\\n	    { /* Just eat it. */ }
 \(		    { return TK_LPAREN; }
 \)		    { return TK_RPAREN; }
+\[		    { return TK_LBRACK; }
+]		    { return TK_RBRACK; }
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
 "timer"     { return TK_TIME; }
+"timeout"   { return TK_TIMEOUT; }
 "debug"     { return TK_DEBUG; }
 "step"      { return TK_SINGLE_STEP; }
 "trace"     { return TK_TRACE; }
 "elaborate" { return TK_ELABORATE; }
 "load"      { return TK_LOAD; }
+"curry"     { return TK_CURRY; }
+"turner"    { return TK_TURNER; }
+[1-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
+				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {
 	char *tmp;
 	tmp = unescape_string(yytext);
 	yylval.string_constant = Atom_string(tmp);
 	free(tmp);
-	return(STRING_CONSTANT);
+	return STRING_LITERAL;
 }
-S { yylval.cn = COMB_S; return TK_PRIMITIVE; }
-K { yylval.cn = COMB_K; return TK_PRIMITIVE; }
-I { yylval.cn = COMB_I; return TK_PRIMITIVE; }
-B { yylval.cn = COMB_B; return TK_PRIMITIVE; }
-C { yylval.cn = COMB_C; return TK_PRIMITIVE; }
+S { if (S_as_combinator) { yylval.cn = COMB_S; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+K { if (K_as_combinator) { yylval.cn = COMB_K; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+I { if (I_as_combinator) {yylval.cn = COMB_I; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+B { if (B_as_combinator) {yylval.cn = COMB_B; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+C { if (C_as_combinator) {yylval.cn = COMB_C; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+W { if (W_as_combinator) {yylval.cn = COMB_W; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
 [a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }
 .		    { /* Just eat it. */ }
 
