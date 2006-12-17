@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>  /* malloc() and free() */
+#include <assert.h>
+#include <setjmp.h>   /* longjmp(), jmp_buf */
 
 #include <node.h>
 #include <graph.h>
@@ -11,6 +13,8 @@ extern int trace_reduction;
 extern int debug_reduction;
 extern int elaborate_output;
 extern int single_step;
+
+extern jmp_buf in_reduce_graph;
 
 #define D if(debug_reduction)
 #define T if(trace_reduction)
@@ -129,6 +133,7 @@ reduce_graph(struct node *root)
 						n3->examined = 0;
 						POP(stack, 3);
 						T {printf("S reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
 					} else
 						POP(stack, 1);
 					break;
@@ -189,6 +194,28 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 3)->examined = 0;
 						POP(stack, 3);
 						T{printf("C reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
+					} else
+						POP(stack, 1);
+					break;
+				case COMB_W:
+					D printf("W combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
+					if (STACK_SIZE(stack) > 3)
+					{
+						struct node *ltmp = PARENTNODE(stack, 2)->left;
+						T{printf("W reduction, before: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						SS;
+						PARENTNODE(stack, 2)->left
+							= new_application(
+								PARENTNODE(stack, 1)->right,
+								PARENTNODE(stack, 2)->right
+							);
+						++PARENTNODE(stack, 2)->left->refcnt;
+						PARENTNODE(stack, 1)->examined = 0;
+						PARENTNODE(stack, 2)->examined = 0;
+						free_node(ltmp);
+						POP(stack, 2);
+						T{printf("W reduction, after: ");  print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
 					} else
 						POP(stack, 1);
@@ -268,14 +295,28 @@ free_graph(struct node *p)
 	free(p);
 }
 
+/* Control can longjmp() back to reduce_tree()
+ * in grammar.y for certain input(s). */
 int
 read_line(void)
 {
 	char buf[64];
-	printf("continue? ");
-	fflush(stdout);
-	fgets(buf, sizeof(buf), stdin);
-	if (*buf == 'n') exit(0);  /* XXX - maybe do a longjmp? */
-	if (*buf == 'c') single_step = 0;
+	*buf = 'A';
+	do {
+		printf("continue? ");
+		fflush(stdout);
+		fgets(buf, sizeof(buf), stdin);
+		if (*buf == 'x' || *buf == 'e') exit(0);
+		if (*buf == 'n' || *buf == 'q') longjmp(in_reduce_graph, 3);
+		if (*buf == 'c') single_step = 0;
+		if (*buf == '?')
+		{
+			fprintf(stderr,
+				"e, x -> exit now\n"
+				"n, q -> terminate current reduction, return to top level\n"
+				"c -> continue current reduction without further stops\n"
+			);
+		}
+	} while ('?' == *buf);
 	return single_step;
 }
