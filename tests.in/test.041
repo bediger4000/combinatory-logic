@@ -1,0 +1,13 @@
+# Check 5-rule "turner" bracket abstraction
+# I
+[x]turner x
+# K A
+[x]turner A
+# A
+[x]turner  A x
+# B
+[p]turner [q]turner [r]turner p (q r)
+# C
+[p]turner [q]turner [r]turner ((p r) q)
+# S a b 
+[x]turner (a x)(b x)

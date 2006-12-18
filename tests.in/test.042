@@ -1,0 +1,12 @@
+# I
+[x]curry x
+# K A
+[x]curry A
+# A
+[x]curry  A x
+# B
+[p]curry [q]curry [r]curry p (q r)
+# C
+[p]curry [q]curry [r]curry ((p r) q)
+# S a b 
+[x]curry (a x)(b x)
