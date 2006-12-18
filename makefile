@@ -1,18 +1,20 @@
-#CC = tcc -Wall
-#CFLAGS = -I. -D_TCC_
-#YACC = yacc  -d -v
+all:
+	@echo "Try one of these:"
+	@echo "make cc"   "- very generic"
+	@echo "make gnu"  "- all GNU"
+	@echo "make lcc"  "- lcc C compiler and yacc"
+	@echo "make tcc"  "- tcc C compiler and yacc"
 
-CC = gcc
-CFLAGS = -I. -g -O -Wall
-YACC = bison -b y
+cc:
+	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
+gnu:
+	make CC=gcc YACC='bison -b y' LEX=flex CFLAGS='-I. -g -O -Wall' build
+lcc:
+	make CC=lcc YACC='yacc -d -v' CFLAGS='-I.' build
+tcc:
+	make CC='tcc -Wall' YACC='yacc -d -v' CFLAGS='-I. -D_TCC_' build
 
-#CC = lcc
-#CFLAGS = -I.
-
-#LEX = lex
-#YACC = yacc -d -v
-
-all: cl
+build: cl
 
 OBJS = node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
 	spine_stack.o bracket_abstraction.o
