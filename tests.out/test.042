@@ -1,0 +1,12 @@
+I
+I
+K A
+K A
+S (K A) I
+S (K A) I
+S (S (K S) (S (K K) (S (K S) (S (K K) I)))) (K (S (S (K S) (S (K K) I)) (K I)))
+S (S (K S) (S (K K) (S (K S) (S (K K) I)))) (K (S (S (K S) (S (K K) I)) (K I)))
+S (S (K S) (S (K K) (S (K S) (S (S (K S) (S (K K) I)) (K I))))) (K (S (K K) I))
+S (S (K S) (S (K K) (S (K S) (S (S (K S) (S (K K) I)) (K I))))) (K (S (K K) I))
+S (S (K a) I) (S (K b) I)
+S (S (K a) I) (S (K b) I)
