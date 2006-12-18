@@ -110,9 +110,9 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 					r = new_application(
 						new_application(
 							new_combinator(COMB_C),
-							arena_copy_graph(tree->right)
+							turner_bracket_abstraction(var, tree->left)
 						),
-						turner_bracket_abstraction(var, tree->left)
+						arena_copy_graph(tree->right)
 					);
 				}
 			} else if (var_appears_in_graph(var, tree->right)) {
