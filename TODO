@@ -1,28 +1,37 @@
 1. Signal handler
+	- done
 2. Timer
+	- done
 3. Optionally, step through reductions, quitting on appropriate input
+	- done
 3a. Optionally, print out whole tree after every reduction
+	- done
 4. add "define" and associated storage and cleanup
+	- done
 5. Make a CL expression into lambda term.
 6. Make lambda calculator that compiles into CL, runs it using
    graph reduction, then converts back.
 7. Make it "autotool-able".
+	- not doing this.
 8. Convert back to explicit free-ing of nodes.
 	- Doesn't help.  Maximum graph size exists after the
 	parse finished.  reduce_graph() never calls new_combinator()
 	or new_application().
+	- Did help after all: some application nodes do get created,
+	as the old ones have to stay in place until ref count drops
+	to zero.
 
 Sun Aug 13 11:52:34 MDT 2006
 
 PROGRAM
 1. Add signal handler
-	done
+	- done
 2. Add time reduction command to interpreter
-	done
+	- done
 3. Add "define" and associated storage and cleanup
-	2006-08-14
+	- 2006-08-14
 4. Create ackermann or addition or something, and do some timings
-	2006-09-18
+	- 2006-09-18
 5. Implement some of Koopman's TIGRE-style optimizations.
 	(a) non-recursive reduce_graph()
 		- initial version, 2006-10-23
@@ -71,6 +80,7 @@ k) Better garbage collection of used combinators and
 		every unused application & combinator gets dereferenced.
 l) Add combinator(s) for some other weird basis.
 	- JB Rosser's I and J?
+	- single-combinator basis?
 m) Make a random CL-expression generator (python?)
 	based on BNF grammar.  Use it to make some test cases.
 		- Done, 2006-10-28, but in Perl.  See file "evil.expressions"
