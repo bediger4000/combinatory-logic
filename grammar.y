@@ -40,6 +40,7 @@ int reduction_interrupted = 0;
 
 struct node *reduce_tree(struct node *root);
 float elapsed_time(struct timeval before, struct timeval after);
+void usage(char *progname);
 
 struct filename_node {
 	const char *filename;
@@ -208,7 +209,7 @@ main(int ac, char **av)
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mstT:SKIBCW")))
+	while (-1 != (c = getopt(ac, av, "deL:mstT:SKIBCWx")))
 	{
 		switch (c)
 		{
@@ -239,6 +240,10 @@ main(int ac, char **av)
 			break;
 		case 't':
 			trace_reduction = 1;
+			break;
+		case 'x':
+			usage(av[0]);
+			exit(0);
 			break;
 		/* Turn *off* selected combinators: they become mere identifiers */
 		case 'S':
@@ -400,4 +405,27 @@ elapsed_time(struct timeval before, struct timeval after)
 		+ (1.0E-6)*(float)(after.tv_usec - before.tv_usec);
 
 	return r;
+}
+
+void
+usage(char *progname)
+{
+	fprintf(stderr, "%s: Combinatory Logic like language interpreter\n",
+		progname);
+	fprintf(stderr, "Flags:\n"
+		"-d             debug reductions\n"
+		"-e             elaborate output\n"
+		"-L  filename   Load and interpret a filenamed filename\n"
+		"-m             on exit, print memory usage summary\n"
+		"-s             single-step reductions\n"
+		"-T number      reduce a graph for number seconds, the stop\n"
+		"-t             trace reductions\n"
+		"-S             treat S as a non-combinator\n"
+		"-K             treat K as a non-combinator\n"
+		"-I             treat I as a non-combinator\n"
+		"-B             treat B as a non-combinator\n"
+		"-C             treat C as a non-combinator\n"
+		"-W             treat W as a non-combinator\n"
+		""
+	);
 }
