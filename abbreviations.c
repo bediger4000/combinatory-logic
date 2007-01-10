@@ -49,7 +49,7 @@ abbreviation_lookup(const char *id)
 }
 
 struct node *
-abbreviation_add(const char *id, struct node *exp)
+abbreviation_add(const char *id, struct node *expr)
 {
 	struct node *r = NULL;
 	struct hashnode *n = NULL;
@@ -58,9 +58,9 @@ abbreviation_add(const char *id, struct node *exp)
 	if ((n = node_lookup(abbr_table, id, &hv)))
 	{
 		r = (struct node *)n->data;
-		n->data = (void *)copy_graph(exp);
+		n->data = (void *)copy_graph(expr);
 	} else {
-		(void)add_data(abbr_table, id, (void *)copy_graph(exp));
+		(void)add_data(abbr_table, id, (void *)copy_graph(expr));
 	}
 
 	return r;

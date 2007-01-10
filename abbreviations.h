@@ -25,4 +25,4 @@
 void setup_abbreviation_table(struct hashtable *h);
 
 struct node *abbreviation_lookup(const char *id);
-struct node *abbreviation_add(const char *id, struct node *exp);
+struct node *abbreviation_add(const char *id, struct node *expr);
