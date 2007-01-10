@@ -53,6 +53,9 @@ extern void set_yyin(const char *filename);
 extern void reset_yyin(void);
 extern void  push_and_open(const char *filename);
 
+extern int yylex(void);
+int yyerror(char *s1);
+
 /* Various "treat as combinator" flags.
  * For example: S_as_combinator, when set (default) causes
  * the lexer to treat "S" as an S-combinator.  When unset,
