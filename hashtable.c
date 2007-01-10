@@ -158,12 +158,12 @@ rehash_hashtable(struct hashtable *h)
 	while (oldtail != l)
 	{
 		struct hashnode *t = l->next;
-		int index = MOD(l->value, h->maxp);
+		int idx = MOD(l->value, h->maxp);
 
-		if (index < h->p)
-			index = MOD(l->value, (2*h->maxp));
+		if (idx < h->p)
+			idx = MOD(l->value, (2*h->maxp));
 
-		if (index == newindex)
+		if (idx == newindex)
 		{
 			insert_node(h->buckets[newindex], l);
 			++h->buckets[newindex]->nodes_in_chain;
@@ -370,17 +370,17 @@ node_lookup(struct hashtable *h, const char *string_to_lookup, unsigned int *rhv
 {
 	struct hashnode *r = NULL;
 	unsigned int hashval = hash_djb2(string_to_lookup);
-	int index = MOD(hashval, h->maxp);
+	int idx = MOD(hashval, h->maxp);
 	struct hashnode *chain;
 
 	*rhv = hashval;
 
-	if (index < h->p)
-		index = MOD(hashval, (2*h->maxp));
+	if (idx < h->p)
+		idx = MOD(hashval, (2*h->maxp));
 
-	chain = h->buckets[index]->next;
+	chain = h->buckets[idx]->next;
 
-	while (chain != h->sentinels[index])
+	while (chain != h->sentinels[idx])
 	{
 		/* checking the equivalence of hash value first prevents
 		 * expensive byte-by-byte strcmp().  Seems to improve performance. */
