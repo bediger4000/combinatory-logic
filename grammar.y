@@ -133,7 +133,7 @@ interpreter_command
 	| TK_TRACE TK_EOL { trace_reduction ^= 1; }
 	| TK_SINGLE_STEP TK_EOL { single_step ^= 1; }
 	| TK_LOAD STRING_LITERAL TK_EOL { push_and_open($2); }
-	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { }
+	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	;
 
 expression
