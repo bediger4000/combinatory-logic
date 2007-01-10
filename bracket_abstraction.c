@@ -25,6 +25,7 @@ var_appears_in_graph(struct node *var, struct node *tree)
 		} else if (var->name == tree->name)
 			r = 1;
 		break;
+	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -67,6 +68,7 @@ curry_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
+	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -144,6 +146,7 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
+	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
