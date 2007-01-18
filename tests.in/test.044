@@ -1,0 +1,46 @@
+# Scott Numerals, and a non-standard fixed point combinator
+#define zero %a.%b.a
+def zero [a][b] a
+#define succ %c.%d.%e.(e c)
+define succ [c][d][e] e c
+#define case %f.%g.%h.f g h
+define case [f][g][h]f g h
+#define pred %i.(i (%j.%k.j) (%l.l))
+define pred [i] (i ([j][k]j) ([l]l))
+define one reduce succ zero
+define two reduce succ one
+
+define zerotest reduce [a](case a true ([d]false))
+zerotest zero
+zerotest one
+zerotest two
+zerotest (pred (pred two))
+
+# Not really a fixed point combinator:
+# F(YF) != YF, but it works to create recursive
+# functions.
+def Ynonstd (B (S I I) (B (B (S I I)) B))
+
+
+# John Tromp
+def Ytromp1 (S C I)(S B (C (B S (C I)) I))
+def Ytromp2 (S (S (K S) (S (S (K S) (S (K K) I)) (K I))) (S (K K) I))(S (S (K S) (S (K K) I)) (S (S (K S) (S (K (S I)) (S (K K) I))) (K I)))
+
+define R ([o][n][m]( case m n (o (succ n)) ))
+
+define add1 (Ytromp1 R)
+
+define add2 (Ytromp2 R)
+
+define addns (Ynonstd R)
+
+add1 zero zero
+add2 zero zero
+addns zero zero
+
+add1 two two
+add2 two two
+addns two two
+
+def f4 reduce addns two two
+zerotest (pred (pred (pred (pred f4))))

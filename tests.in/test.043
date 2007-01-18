@@ -1,0 +1,79 @@
+# Scott Numerals, and various fixed point combinators
+#define zero %a.%b.a
+def zero [a][b] a
+#define succ %c.%d.%e.(e c)
+define succ [c][d][e] e c
+#define case %f.%g.%h.f g h
+define case [f][g][h]f g h
+#define pred %i.(i (%j.%k.j) (%l.l))
+define pred [i] (i ([j][k]j) ([l]l))
+define one reduce succ zero
+define two reduce succ one
+
+define zerotest reduce [a](case a true ([d]false))
+zerotest zero
+zerotest one
+zerotest two
+zerotest (pred (pred two))
+
+# Curry
+#define Y %f.((%x.f(x x))(%x.f(x x)))
+# Turing
+#define Theta (%x.%y.y(x x y))(%x.%y.y(x x y))
+# John Tromp
+#define Tromp (%x.%y.x y x)(%y.%x.y (x y x))
+
+
+# Curry
+def Ycurry1 B (S I I) (C B (S I I))
+def Ycurry2 S (K (S I I)) (S (S (K S) (S (K K) I)) (K (S I I)))
+# Turing
+def Yturing1 (B (S I) (S I I))(B (S I) (S I I))
+def Yturing2 (S (K (S I)) (S (S (K S) (S (K K) (S I I))) (K I))) (S (K (S I)) (S (S (K S) (S (K K) (S I I))) (K I)))
+# John Tromp
+def Ytromp1 (S C I)(S B (C (B S (C I)) I))
+def Ytromp2 (S (S (K S) (S (S (K S) (S (K K) I)) (K I))) (S (K K) I))(S (S (K S) (S (K K) I)) (S (S (K S) (S (K (S I)) (S (K K) I))) (K I)))
+
+define R ([o][n][m]( case m n (o (succ n)) ))
+
+define add (Ycurry1 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
+
+define add (Ycurry2 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
+
+define add (Yturing1 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
+
+define add (Yturing2 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
+
+define add (Ytromp1 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
+
+define add (Ytromp2 R)
+reduce add zero zero
+reduce add one zero
+reduce add zero one 
+reduce add one one 
+reduce add two two 
