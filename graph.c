@@ -84,9 +84,11 @@ reduce_graph(struct node *root)
 					PUSHNODE(stack, tmp);  /* "dummy" node at top of stack */
 					PUSHNODE(stack, tmp->right);
 				} else
-					POP(stack, 1);  /* both sides of application traversed */
+					POP(stack, 1);  /* both sides of application node traversed */
 				break;
 			case COMBINATOR:
+				/* node->typ indicates a combinator, which can comprise a built-in,
+				 * or it can comprise a mere variable. Let node->cn decide. */
 				if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
 				switch (TOPNODE(stack)->cn)
 				{
@@ -242,13 +244,13 @@ reduce_graph(struct node *root)
 					} else
 						POP(stack, 1);
 					break;
-				case COMB_NONE:
+				case COMB_NONE:  /* A combinator that's not a built-in */
 					T{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root, 0, TOPNODE(stack)->sn);}
 					POP(stack, 1);
 					D{printf("after pop: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 					break;
 				}
-				break;  /* end of case COMBINATOR */
+				break;  /* end of case COMBINATOR, switch on node->cn */
 			case UNTYPED:
 				POP(stack, 1);
 				break;
@@ -259,62 +261,6 @@ reduce_graph(struct node *root)
 		T printf("pop spine stack\n");
 
 	} while (stack);
-}
-
-struct node *
-copy_graph(struct node *p)
-{
-	struct node *r = NULL;
-
-	if (!p)
-		return r;
-
-	r = malloc(sizeof(*r));
-	r->typ = p->typ;
-	r->sn = -666;
-	r->cn = COMB_NONE;
-
-	switch (p->typ)
-	{
-	case APPLICATION:
-		r->name = NULL;
-		r->left = copy_graph(p->left);
-		r->right = copy_graph(p->right);
-		r->examined = 0;
-		break;
-	case COMBINATOR:
-		r->name = p->name;
-		r->cn = p->cn;
-		r->left = r->right = NULL;
-		break;
-	case UNTYPED:
-		printf("Copying an UNTYPED node\n");
-		r->name = NULL;
-		r->left = r->right = NULL;
-		break;
-	default:
-		printf("Copying n node of unknown (%d) type\n", p->typ);
-		r->name = NULL;
-		r->left = copy_graph(p->left);
-		r->right = copy_graph(p->right);
-		break;
-	}
-	return r;
-}
-
-void
-free_graph(struct node *p)
-{
-	if (!p) return;
-
-	free_graph(p->left);
-	free_graph(p->right);
-
-	p->name = NULL;
-	p->left = p->right = NULL;
-	p->typ = -1;
-
-	free(p);
 }
 
 /* Control can longjmp() back to reduce_tree()

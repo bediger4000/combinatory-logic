@@ -25,7 +25,7 @@
 #include <hashtable.h>
 
 #include <node.h>
-#include <graph.h>
+#include <abbreviations.h>  /* free_graph() */
 
 unsigned int hash_djb2(const char *s);
 void rehash_hashtable(struct hashtable *h);

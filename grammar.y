@@ -137,8 +137,7 @@ stmnt
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL
 		{
-			struct node *prev = abbreviation_add($2, $3);
-			if (prev) free_graph(prev);
+			abbreviation_add($2, $3);
 			++$3->refcnt;
 			free_node($3);
 		}

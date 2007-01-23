@@ -25,4 +25,9 @@
 void setup_abbreviation_table(struct hashtable *h);
 
 struct node *abbreviation_lookup(const char *id);
-struct node *abbreviation_add(const char *id, struct node *expr);
+void         abbreviation_add(const char *id, struct node *expr);
+
+/* malloc/free based whole-graph copy and delete.  Only free_graph()
+ * gets used outside abbreviations.c, by hashtable module */
+struct node *copy_graph(struct node *root);
+void         free_graph(struct node *root);

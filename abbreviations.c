@@ -29,7 +29,6 @@
 #include <node.h>
 #include <hashtable.h>
 #include <abbreviations.h>
-#include <graph.h>
 
 struct hashtable *abbr_table = NULL;
 
@@ -44,24 +43,89 @@ abbreviation_lookup(const char *id)
 {
 	struct node *r = NULL;
 	void *p = data_lookup(abbr_table, id);
+	/* make a "permanent" copy of the parse tree, so that
+	 * reduce_graph() can destructively reduce the resulting
+	 * parse tree. */
 	if (p) r = arena_copy_graph((struct node *)p);
 	return r;
 }
 
-struct node *
+void
 abbreviation_add(const char *id, struct node *expr)
 {
-	struct node *r = NULL;
 	struct hashnode *n = NULL;
 	unsigned int hv;
 
 	if ((n = node_lookup(abbr_table, id, &hv)))
 	{
-		r = (struct node *)n->data;
+		/* This def/define replaces a previous one.
+		 * Permanently free the old parse tree. */
+		free_graph((struct node *)n->data);
+
+		/* make a "permanent" copy of the parse tree, so that
+	 	* reduce_graph() can destructively reduce the resulting
+	 	* parse tree. */
 		n->data = (void *)copy_graph(expr);
 	} else {
+		/* Make a permanent copy, rather than out of an arena,
+		 * so that the parse tree doesn't disappear when arenas
+		 * get reset. */
 		(void)add_data(abbr_table, id, (void *)copy_graph(expr));
 	}
+}
 
+struct node *
+copy_graph(struct node *p)
+{
+	struct node *r = NULL;
+
+	if (!p)
+		return r;
+
+	r = malloc(sizeof(*r));
+	r->typ = p->typ;
+	r->sn = -666;
+	r->cn = COMB_NONE;
+
+	switch (p->typ)
+	{
+	case APPLICATION:
+		r->name = NULL;
+		r->left = copy_graph(p->left);
+		r->right = copy_graph(p->right);
+		r->examined = 0;
+		break;
+	case COMBINATOR:
+		r->name = p->name;
+		r->cn = p->cn;
+		r->left = r->right = NULL;
+		break;
+	case UNTYPED:
+		printf("Copying an UNTYPED node\n");
+		r->name = NULL;
+		r->left = r->right = NULL;
+		break;
+	default:
+		printf("Copying n node of unknown (%d) type\n", p->typ);
+		r->name = NULL;
+		r->left = copy_graph(p->left);
+		r->right = copy_graph(p->right);
+		break;
+	}
 	return r;
+}
+
+void
+free_graph(struct node *p)
+{
+	if (!p) return;
+
+	free_graph(p->left);
+	free_graph(p->right);
+
+	p->name = NULL;
+	p->left = p->right = NULL;
+	p->typ = -1;
+
+	free(p);
 }
