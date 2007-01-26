@@ -34,7 +34,7 @@ extern int debug_reduction;
 extern int elaborate_output;
 extern int single_step;
 
-extern jmp_buf in_reduce_graph;
+extern sigjmp_buf in_reduce_graph;
 
 #define D if(debug_reduction)
 #define T if(trace_reduction)
@@ -275,7 +275,7 @@ read_line(void)
 		fflush(stdout);
 		fgets(buf, sizeof(buf), stdin);
 		if (*buf == 'x' || *buf == 'e') exit(0);
-		if (*buf == 'n' || *buf == 'q') longjmp(in_reduce_graph, 3);
+		if (*buf == 'n' || *buf == 'q') siglongjmp(in_reduce_graph, 3);
 		if (*buf == 'c') single_step = 0;
 		if (*buf == '?')
 		{

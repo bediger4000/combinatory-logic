@@ -54,7 +54,7 @@ int max_reduction_count = 0; /* when non-zero, how many reductions to perform */
  * (c) getting out of single-stepped graph reduction in reduce_graph()
  */
 void sigint_handler(int signo);
-jmp_buf in_reduce_graph;
+sigjmp_buf in_reduce_graph;
 int interpreter_interrupted = 0;
 int reduction_interrupted = 0;
 
@@ -351,9 +351,9 @@ void
 sigint_handler(int signo)
 {
 	/* the "return value" of 1 or 2 comes out in the
-	 * call to setjmp() in reduce_tree().
+	 * call to sigsetjmp() in reduce_tree().
 	 */
-	longjmp(in_reduce_graph, signo == SIGINT? 1: 2);
+	siglongjmp(in_reduce_graph, signo == SIGINT? 1: 2);
 }
 
 /*
@@ -370,14 +370,16 @@ reduce_tree(struct node *real_root)
 	int cc;
 	struct node *new_root = new_application(real_root, NULL);
 
+	/* new_root - points to a "dummy" node, necessary for I and
+	 * K reductions, if the expression is something like "I x" or
+	 * K a b. */
 	++new_root->refcnt;
-
 	MARK_RIGHT_BRANCH_TRAVERSED(new_root);
 
 	old_sigint_handler = signal(SIGINT, sigint_handler);
 	old_sigalm_handler = signal(SIGALRM, sigint_handler);
 
-	if (!(cc = setjmp(in_reduce_graph)))
+	if (!(cc = sigsetjmp(in_reduce_graph, 1)))
 	{
 		alarm(reduction_timeout);
 		gettimeofday(&before, NULL);
