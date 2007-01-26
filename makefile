@@ -68,9 +68,14 @@ cl: y.tab.o lex.yy.o $(OBJS)
 tests:  gnu runtests
 	-./runtests
 
+fuzz: gnu clfuzz
+	-rm -rf fuzz.in
+	./clfuzz 20 25 > fuzz.in
+	./cl -T 10 < fuzz.in
+
 clean:
 	-rm -rf cl
 	-rm y.tab.c y.tab.h lex.yy.c y.output
 	-rm -rf y.tab.o lex.yy.o $(OBJS)
 	-rm -rf core *.a *.o
-	-rm -f tests.output/*
+	-rm -f tests.output/* fuzz.in
