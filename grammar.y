@@ -109,7 +109,7 @@ int W_as_combinator = 1;
 %token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
-%token TK_TURNER TK_CURRY
+%token TK_TURNER TK_CURRY TK_TROMP
 
 %type <node> expression stmnt application term constant interpreter_command
 %type <node> bracket_abstraction
@@ -186,6 +186,14 @@ expression
 	| bracket_abstraction TK_TURNER expression
 		{
 			$$ = turner_bracket_abstraction($1, $3);
+			++$1->refcnt;
+			free_node($1);
+			++$3->refcnt;
+			free_node($3);
+		}
+	| bracket_abstraction TK_TROMP expression
+		{
+			$$ = tromp_bracket_abstraction($1, $3);
 			++$1->refcnt;
 			free_node($1);
 			++$3->refcnt;

@@ -83,6 +83,7 @@ extern int W_as_combinator;
 "load"      { return TK_LOAD; }
 "curry"     { return TK_CURRY; }
 "turner"    { return TK_TURNER; }
+"tromp"     { return TK_TROMP; }
 [1-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {

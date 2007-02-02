@@ -21,6 +21,7 @@
 #include <stdio.h>  /* NULL */
 
 #include <node.h>
+#include <graph.h>
 #include <bracket_abstraction.h>
 
 int
@@ -171,4 +172,219 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 		break;
 	}
 	return r;
+}
+
+/* return 1 if two graphs "equate", and 0 if they don't.
+ * "Equate" means same tree structure (application-type nodes
+ * in the same places, leaf (combinator) nodes in the same places),
+ * and that combinator-type nodes in the same places have the same name.
+ * Used only to determine whether to apply this rule:
+ * [x] ((M L) (N L)) -> [x](S M N L)         (M, N combinators)
+ * in the Tromp Bracket Abstraction algorithm, below.
+ */
+int
+equivalent_graphs(struct node *g1, struct node *g2)
+{
+	int r = 0;
+
+	if (g1->typ == g2->typ)
+	{
+		switch (g1->typ)
+		{
+		case APPLICATION:
+			r = equivalent_graphs(g1->left, g2->left)
+				&& equivalent_graphs(g1->right, g2->right);
+			break;
+		case COMBINATOR:
+			if (g1->cn == g2->cn && g1->name == g2->name)
+				r = 1;
+			break;
+		case UNTYPED:
+			r = 1; /* XXX - this can't consitute correct behavior, can it? */
+			break;
+		}
+
+	}
+
+	return r;
+}
+
+
+/* Apply the following set of 9 rules in decreasing order
+ * of applicability:
+ *
+ * [x](S K M)        -> S K                  (For all M)
+ * [x] M             -> K M                  (x not appearing in M)
+ * [x] x             -> I
+ * [x] M x           -> M                    (x not appearing in M)
+ * [x] x M x         -> [x] (S S K x M)
+ * [x] (M (N L))     -> [x] (S ([x] M) N L)  (M, N combinators)
+ * [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, N combinators)
+ * [x] ((M L) (N L)) -> [x](S M N L)         (M, N combinators)
+ * [x] M N           -> S ([x] M) ([x] N)
+ *
+ * tromp_bracket_abstraction() examines the parse tree argument,
+ * and returns a parse tree with the combinator named by var argument
+ * abstracted out of the original parse tree.  The returned parse tree
+ * has no references to the original, and the original parse tree does
+ * not get modified in the process.
+ * Hey, only S, K and I end up in the final abstracted expression.
+ * How could you incorporate B and C in it? If they helped Turner, maybe
+ * they would help here.
+ */
+struct node *
+tromp_bracket_abstraction(struct node *var, struct node *tree)
+{
+	if (APPLICATION == tree->typ
+		&& APPLICATION == tree->left->typ
+		&& COMBINATOR == tree->left->left->typ
+		&& COMB_S == tree->left->left->cn
+		&& COMBINATOR == tree->left->right->typ
+		&& COMB_K == tree->left->right->cn
+	)
+	{
+		/* [x] (S K M) -> S K */
+		return new_application(new_combinator(COMB_S), new_combinator(COMB_K));
+	}
+
+	
+
+	if (!var_appears_in_graph(var, tree))
+	{
+		/* [x] M -> K M    when x doesn't appear in M */
+		return new_application(new_combinator(COMB_K),
+			arena_copy_graph(tree));
+	}
+
+	if (COMBINATOR == tree->typ && var->name == tree->name)
+	{
+		/* [x] x -> I */
+		return new_combinator(COMB_I);
+	}
+
+	if (APPLICATION == tree->typ
+		&& COMBINATOR == tree->right->typ
+		&& var->name == tree->right->name
+		&& !var_appears_in_graph(var, tree->left)
+	)
+	{
+		/* [x] M x -> M   x not in M */
+		return arena_copy_graph(tree->left);
+	}
+
+	if (APPLICATION == tree->typ
+		&& APPLICATION == tree->left->typ
+		&& COMBINATOR == tree->right->typ
+		&& var->name == tree->right->name
+		&& COMBINATOR == tree->left->left->typ
+		&& var->name == tree->left->left->name
+	)
+	{
+		/* [x] (x M x) -> [x] (S S K x M) */
+		struct node *r;
+		struct node *disposable = new_application(
+				new_application(
+					new_application(
+						new_application(
+							new_combinator(COMB_S),
+							new_combinator(COMB_S)
+						),
+						new_combinator(COMB_K)
+					),
+					new_term(var->name)
+				),
+				arena_copy_graph(tree->left->right)
+		);
+		++disposable->refcnt;
+		r = tromp_bracket_abstraction(var, disposable);
+		free_node(disposable);
+		return r;
+	}
+
+	if (APPLICATION == tree->typ
+		&& COMBINATOR == tree->left->typ
+		&& APPLICATION == tree->right->typ
+		&& COMBINATOR == tree->right->left->typ
+	)
+	{
+ 		/* [x] (M (N L))     -> [x] (S ([x] M) N L)  (M, N combinators) */
+		struct node *r;
+		struct node *disposable = new_application(
+			new_application(
+				new_application(
+					new_combinator(COMB_S),
+					tromp_bracket_abstraction(var, tree->left)
+				),
+				arena_copy_graph(tree->right->left)
+			),
+			arena_copy_graph(tree->right->right)
+		);
+		r = tromp_bracket_abstraction(var, disposable);
+		++disposable->refcnt;
+		free_node(disposable);
+		return r;
+	}
+
+	if (APPLICATION == tree->typ
+		&& APPLICATION == tree->left->typ
+		&& COMBINATOR == tree->left->left->typ
+		&& COMBINATOR == tree->left->right->typ
+	)
+	{
+ 		/* [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, N combinators) */
+		struct node *r;
+		struct node *disposable = new_application(
+			new_application(
+				new_application(
+					new_combinator(COMB_S),
+					arena_copy_graph(tree->left->left)
+				),
+				tromp_bracket_abstraction(var, tree->right)
+			),
+			arena_copy_graph(tree->left->right)
+		);
+		r = tromp_bracket_abstraction(var, disposable);
+		++disposable->refcnt;
+		free_node(disposable);
+		return r;
+	}
+
+	if (APPLICATION == tree->typ
+		&& APPLICATION == tree->left->typ
+		&& APPLICATION == tree->right->typ
+		&& COMBINATOR == tree->left->left->typ
+		&& COMBINATOR == tree->right->left->typ
+		&& equivalent_graphs(tree->left->right, tree->right->right)
+
+	)
+	{
+ 		/* [x] ((M L) (N L)) -> [x](S M N L)         (M, N combinators) */
+		struct node *r;
+		struct node *disposable = new_application(
+			new_application(
+				new_application(
+					new_combinator(COMB_S),
+					arena_copy_graph(tree->left->left)
+				),
+				arena_copy_graph(tree->right->left)
+			),
+			arena_copy_graph(tree->right->right)
+		);
+		r = tromp_bracket_abstraction(var, disposable);
+		++disposable->refcnt;
+		free_node(disposable);
+		return r;
+	}
+
+	/* XXX - does it really make sense for the final "rule" to not
+	 * have an if() block around it? */
+
+	/* [x] M N           -> S ([x] M) ([x] N) */
+	return new_application(
+		new_application(
+			new_combinator(COMB_S),
+			tromp_bracket_abstraction(var, tree->left)
+		),
+		tromp_bracket_abstraction(var, tree->right)
+	);
 }
