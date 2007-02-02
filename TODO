@@ -114,3 +114,11 @@ u) Might need to put a limit (changeable from cmd line?) on the max
 v) Need to write (X)HTML-format document to describe the whole thing,
 	especially the reference-counting and arena memory allocation.
 	- Perhaps use txt2tags to do this?
+
+w) Add timeout-handling to bracket abstraction.  Also need to clean
+	up the grammar around bracket abstraction: too many productions
+	exist, when only one should appear.  Have to handle zero-length
+	"type" of bracket abstraction ("turner", "curry", "tromp" or ""),
+	and select the bracket abstraction function based on the "type".
+	This simplifies the addition of timeout-handling.  Also need
+	to check memory leaks in this case.
