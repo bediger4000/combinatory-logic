@@ -298,6 +298,7 @@ free_node(struct node *node)
 
 	--node->refcnt;
 
+
 	if (node->refcnt == 0)
 	{
 		if (APPLICATION == node->typ)
@@ -307,5 +308,7 @@ free_node(struct node *node)
 		}
 		node->right = node_free_list;
 		node_free_list = node;
-	}
+	} else if (0 > node->refcnt)
+		fprintf(stderr, "Freeing node %d, negative ref cnt %d\n",
+			node->sn, node->refcnt);
 }
