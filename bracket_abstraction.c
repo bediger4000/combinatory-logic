@@ -219,7 +219,7 @@ equivalent_graphs(struct node *g1, struct node *g2)
  * [x] M x           -> M                    (x not appearing in M)
  * [x] x M x         -> [x] (S S K x M)
  * [x] (M (N L))     -> [x] (S ([x] M) N L)  (M, N combinators)
- * [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, N combinators)
+ * [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, L combinators)
  * [x] ((M L) (N L)) -> [x](S M N L)         (M, N combinators)
  * [x] M N           -> S ([x] M) ([x] N)
  *
@@ -303,8 +303,10 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 
 	if (APPLICATION == tree->typ
 		&& COMBINATOR == tree->left->typ
+		&& COMB_NONE != tree->left->cn
 		&& APPLICATION == tree->right->typ
 		&& COMBINATOR == tree->right->left->typ
+		&& COMB_NONE != tree->right->left->cn
 	)
 	{
  		/* [x] (M (N L))     -> [x] (S ([x] M) N L)  (M, N combinators) */
@@ -328,10 +330,12 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 	if (APPLICATION == tree->typ
 		&& APPLICATION == tree->left->typ
 		&& COMBINATOR == tree->left->left->typ
-		&& COMBINATOR == tree->left->right->typ
+		&& COMB_NONE != tree->left->left->cn
+		&& COMBINATOR == tree->right->typ
+		&& COMB_NONE != tree->right->cn
 	)
 	{
- 		/* [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, N combinators) */
+		/* [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, L combinators) */
 		struct node *r;
 		struct node *disposable = new_application(
 			new_application(
