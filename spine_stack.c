@@ -27,7 +27,7 @@ static struct spine_stack *spine_stack_free_list = NULL;
 
 static int stack_malloc_cnt = 0;
 static int stack_reused_cnt = 0;
-static int new_stack_cnt;
+static int new_stack_cnt   = 0;
 
 extern int interpreter_interrupted;
 
