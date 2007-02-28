@@ -59,6 +59,11 @@ int interpreter_interrupted = 0;
 int reduction_interrupted = 0;
 
 struct node *reduce_tree(struct node *root);
+struct node *execute_bracket_abstraction(
+	struct node *(*bafunc)(struct node *, struct node *),
+	struct node *abstracted_var,
+	struct node *root
+);
 float elapsed_time(struct timeval before, struct timeval after);
 void usage(char *progname);
 
@@ -98,6 +103,7 @@ int W_as_combinator = 1;
 	int   numerical_constant;
 	struct node *node;
 	enum combinatorName cn;
+	struct node *(*bafunc)(struct node *, struct node *);
 }
 
 
@@ -109,10 +115,11 @@ int W_as_combinator = 1;
 %token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
-%token TK_TURNER TK_CURRY TK_TROMP
+%token TK_TURNER TK_CURRY TK_TROMP TK_G
 
 %type <node> expression stmnt application term constant interpreter_command
-%type <node> bracket_abstraction
+%type <node> bracket_abstraction 
+%type <bafunc> abstraction_algorithm
 
 %%
 
@@ -167,38 +174,22 @@ expression
 			tmp->left = NULL;
 			free_node(tmp);
 		}
-	| bracket_abstraction expression
+	| bracket_abstraction abstraction_algorithm expression
 		{
-			$$ = curry_bracket_abstraction($1, $2);
-			++$1->refcnt;
-			free_node($1);
-			++$2->refcnt;
-			free_node($2);
-		}
-	| bracket_abstraction TK_CURRY expression
-		{
-			$$ = curry_bracket_abstraction($1, $3);
+			$$ = ($2)($1, $3);
 			++$1->refcnt;
 			free_node($1);
 			++$3->refcnt;
 			free_node($3);
 		}
-	| bracket_abstraction TK_TURNER expression
-		{
-			$$ = turner_bracket_abstraction($1, $3);
-			++$1->refcnt;
-			free_node($1);
-			++$3->refcnt;
-			free_node($3);
-		}
-	| bracket_abstraction TK_TROMP expression
-		{
-			$$ = tromp_bracket_abstraction($1, $3);
-			++$1->refcnt;
-			free_node($1);
-			++$3->refcnt;
-			free_node($3);
-		}
+	;
+
+abstraction_algorithm
+	: TK_CURRY  { $$ = curry_bracket_abstraction; }
+	| TK_TURNER { $$ = turner_bracket_abstraction; }
+	| TK_TROMP  { $$ = tromp_bracket_abstraction; }
+	| TK_G      { $$ = grzegorczyk_bracket_abstraction; }
+	| { $$ = curry_bracket_abstraction; }
 	;
 
 application
@@ -419,6 +410,59 @@ reduce_tree(struct node *real_root)
 		printf("elapsed time %.3f seconds\n", elapsed_time(before, after));
 
 	return new_root;
+}
+
+/*
+ * Function execute_bracket_abstraction() exists to wrap various bracket
+ * abstraction functions.  It wraps with setting signal handlers,
+ * taking before & after timestamps, setting jmp_buf structs, etc.
+ */
+struct node *
+execute_bracket_abstraction(
+	struct node *(*bafunc)(struct node *, struct node *),
+	struct node *abstracted_var,
+	struct node *root
+)
+{
+	struct node *r = NULL;
+	void (*old_sigint_handler)(int);
+	void (*old_sigalm_handler)(int);
+	struct timeval before, after;
+	int cc;
+
+	old_sigint_handler = signal(SIGINT, sigint_handler);
+	old_sigalm_handler = signal(SIGALRM, sigint_handler);
+
+	if (!(cc = sigsetjmp(in_reduce_graph, 1)))
+	{
+		alarm(reduction_timeout);
+		gettimeofday(&before, NULL);
+		r = (bafunc)(abstracted_var, root);
+		alarm(0);
+		gettimeofday(&after, NULL);
+	} else {
+		const char *phrase = "Unset";
+		alarm(0);
+		gettimeofday(&after, NULL);
+		switch (cc)
+		{
+		case 1: phrase = "Interrupt"; break;
+		case 2: phrase = "Timeout";   break;
+		case 3: phrase = "Terminated";break;
+		default:
+			phrase = "Unknown";
+			break;
+		}
+		printf("%s\n", phrase);
+	}
+
+	signal(SIGINT, old_sigint_handler);
+	signal(SIGALRM, old_sigalm_handler);
+
+	if (reduction_timer)
+		printf("elapsed time %.3f seconds\n", elapsed_time(before, after));
+
+	return r;
 }
 
 /* utility function elapsed_time() */
