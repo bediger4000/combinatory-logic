@@ -174,6 +174,91 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 	return r;
 }
 
+/* "A 'new' abstraction algorithm", M.A. Price, H.Simmons
+   This actually implments "The cooked G-Algorithm".
+	[x] x   -> I
+	[x] Z   -> K Z                   x not appearing in Z
+	[x] Q x -> Q                     x not appearing in Q
+	[x] Q P -> B Q ([x] P)           x appears only in P, not in Q
+	[x] Q P -> C ([x]Q) P            x appears only in Q, not in P
+	[x] Q P -> W((B(C([x]Q)))([x]P)) x appears in both P and Q
+ */
+struct node *
+grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
+{
+	struct node *r = NULL;
+	switch (tree->typ)
+	{
+	case APPLICATION:
+		if (!var_appears_in_graph(var, tree))
+			/* [x] Z   -> K Z    x not appearing in Z */
+			r = new_application(new_combinator(COMB_K), arena_copy_graph(tree));
+		else {
+			/* variable getting abstracted out appears somewhere */
+			if (var_appears_in_graph(var, tree->left))
+			{
+				if (var_appears_in_graph(var, tree->right))
+				{
+					/* [x] Q P -> W( (B(C([x]Q))) ([x]P)) x appears in both Q and P */
+					r = new_application(
+							new_combinator(COMB_W),
+							new_application(
+								new_application(
+									new_combinator(COMB_B),
+									new_application(
+										new_combinator(COMB_C),
+										grzegorczyk_bracket_abstraction(var, tree->left)
+									)
+								),
+								grzegorczyk_bracket_abstraction(var, tree->right)
+							)
+						);
+				} else {
+					/* [x] M N -> C ([x]M) N       x appears only in M, not in N */
+					r = new_application(
+						new_application(
+							new_combinator(COMB_C),
+							grzegorczyk_bracket_abstraction(var, tree->left)
+						),
+						arena_copy_graph(tree->right)
+					);
+				}
+			} else if (var_appears_in_graph(var, tree->right)) {
+				if (COMBINATOR == tree->right->typ && var->name == tree->right->name)
+				{
+					/* [x] N x -> N                x not appearing in N */
+					r = arena_copy_graph(tree->left);
+				} else {
+					/* [x] M N -> B M ([x] N)      x appears only in N, not in M */
+					r = new_application(
+						new_application(
+							new_combinator(COMB_B),
+							arena_copy_graph(tree->left)
+						),
+						grzegorczyk_bracket_abstraction(var, tree->right)
+					);
+				}
+			}
+		}
+		break;
+	case COMBINATOR:
+		if (var->cn == tree->cn && var->name == tree->name)
+			/* [x] x -> I */
+			r = new_combinator(COMB_I);
+		else
+			/* [x] N -> K N */
+			r = new_application(
+				new_combinator(COMB_K),
+				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
+			);
+		break;
+	case UNTYPED: /* XXX */
+	default:
+		break;
+	}
+	return r;
+}
+
 /* return 1 if two graphs "equate", and 0 if they don't.
  * "Equate" means same tree structure (application-type nodes
  * in the same places, leaf (combinator) nodes in the same places),

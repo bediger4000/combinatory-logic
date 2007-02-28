@@ -21,3 +21,4 @@
 struct node *curry_bracket_abstraction(struct node *var, struct node *tree);
 struct node *turner_bracket_abstraction(struct node *var, struct node *tree);
 struct node *tromp_bracket_abstraction(struct node *var, struct node *tree);
+struct node *grzegorczyk_bracket_abstraction(struct node *var, struct node *tree);
