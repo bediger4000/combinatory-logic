@@ -81,10 +81,10 @@ extern int W_as_combinator;
 "trace"     { return TK_TRACE; }
 "elaborate" { return TK_ELABORATE; }
 "load"      { return TK_LOAD; }
-"curry"     { return TK_CURRY; }
-"turner"    { return TK_TURNER; }
-"g"    { return TK_G; }
-"tromp"     { return TK_TROMP; }
+"curry"|"turner"|"g"|"tromp" {
+		yylval.identifier = Atom_string(yytext);
+		return TK_ALGORITHM_NAME;
+	}
 [1-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {

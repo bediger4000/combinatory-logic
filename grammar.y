@@ -115,7 +115,7 @@ int W_as_combinator = 1;
 %token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
-%token TK_TURNER TK_CURRY TK_TROMP TK_G
+%token <identifier> TK_ALGORITHM_NAME
 
 %type <node> expression stmnt application term constant interpreter_command
 %type <node> bracket_abstraction 
@@ -185,11 +185,8 @@ expression
 	;
 
 abstraction_algorithm
-	: TK_CURRY  { $$ = curry_bracket_abstraction; }
-	| TK_TURNER { $$ = turner_bracket_abstraction; }
-	| TK_TROMP  { $$ = tromp_bracket_abstraction; }
-	| TK_G      { $$ = grzegorczyk_bracket_abstraction; }
-	| { $$ = curry_bracket_abstraction; }
+	: TK_ALGORITHM_NAME  { $$ = determine_bracket_abstraction($1); }
+	| { $$ = default_bracket_abstraction; }
 	;
 
 application

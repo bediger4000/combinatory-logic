@@ -24,6 +24,8 @@
 #include <graph.h>
 #include <bracket_abstraction.h>
 
+bracket_abstraction_function default_bracket_abstraction = curry_bracket_abstraction;
+
 int
 var_appears_in_graph(struct node *var, struct node *tree)
 {
@@ -477,3 +479,31 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 		tromp_bracket_abstraction(var, tree->right)
 	);
 }
+
+bracket_abstraction_function
+determine_bracket_abstraction(const char *algorithm_name)
+{
+	struct {
+		char *algorithm_name;  /* values match TK_ALGORITHM_NAME in lex.l */
+		bracket_abstraction_function f;
+	} afmap[] = {
+		{"curry", curry_bracket_abstraction},
+		{"g", grzegorczyk_bracket_abstraction},
+		{"tromp", tromp_bracket_abstraction},
+		{"turner", turner_bracket_abstraction}
+	};
+	int i;
+	bracket_abstraction_function func = NULL;
+
+	for (i = 0; i < sizeof(afmap)/sizeof(afmap[0]); ++i)
+	{
+		if (!strcmp(afmap[i].algorithm_name, algorithm_name))
+		{
+			func = afmap[i].f;
+			break;
+		}
+	}
+
+	return func;
+}
+
