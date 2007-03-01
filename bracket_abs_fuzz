@@ -1,0 +1,3 @@
+#!/bin/sh
+# Modified clfuzz
+./clfuzz 25 | ./cl | sed -n -e '1p' -e '4p' | uniq -c

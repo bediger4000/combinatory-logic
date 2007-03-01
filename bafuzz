@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+# Generate random Combinatory Logic expressions, 1 per line.
+# Two possible command-line arguments, both numbers.
+# (1) Minimum number of CL atoms (combinators, '(' and ')')
+# to generate per line.  Default 10.
+# (2) Number of lines of CL expressions to generate.  Default 1.
+#
+# Note that it will generate a minimum number of atoms,
+# and then continue to add to the expression until all
+# left-parens have balancing right-parens in the output.
+# This can lead to longer-than-specified expressions,
+# particularly for larger values of minimum number of atoms.
+
+use strict;
+use diagnostics;
+
+my $max = 10;
+my $count = 1;
+
+if ($ARGV[0]) {
+	$max = int($ARGV[0]);
+}
+
+if ($ARGV[1]) {
+	$count = int($ARGV[1]);
+}
+
+my $lparen = '(';
+my $rparen = ')';
+
+foreach my $loops (1..$count) {
+
+# Array @tokens has the combinators to output, along with
+# at least 1 left paren.  I find that 3 left parens causes them
+# to show up with acceptable frequency.  Tastes vary.
+# You could add ("W", "J") extra combinators, or remove them
+# ("B", "C") as your spirit moves you.
+
+my @tokens = ("x ", "C ", "B ", "I ", "S ", "K ", "W ", $lparen, $lparen, $lparen);
+my @term_count_stack = ();  # New element goes on this stack for every '(' output.
+my $term_count = 0;  # Number of terms between parens so far.
+my $n = 0;  # Number of atoms (elements of @tokens) output so far.
+
+my $ba = 'g';
+print "def d reduce ";
+
+# Loop while the program hasn't output enough atoms, and while
+# a right-paren appears on the end of @tokens - every time the
+# program outputs a left-paren, it pushes a right-paren on the
+# end of @tokens.  Probabalistically, the right-paren gets output
+# at some point, completing that sub-expression syntactically.
+# The program pops the right-paren off @toakens.  I thought this
+# constituted a fairly clever way to output syntactically-valid
+# CL expressions.
+
+while ($n < $max || ($tokens[-1] eq $rparen)) {
+	my $q = int(rand()*100) % scalar @tokens;
+	my $token = $tokens[$q];
+	if (!$token) {
+		# Shouldn't happen, but perhaps it will anyway.
+		print STDERR "Null token at index $q of ", scalar @tokens, "\n";
+		next;
+	} elsif ($token eq $lparen) {
+		if ($n < $max) {
+			push @tokens, $rparen;
+			push @term_count_stack, $term_count;  # Gotta have 2 terms inside parenteses.
+			$term_count = 0;  # Zero terms inside new '('
+			print $lparen;
+		}
+	} elsif ($token eq $rparen) {
+		# Can't end up with a ')' here, unless a '(' got pushed earlier.
+		if ($term_count >= 2) {
+			# Have at least two terms between parentheses.
+			print $rparen;
+			pop @tokens;  # Pop the ')', put on stack when '(' got chosen.
+			$term_count = pop @term_count_stack;
+			# The ')' means that a parenthesized term closed,
+			# and at least one term exists at this new level of
+			# parentheses.
+			++$term_count;
+		} # else, 0 or 1 terms after a '(', keep going.
+	} else {
+		# Plain old S, K, I, etc combinator.
+		print $token;
+		++$term_count;
+	}
+	++$n;
+}
+
+print "\n";
+# The 'x' inside '[]' has to agree with an entry in @tokens above.
+print "def q ([x] $ba d) x\n";
+print "d\n";
+print "q\n";
+
+}
