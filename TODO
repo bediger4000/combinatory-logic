@@ -106,8 +106,11 @@ t) Add variety of bracket abstraction algorithms to cl
 	-- 2006-11-21, Curry-Feys simple algorithm
 	-- 2006-11-27, Turner algorithm
 	- Need to add John Tromp's 9-rule algorithm
+		-- 2007-02-02 done
 	- Need to add the old BCKW algorithm
+		-- 2007-02-28 done
 	- Need to add test cases
+		-- 2007-02 done
 u) Might need to put a limit (changeable from cmd line?) on the max
 	spine stack stack size that it can allocate.  Probably need to use
 	the longjmp mechanism to quit out of the reduction at that point.
@@ -122,3 +125,4 @@ w) Add timeout-handling to bracket abstraction.  Also need to clean
 	and select the bracket abstraction function based on the "type".
 	This simplifies the addition of timeout-handling.  Also need
 	to check memory leaks in this case.
+		-- 2007-02-28, done.
