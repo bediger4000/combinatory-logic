@@ -1,0 +1,9 @@
+# S-combinator alternative implementations using B, C, W
+def Sf B(B(B W)B)C
+def Sg B(B W)(B B C)
+def Sh B(B(B W)C)(B B)
+
+S  p q r
+Sf p q r
+Sg p q r
+Sh p q r

@@ -1,0 +1,10 @@
+# Test John Tromp's bracket abstraction algorithm
+[x]tromp S K (S (x (x B C I C B S) K C B S x B B C (C x) K C I x B))
+[x]tromp S
+[x]tromp x
+[x]tromp M x
+[x]tromp x M x
+[x]tromp (K (K x))
+[x]tromp (S (K x) K)
+[x]tromp (M x)(N x)
+[x]tromp (M (x I))(N (x K))

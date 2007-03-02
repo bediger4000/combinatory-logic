@@ -1,0 +1,80 @@
+# Scott Numerals, and various fixed point combinators,
+# transliterated via Tromp's bracket abstraction algorithm.
+#define zero %a.%b.a
+def zero [a]tromp [b]tromp  a
+#define succ %c.%d.%e.(e c)
+define succ [c]tromp [d]tromp [e]tromp  e c
+#define case %f.%g.%h.f g h
+define case [f]tromp [i]tromp [h]tromp f i h
+#define pred %i.(i (%j.%k.j) (%l.l))
+define pred [i]tromp  (i ([j]tromp [k]tromp j) ([l]tromp l))
+define one reduce succ zero
+define two reduce succ one
+
+define zerotest reduce [a]tromp (case a true ([d]tromp false))
+zerotest zero
+zerotest one
+zerotest two
+zerotest (pred (pred two))
+
+# Curry
+#define Y %f.((%x.f(x x))(%x.f(x x)))
+# Turing
+#define Theta (%x.%y.y(x x y))(%x.%y.y(x x y))
+# John Tromp
+#define Tromp (%x.%y.x y x)(%y.%x.y (x y x))
+
+
+# Curry
+def Ycurry1 B (S I I) (C B (S I I))
+def Ycurry2 S (K (S I I)) (S (S (K S) (S (K K) I)) (K (S I I)))
+# Turing
+def Yturing1 (B (S I) (S I I))(B (S I) (S I I))
+def Yturing2 (S (K (S I)) (S (S (K S) (S (K K) (S I I))) (K I))) (S (K (S I)) (S (S (K S) (S (K K) (S I I))) (K I)))
+# John Tromp
+def Ytromp1 (S C I)(S B (C (B S (C I)) I))
+def Ytromp2 (S (S (K S) (S (S (K S) (S (K K) I)) (K I))) (S (K K) I))(S (S (K S) (S (K K) I)) (S (S (K S) (S (K (S I)) (S (K K) I))) (K I)))
+
+define R ([o]tromp [n]tromp [m]tromp ( case m n (o (succ n)) ))
+
+define addyc1 (Ycurry1 R)
+reduce addyc1 zero zero
+reduce addyc1 one zero
+reduce addyc1 zero one 
+reduce addyc1 one one 
+reduce addyc1 two two 
+
+define addyc2 (Ycurry2 R)
+reduce addyc2 zero zero
+reduce addyc2 one zero
+reduce addyc2 zero one 
+reduce addyc2 one one 
+reduce addyc2 two two 
+
+define addyt1 (Yturing1 R)
+reduce addyt1 zero zero
+reduce addyt1 one zero
+reduce addyt1 zero one 
+reduce addyt1 one one 
+reduce addyt1 two two 
+
+define addyt2 (Yturing2 R)
+reduce addyt2 zero zero
+reduce addyt2 one zero
+reduce addyt2 zero one 
+reduce addyt2 one one 
+reduce addyt2 two two 
+
+define addt1 (Ytromp1 R)
+reduce addt1 zero zero
+reduce addt1 one zero
+reduce addt1 zero one 
+reduce addt1 one one 
+reduce addt1 two two 
+
+define addt2 (Ytromp2 R)
+reduce addt2 zero zero
+reduce addt2 one zero
+reduce addt2 zero one 
+reduce addt2 one one 
+reduce addt2 two two 

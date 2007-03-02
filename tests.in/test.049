@@ -1,0 +1,16 @@
+# Check 5-rule "G Algorithm" bracket abstraction
+# I
+[x]g x
+# K A
+[x]g A
+# A
+[x]g  A x
+# B
+[p]g [q]g [r]g p (q r)
+[x]g a (b x)
+# C
+[p]g [q]g [r]g ((p r) q)
+[x]g a x b
+# [x] Q P -> W((B(C([x]Q)))([x]P)) x appears in both P and Q
+[x]g (a x)(b x)
+[p]g [q]g [r]g ((p r) (q r))  # derives S in terms of B,C,W,K,I
