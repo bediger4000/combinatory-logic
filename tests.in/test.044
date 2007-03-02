@@ -4,7 +4,7 @@ def zero [a][b] a
 #define succ %c.%d.%e.(e c)
 define succ [c][d][e] e c
 #define case %f.%g.%h.f g h
-define case [f][g][h]f g h
+define case [f][i][h]f i h
 #define pred %i.(i (%j.%k.j) (%l.l))
 define pred [i] (i ([j][k]j) ([l]l))
 define one reduce succ zero
