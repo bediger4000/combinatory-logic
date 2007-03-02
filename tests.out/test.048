@@ -1,0 +1,68 @@
+S (S I (K true)) (K (K false)) K
+true
+S (S I (K true)) (K (K false)) (K (S I (K K)))
+false
+S (S I (K true)) (K (K false)) (K (S I (K (K (S I (K K))))))
+false
+S (S I (K true)) (K (K false)) (S (S I (K K)) (K I) (S (S I (K K)) (K I) (K (S I (K (K (S I (K K))))))))
+true
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K
+K
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K K))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K K)))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
+K (S I (K (K (S I (K (K (S I (K (K (S I (K K)))))))))))
