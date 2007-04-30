@@ -38,6 +38,10 @@ extern char *optarg;
 #include <spine_stack.h>
 #include <bracket_abstraction.h>
 
+#ifdef YYBISON
+#define YYERROR_VERBOSE
+#endif
+
 /* flags, binary on/off for various outputs */
 int debug_reduction  = 0;
 int elaborate_output = 0;
@@ -49,6 +53,8 @@ int memory_info      = 0;
 int reduction_timeout = 0;  /* how long to let a graph reduction run, seconds */
 int max_reduction_count = 0; /* when non-zero, how many reductions to perform */
 
+int prompting = 1;
+
 /* Signal handling.  in_reduce_graph used to (a) handle
  * contrl-C interruptions (b) reduction-run-time timeouts,
  * (c) getting out of single-stepped graph reduction in reduce_graph()
@@ -57,6 +63,8 @@ void sigint_handler(int signo);
 sigjmp_buf in_reduce_graph;
 int interpreter_interrupted = 0;
 int reduction_interrupted = 0;
+
+void top_level_cleanup(int syntax_error_processing);
 
 struct node *reduce_tree(struct node *root);
 struct node *execute_bracket_abstraction(
@@ -124,13 +132,10 @@ int W_as_combinator = 1;
 %%
 
 program
-	: stmnt {
-			reset_node_allocation();
-			reduction_interrupted = 0;
-		}
-	| program stmnt  { reset_node_allocation(); reduction_interrupted = 0; }
+	: stmnt { top_level_cleanup(0); }
+	| program stmnt { top_level_cleanup(0); }
 	| error  /* magic token - yacc unwinds to here on syntax error */
-		{ reset_node_allocation(); reduction_interrupted = 0; }
+		{ top_level_cleanup(1); }
 	;
 
 stmnt
@@ -176,7 +181,7 @@ expression
 		}
 	| bracket_abstraction abstraction_algorithm expression
 		{
-			$$ = ($2)($1, $3);
+			$$ = execute_bracket_abstraction($2, $1, $3);
 			++$1->refcnt;
 			free_node($1);
 			++$3->refcnt;
@@ -227,7 +232,7 @@ main(int ac, char **av)
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mstT:SKIBCWx")))
+	while (-1 != (c = getopt(ac, av, "deL:mpstT:SKIBCWx")))
 	{
 		switch (c)
 		{
@@ -249,6 +254,9 @@ main(int ac, char **av)
 			break;
 		case 'm':
 			memory_info = 1;
+			break;
+		case 'p':
+			prompting = 0;
 			break;
 		case 's':
 			single_step = 1;
@@ -323,8 +331,10 @@ main(int ac, char **av)
 	set_yyin_stdin();
 
 	do {
+		if (prompting) printf("CL> ");
 		r =  yyparse();
 	} while (r);
+	if (prompting) printf("\n");
 
 	if (memory_info) fprintf(stderr, "Memory usage indicators:\n");
 	free_all_nodes(memory_info);
@@ -332,6 +342,13 @@ main(int ac, char **av)
 	free_all_spine_stacks(memory_info);
 
 	return r;
+}
+
+void top_level_cleanup(int syntax_error_occurred)
+{
+	reset_node_allocation();
+	reduction_interrupted = 0;
+	if (prompting && !syntax_error_occurred) printf("CL> ");
 }
 
 int
@@ -491,14 +508,14 @@ usage(char *progname)
 		"-L  filename   Load and interpret a filenamed filename\n"
 		"-m             on exit, print memory usage summary\n"
 		"-s             single-step reductions\n"
-		"-T number      reduce a graph for number seconds, the stop\n"
+		"-T number      evaluate an expression for up to number seconds\n"
 		"-t             trace reductions\n"
-		"-S             treat S as a non-combinator\n"
-		"-K             treat K as a non-combinator\n"
-		"-I             treat I as a non-combinator\n"
-		"-B             treat B as a non-combinator\n"
-		"-C             treat C as a non-combinator\n"
-		"-W             treat W as a non-combinator\n"
+		"-S             treat identifier S as a non-primitive\n"
+		"-K             treat identifier K as a non-primitive\n"
+		"-I             treat identifier I as a non-primitive\n"
+		"-B             treat identifier B as a non-primitive\n"
+		"-C             treat identifier C as a non-primitive\n"
+		"-W             treat identifier W as a non-primitive\n"
 		""
 	);
 }
