@@ -1,0 +1,16 @@
+# Exercize the "interpreter commands"
+load "tests.in/test.050"
+timer
+timer
+elaborate
+elaborate
+debug
+debug
+trace
+trace
+step
+step
+timeout 15
+timer
+C K K a
+[x] (x S x x (x x))

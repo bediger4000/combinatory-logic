@@ -1,0 +1,2 @@
+# Deliberate syntax error for coverage tests
+spam () frank
