@@ -92,6 +92,7 @@ o) change lexer to just eat "\\n" so that it looks like
 	-- done Thu Sep 21 13:57:10 MDT 2006, needs test case(s)
 p) Add "prompting", also to lc
 	- use command line flag to turn it off, for testing.
+	- 2007-04-22, done
 q) all command-line flags should have "interpreter command"
 	counterparts.
 r) spine stack - push-a-node (PUSHNODE macro right now) should
@@ -126,3 +127,11 @@ w) Add timeout-handling to bracket abstraction.  Also need to clean
 	This simplifies the addition of timeout-handling.  Also need
 	to check memory leaks in this case.
 		-- 2007-02-28, done.
+
+x) Add a "timer on"/"timer off" thing: this would let you pick up the
+	total time spent between commands, a "summary" of an entire operation.
+	The current bracket abstraction timing (item w) gives N values for
+	N variables abstracted.
+
+y) Add in Bison-specific flex/bison error handling and output.
+	This will aid in diagnosing syntax errors by users (if any).
