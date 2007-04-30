@@ -57,8 +57,10 @@ new_application(struct node *left_child, struct node *right_child)
 	r->right = right_child;
 	r->left  = left_child;
 
-	if (r->right) ++r->right->refcnt;
-	if (r->left)  ++r->left->refcnt;
+	if (r->right)
+		++r->right->refcnt;
+	if (r->left)
+		++r->left->refcnt;
 
 	return r;
 }
@@ -75,13 +77,17 @@ new_combinator(enum combinatorName cn)
 
 	r->typ = COMBINATOR;
 	r->cn = cn;
-	r->name = (cn == COMB_S)? "S":
-		(cn == COMB_K)? "K":
-		(cn == COMB_I)? "I":
-		(cn == COMB_B)? "B":
-		(cn == COMB_C)? "C":
-		(cn == COMB_W)? "W":
-		"none";
+	switch (r->cn)
+	{
+	case COMB_S: r->name = "S"; break;
+	case COMB_K: r->name = "K"; break;
+	case COMB_I: r->name = "I"; break;
+	case COMB_B: r->name = "B"; break;
+	case COMB_C: r->name = "C"; break;
+	case COMB_W: r->name = "W"; break;
+	case COMB_NONE:
+	default: r->name = "none"; break;
+	}
 
 	return r;
 }
@@ -270,8 +276,8 @@ arena_copy_graph(struct node *p)
 		++r->right->refcnt;
 		break;
 	case COMBINATOR:
-		r->name   = p->name;
-		r->cn   = p->cn;
+		r->name = p->name;
+		r->cn = p->cn;
 		break;
 	case UNTYPED:
 		printf("Copying an UNTYPED node\n");
@@ -297,7 +303,6 @@ free_node(struct node *node)
 			node->sn, node->refcnt);
 
 	--node->refcnt;
-
 
 	if (node->refcnt == 0)
 	{
