@@ -3,6 +3,8 @@
 [x]g x
 # K A
 [x]g A
+# K A  - where A consitutes an application
+[x]g F N
 # A
 [x]g  A x
 # B
