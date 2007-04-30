@@ -56,22 +56,23 @@ abbreviation_add(const char *id, struct node *expr)
 	struct hashnode *n = NULL;
 	unsigned int hv;
 
-	if ((n = node_lookup(abbr_table, id, &hv)))
-	{
-		/* This def/define replaces a previous one.
-		 * Permanently free the old parse tree. */
-		free_graph((struct node *)n->data);
+	/* By the time flow-of-control arrives here,
+	 * the string (variable id) has already gotten
+	 * in the hashtable. Only 1 struct hashtable exists,
+	 * used for both unique-string-saving, and storage
+	 * of "abbreviations". The lexer code guarantess
+	 * it by calling Atom_string() on all input strings.
+	 * Therefore, this code *always* finds string id
+	 * in the abbr_table.
+	 */
+	n = node_lookup(abbr_table, id, &hv);
 
-		/* make a "permanent" copy of the parse tree, so that
-	 	* reduce_graph() can destructively reduce the resulting
-	 	* parse tree. */
-		n->data = (void *)copy_graph(expr);
-	} else {
-		/* Make a permanent copy, rather than out of an arena,
-		 * so that the parse tree doesn't disappear when arenas
-		 * get reset. */
-		(void)add_data(abbr_table, id, (void *)copy_graph(expr));
-	}
+	free_graph((struct node *)n->data);
+
+	/* make a "permanent" copy of the parse tree, so that
+	 * reduce_graph() can destructively reduce the resulting
+	 * parse tree. */
+	n->data = (void *)copy_graph(expr);
 }
 
 struct node *
