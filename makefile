@@ -20,6 +20,7 @@ all:
 	@echo "Try one of these:"
 	@echo "make cc"   "- very generic"
 	@echo "make gnu"  "- all GNU"
+	@echo "make coverage"  "- all GNU, with gcov options on"
 	@echo "make lcc"  "- lcc C compiler and yacc"
 	@echo "make tcc"  "- tcc C compiler and yacc"
 
@@ -27,6 +28,8 @@ cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -O -Wall' build
+coverage:
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -fprofile-arcs -ftest-coverage' build
 lcc:
 	make CC=lcc YACC='yacc -d -v' CFLAGS='-I.' build
 tcc:
@@ -77,5 +80,5 @@ clean:
 	-rm -rf cl
 	-rm y.tab.c y.tab.h lex.yy.c y.output
 	-rm -rf y.tab.o lex.yy.o $(OBJS)
-	-rm -rf core *.a *.o
+	-rm -rf core *.a *.o *.bb *.bbg .da
 	-rm -f tests.output/* fuzz.in
