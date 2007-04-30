@@ -494,7 +494,7 @@ determine_bracket_abstraction(const char *algorithm_name)
 		{"turner", turner_bracket_abstraction}
 	};
 	int i;
-	bracket_abstraction_function func = NULL;
+	bracket_abstraction_function func = (bracket_abstraction_function)NULL;
 
 	for (i = 0; i < sizeof(afmap)/sizeof(afmap[0]); ++i)
 	{
