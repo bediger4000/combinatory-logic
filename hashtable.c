@@ -305,10 +305,8 @@ void free_hashtable(struct hashtable *h)
 				free(chain->string);
 				chain->string = NULL;
 			}
-			if (chain->data)
-			{
-				free_graph(chain->data);
-			}
+			free_graph(chain->data);
+			chain->data = NULL;
 			free(chain);
 			chain = tmp;
 		}
