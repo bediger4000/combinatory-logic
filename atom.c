@@ -34,25 +34,6 @@ setup_atom_table(struct hashtable *h)
 	atom_table = h;
 }
 
-int
-Atom_length(const char *str)
-{
-	int r = -1;
-	unsigned int hv;
-	struct hashnode *n;
-
-	n = node_lookup(atom_table, str, &hv);
-	if (n)
-		r = n->string_length;
-	return r;
-}
-
-const char *
-Atom_new(const char *str, int len)
-{
-	return add_string(atom_table, str);
-}
-
 const char *
 Atom_string(const char *str)
 {
