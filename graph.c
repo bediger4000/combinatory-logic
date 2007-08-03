@@ -34,6 +34,8 @@ extern int debug_reduction;
 extern int elaborate_output;
 extern int single_step;
 
+extern int max_reduction_count;
+
 extern sigjmp_buf in_reduce_graph;
 
 #define D if(debug_reduction)
@@ -54,13 +56,13 @@ void
 reduce_graph(struct node *root)
 {
 	struct spine_stack *stack = NULL;
+	unsigned long reduction_counter = 0;
 
 	push_spine_stack(&stack);
 
 	PUSHNODE(stack, root);
 
 	do {
-
 
 		while (STACK_NOT_EMPTY(stack))
 		{
@@ -125,6 +127,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined ^= LEFT;
 						PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
 						free_node(PARENTNODE(stack, 2));
+						++reduction_counter;
 						POP(stack, 3);
 						T {printf("K reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
@@ -155,6 +158,7 @@ reduce_graph(struct node *root)
 						free_node(ltmp);
 						free_node(rtmp);
 						n3->examined = 0;
+						++reduction_counter;
 						POP(stack, 3);
 						T {printf("S reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
@@ -186,6 +190,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined = 0;
 						PARENTNODE(stack, 3)->examined = 0;
 
+						++reduction_counter;
 						POP(stack, 3);
 						T {printf("B reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
@@ -216,6 +221,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						PARENTNODE(stack, 3)->examined = 0;
+						++reduction_counter;
 						POP(stack, 3);
 						T{printf("C reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
@@ -227,7 +233,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						struct node *ltmp = PARENTNODE(stack, 2)->left;
-						T{printf("W reduction, before: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						T{printf("W reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
 						SS;
 						PARENTNODE(stack, 2)->left
 							= new_application(
@@ -238,6 +244,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						free_node(ltmp);
+						++reduction_counter;
 						POP(stack, 2);
 						T{printf("W reduction, after: ");  print_graph(root, 0, TOPNODE(stack)->sn);}
 						SS;
@@ -255,6 +262,11 @@ reduce_graph(struct node *root)
 				POP(stack, 1);
 				break;
 			}
+
+			if (max_reduction_count > 0
+				&& reduction_counter > max_reduction_count)
+					/* The 4 means "too many reductions" */
+						siglongjmp(in_reduce_graph, 4);
 		}
 
 		pop_spine_stack(&stack);

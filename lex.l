@@ -59,6 +59,9 @@ extern int B_as_combinator;
 extern int C_as_combinator;
 extern int W_as_combinator;
 
+extern int prompting;
+int old_prompting = -1;
+
 
 %}
 
@@ -181,6 +184,9 @@ push_and_open(const char *filename)
 		current_input_stream = filename;
 		file_stack = n;
 		lineno = 0;
+		if (old_prompting < 0)
+			old_prompting = prompting;
+		prompting = 0;
 	} else {
 		fprintf(stderr, "Could not open \"%s\" for read: %s\n",
 			filename, strerror(errno));
@@ -253,6 +259,15 @@ yywrap()
 		free(file_stack);
 		file_stack = tmp;
 		r = 0;
+	}
+	if (!file_stack)
+	{
+		if (old_prompting > 0)
+		{
+			prompting = 1;
+			old_prompting = -1;
+			printf("CL> ");
+		}
 	}
 	return r;
 }

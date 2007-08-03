@@ -38,7 +38,7 @@ special:
 	make CC=gcc YACC='yacc -d -v' LEX=flex sbuild
 
 sbuild:
-	make CFLAGS='-Wunused -Wpointer-arith -Wshadow -Wsequence-point -Wnonnull -Wstrict-aliasing -Wswitch -Wswitch-enum -g -O -I.'  build
+	make CFLAGS='-Wunused -Wpointer-arith -Wshadow -Wsequence-point -Wnonnull -Wstrict-aliasing -Wswitch -Wswitch-enum -g -O2 -I.'  build
 
 build: cl
 

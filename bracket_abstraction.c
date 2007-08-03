@@ -57,7 +57,7 @@ var_appears_in_graph(struct node *var, struct node *tree)
 }
 
 /* Curry-Feys bracket abstraction
-	[x]     -> I
+	[x] x   -> I
 	[x] N   -> K N,   x not appearing in N
 	[x] M N -> S ([x]M) ([x]N)
  */
@@ -100,7 +100,7 @@ curry_bracket_abstraction(struct node *var, struct node *tree)
 }
 
 /* Simple Turner bracket abstraction
-	[x]     -> I
+	[x] x   -> I
 	[x] N x -> N                x not appearing in N
 	[x] N   -> K N              x not appearing in N
 	[x] M N -> C ([x]M) N       x appears only in M, not in N
@@ -178,7 +178,7 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 }
 
 /* "A 'new' abstraction algorithm", M.A. Price, H.Simmons
-   This actually implments "The cooked G-Algorithm".
+   This actually implements "The cooked G-Algorithm".
 	[x] x   -> I
 	[x] Z   -> K Z                   x not appearing in Z
 	[x] Q x -> Q                     x not appearing in Q

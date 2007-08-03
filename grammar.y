@@ -49,8 +49,9 @@ int trace_reduction  = 0;
 int reduction_timer  = 0;
 int single_step      = 0;
 int memory_info      = 0;
+int count_reductions = 0;    /* produce a count of reductions */
 
-int reduction_timeout = 0;  /* how long to let a graph reduction run, seconds */
+int reduction_timeout = 0;   /* how long to let a graph reduction run, seconds */
 int max_reduction_count = 0; /* when non-zero, how many reductions to perform */
 
 int prompting = 1;
@@ -232,7 +233,7 @@ main(int ac, char **av)
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mpstT:SKIBCWx")))
+	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:SKIBCWx")))
 	{
 		switch (c)
 		{
@@ -290,6 +291,10 @@ main(int ac, char **av)
 		case 'W':
 			W_as_combinator = 0;
 			break;
+		case 'N':
+			max_reduction_count = strtol(optarg, NULL, 10);
+			if (max_reduction_count < 0) max_reduction_count = 0;
+			break;
 		}
 	}
 
@@ -298,6 +303,8 @@ main(int ac, char **av)
 	if (load_files)
 	{
 		struct filename_node *t, *z;
+		int old_prompt = prompting;
+		prompting = 0;
 		for (z = load_files; z; z = t)
 		{
 			FILE *fin;
@@ -326,6 +333,7 @@ main(int ac, char **av)
 			free(z);
 			fin = NULL;
 		}
+		prompting = old_prompt;
 	}
 
 	set_yyin_stdin();
@@ -405,15 +413,27 @@ reduce_tree(struct node *real_root)
 		gettimeofday(&after, NULL);
 		switch (cc)
 		{
-		case 1: phrase = "Interrupt"; break;
-		case 2: phrase = "Timeout";   break;
-		case 3: phrase = "Terminated";break;
+		case 1:
+			phrase = "Interrupt";
+			reduction_interrupted = 1;
+			break;
+		case 2:
+			reduction_interrupted = 1;
+			phrase = "Timeout";
+			break;
+		case 3:
+			phrase = "Terminated";
+			reduction_interrupted = 1;
+			break;
+		case 4:
+			phrase = "Reduction limit";
+			reduction_interrupted = 0;
+			break;
 		default:
 			phrase = "Unknown";
 			break;
 		}
 		printf("%s\n", phrase);
-		reduction_interrupted = 1;
 		++interpreter_interrupted;
 	}
 
@@ -507,6 +527,7 @@ usage(char *progname)
 		"-e             elaborate output\n"
 		"-L  filename   Load and interpret a filenamed filename\n"
 		"-m             on exit, print memory usage summary\n"
+		"-N number      perform up to number reductions\n"
 		"-s             single-step reductions\n"
 		"-T number      evaluate an expression for up to number seconds\n"
 		"-t             trace reductions\n"
