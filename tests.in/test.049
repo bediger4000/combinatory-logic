@@ -1,18 +1,18 @@
 # Check 5-rule "G Algorithm" bracket abstraction
 # I
-[x]g x
+[x]grz x
 # K A
-[x]g A
+[x]grz A
 # K A  - where A consitutes an application
-[x]g F N
+[x]grz F N
 # A
-[x]g  A x
+[x]grz  A x
 # B
-[p]g [q]g [r]g p (q r)
-[x]g a (b x)
+[p]grz [q]grz [r]grz p (q r)
+[x]grz a (b x)
 # C
-[p]g [q]g [r]g ((p r) q)
-[x]g a x b
+[p]grz [q]grz [r]grz ((p r) q)
+[x]grz a x b
 # [x] Q P -> W((B(C([x]Q)))([x]P)) x appears in both P and Q
-[x]g (a x)(b x)
-[p]g [q]g [r]g ((p r) (q r))  # derives S in terms of B,C,W,K,I
+[x]grz (a x)(b x)
+[p]grz [q]grz [r]grz ((p r) (q r))  # derives S in terms of B,C,W,K,I

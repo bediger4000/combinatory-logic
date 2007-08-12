@@ -84,7 +84,7 @@ int old_prompting = -1;
 "trace"     { return TK_TRACE; }
 "elaborate" { return TK_ELABORATE; }
 "load"      { return TK_LOAD; }
-"curry"|"turner"|"g"|"tromp" {
+"curry"|"turner"|"grz"|"tromp" {
 		yylval.identifier = Atom_string(yytext);
 		return TK_ALGORITHM_NAME;
 	}

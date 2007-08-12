@@ -489,7 +489,7 @@ determine_bracket_abstraction(const char *algorithm_name)
 		bracket_abstraction_function f;
 	} afmap[] = {
 		{"curry", curry_bracket_abstraction},
-		{"g", grzegorczyk_bracket_abstraction},
+		{"grz", grzegorczyk_bracket_abstraction},
 		{"tromp", tromp_bracket_abstraction},
 		{"turner", turner_bracket_abstraction}
 	};
