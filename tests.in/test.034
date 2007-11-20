@@ -8,13 +8,13 @@ define plus (B S (B B))
 #define pred %n.%f.%x.n(%g.%h.h (g f))(%u.x)(%u.u)
 def pred ((C ((B C) ((B (B C)) ((C ((B C) ((B (B B)) ((C B) ((B (B (C I))) (C I)))))) K)))) I)
 #define T %a.%b.a
-define T K
+define True K
 #define F %a.%b.b
 define F (K I)
 #define ifthenelse %p.%x.%y.p x y
 define ifthenelse I
 
-ifthenelse T true false
+ifthenelse True true false
 ifthenelse F true false
 
 #define zerop %n.(n(%x.%a.%b.b) (%a.%b.a))
