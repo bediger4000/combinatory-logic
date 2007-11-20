@@ -103,6 +103,8 @@ int I_as_combinator = 1;
 int B_as_combinator = 1;
 int C_as_combinator = 1;
 int W_as_combinator = 1;
+int T_as_combinator = 1;
+int M_as_combinator = 1;
 
 %}
 
@@ -121,10 +123,11 @@ int W_as_combinator = 1;
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
 %token <string_constant> STRING_LITERAL
-%token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
+%token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
+%token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION 
 
 %type <node> expression stmnt application term constant interpreter_command
 %type <node> bracket_abstraction 
@@ -166,6 +169,8 @@ interpreter_command
 	| TK_SINGLE_STEP TK_EOL { single_step ^= 1; }
 	| TK_LOAD STRING_LITERAL TK_EOL { push_and_open($2); }
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
+	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
+	| TK_SET_BRACKET_ABSTRACTION TK_ALGORITHM_NAME TK_EOL { default_bracket_abstraction = determine_bracket_abstraction($2); }
 	;
 
 expression
@@ -228,12 +233,13 @@ main(int ac, char **av)
 	int c, r;
 	struct filename_node *p, *load_files = NULL, *load_tail = NULL;
 	struct hashtable *h = init_hashtable(64, 10);
+	struct node *(*dba)(struct node *, struct node *);
 	extern int yyparse();
 
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:SKIBCWx")))
+	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:C:B:x")))
 	{
 		switch (c)
 		{
@@ -272,24 +278,47 @@ main(int ac, char **av)
 			usage(av[0]);
 			exit(0);
 			break;
-		/* Turn *off* selected combinators: they become mere identifiers */
-		case 'S':
-			S_as_combinator = 0;
-			break;
-		case 'K':
-			K_as_combinator = 0;
-			break;
-		case 'I':
-			I_as_combinator = 0;
-			break;
 		case 'B':
-			B_as_combinator = 0;
+			dba = determine_bracket_abstraction(optarg);
+			if (dba) default_bracket_abstraction = dba;
+			else {
+				fprintf(stderr, "Unknown bracket abstraction algoritm \"%s\"\n", optarg);
+				usage(av[0]);
+			}
 			break;
 		case 'C':
-			C_as_combinator = 0;
-			break;
-		case 'W':
-			W_as_combinator = 0;
+			/* Turn *off* selected combinators: they become mere identifiers */
+			switch(optarg[0])
+			{
+			case 'S':
+				S_as_combinator = 0;
+				break;
+			case 'K':
+				K_as_combinator = 0;
+				break;
+			case 'I':
+				I_as_combinator = 0;
+				break;
+			case 'B':
+				B_as_combinator = 0;
+				break;
+			case 'C':
+				C_as_combinator = 0;
+				break;
+			case 'W':
+				W_as_combinator = 0;
+				break;
+			case 'M':
+				M_as_combinator = 0;
+				break;
+			case 'T':
+				T_as_combinator = 0;
+				break;
+			default:
+				fprintf(stderr, "Unknown primitive combinator \"%s\"\n", optarg);
+				usage(av[0]);
+				break;
+			}
 			break;
 		case 'N':
 			max_reduction_count = strtol(optarg, NULL, 10);
@@ -531,12 +560,8 @@ usage(char *progname)
 		"-s             single-step reductions\n"
 		"-T number      evaluate an expression for up to number seconds\n"
 		"-t             trace reductions\n"
-		"-S             treat identifier S as a non-primitive\n"
-		"-K             treat identifier K as a non-primitive\n"
-		"-I             treat identifier I as a non-primitive\n"
-		"-B             treat identifier B as a non-primitive\n"
-		"-C             treat identifier C as a non-primitive\n"
-		"-W             treat identifier W as a non-primitive\n"
+		"-C combinator  treat combinator as a non-primitive. Combinator one of S, K, I, B, C, W, M, T\n"
+		"-B algoritm    Use algorithm as default for bracket abstraction.  One of curry, tromp, grz, btmk\n"
 		""
 	);
 }

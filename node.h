@@ -19,7 +19,7 @@
 
 */
 enum nodeType { UNTYPED, APPLICATION, COMBINATOR };
-enum combinatorName { COMB_NONE, COMB_S, COMB_K, COMB_I, COMB_C, COMB_B, COMB_W };
+enum combinatorName { COMB_NONE, COMB_S, COMB_K, COMB_I, COMB_C, COMB_B, COMB_W, COMB_T, COMB_M };
 
 struct node {
 	int sn;

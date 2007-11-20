@@ -58,6 +58,8 @@ extern int I_as_combinator;
 extern int B_as_combinator;
 extern int C_as_combinator;
 extern int W_as_combinator;
+extern int T_as_combinator;
+extern int M_as_combinator;
 
 extern int prompting;
 int old_prompting = -1;
@@ -84,10 +86,12 @@ int old_prompting = -1;
 "trace"     { return TK_TRACE; }
 "elaborate" { return TK_ELABORATE; }
 "load"      { return TK_LOAD; }
-"curry"|"turner"|"grz"|"tromp" {
+"curry"|"turner"|"grz"|"tromp"|"btmk" {
 		yylval.identifier = Atom_string(yytext);
 		return TK_ALGORITHM_NAME;
 	}
+"abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
+"count" { return TK_MAX_COUNT; }
 [1-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {
@@ -113,6 +117,12 @@ C { if (C_as_combinator) {yylval.cn = COMB_C; return TK_PRIMITIVE;}
 	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
  }
 W { if (W_as_combinator) {yylval.cn = COMB_W; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+T { if (T_as_combinator) {yylval.cn = COMB_T; return TK_PRIMITIVE;}
+	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
+ }
+M { if (M_as_combinator) {yylval.cn = COMB_M; return TK_PRIMITIVE;}
 	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
  }
 [a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }

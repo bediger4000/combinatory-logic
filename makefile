@@ -27,13 +27,17 @@ all:
 cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
-	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -O -Wall' build
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -O2 -Wall' build
+mudflap:
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -fmudflap -Wall' LIBS=-lmudflap build
 coverage:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -fprofile-arcs -ftest-coverage' build
 lcc:
 	make CC=lcc YACC='yacc -d -v' CFLAGS='-I.' build
 tcc:
 	make CC='tcc -Wall' YACC='yacc -d -v' CFLAGS='-I. -D_TCC_' build
+pcc:
+	make CC=pcc YACC='yacc -d -v' LEX=lex CFLAGS='-g' build
 special:
 	make CC=gcc YACC='yacc -d -v' LEX=flex sbuild
 
@@ -66,7 +70,7 @@ spine_stack.o: spine_stack.c spine_stack.h
 bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
-	$(CC) -g -o cl y.tab.o lex.yy.o $(OBJS)
+	$(CC) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)
 
 tests:  gnu runtests
 	-./runtests
