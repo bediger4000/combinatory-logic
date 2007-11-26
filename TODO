@@ -135,3 +135,11 @@ x) Add a "timer on"/"timer off" thing: this would let you pick up the
 
 y) Add in Bison-specific flex/bison error handling and output.
 	This will aid in diagnosing syntax errors by users (if any).
+
+Could have non-ref counted leaf structs node: the free_node() and
+new_combinator() functions could look up leaf nodes in a hash table,
+even a simple one, as almost no expression has more than about 10
+names for nodes.  Don't bother decrementing ref count on leaf nodes,
+as not many of them exist, and they don't "churn" like application
+(interior) nodes.
+

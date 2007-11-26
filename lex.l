@@ -92,7 +92,7 @@ int old_prompting = -1;
 	}
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
 "count" { return TK_MAX_COUNT; }
-[1-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
+[0-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {
 	char *tmp;
