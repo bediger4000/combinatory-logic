@@ -70,7 +70,7 @@ spine_stack.o: spine_stack.c spine_stack.h
 bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
-	$(CC) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)
 
 tests:  gnu runtests
 	-./runtests
