@@ -40,6 +40,7 @@ extern sigjmp_buf in_reduce_graph;
 
 #define D if(debug_reduction)
 #define T if(trace_reduction)
+#define NT if(debug_reduction && !trace_reduction)
 
 /* can't do single_step && read_line() - compilers optimize it away */
 #define SS if (single_step) read_line()
@@ -102,7 +103,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 2)
 					{
 						D {printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
-						SS;
+						NT SS;
 						*(PARENTNODE(stack, 2)->updateable)
 							= PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
@@ -121,7 +122,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						D {printf("K reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
-						SS;
+						NT SS;
 						*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
 						PARENTNODE(stack, 1)->examined ^= LEFT;
@@ -144,7 +145,7 @@ reduce_graph(struct node *root)
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 3)->updateable);
 						D {printf("T reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
-						SS;
+						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 2)->right,
 								PARENTNODE(stack, 1)->right
@@ -171,7 +172,7 @@ reduce_graph(struct node *root)
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 2)->updateable);
 						D {printf("M reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
-						SS;
+						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 1)->right,
 								PARENTNODE(stack, 1)->right
@@ -197,7 +198,7 @@ reduce_graph(struct node *root)
 						struct node *ltmp = n3->left;
 						struct node *rtmp = n3->right;
 						D {printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
-						SS;
+						NT SS;
 						n3->left = new_application(
 								PARENTNODE(stack, 1)->right,
 								n3->right
@@ -228,7 +229,7 @@ reduce_graph(struct node *root)
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
 						D {printf("B reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
-						SS;
+						NT SS;
 						PARENTNODE(stack, 3)->left
 							= PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 3)->left->refcnt;
@@ -261,7 +262,7 @@ reduce_graph(struct node *root)
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
 						D {printf("C reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
-						SS;
+						NT SS;
 						PARENTNODE(stack, 3)->left
 							= new_application(
 								PARENTNODE(stack, 1)->right,
@@ -292,7 +293,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *ltmp = PARENTNODE(stack, 2)->left;
 						D{printf("W reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
-						SS;
+						NT SS;
 						PARENTNODE(stack, 2)->left
 							= new_application(
 								PARENTNODE(stack, 1)->right,

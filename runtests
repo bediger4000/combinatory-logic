@@ -6,6 +6,11 @@ then
 	exit 1
 fi
 
+if [ ! -d ./tests.output ]
+then
+	mkdir ./tests.output
+fi
+
 for TNAME in tests.in/test.???
 do
 	OUTPUT=`basename $TNAME`
