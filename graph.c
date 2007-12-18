@@ -184,6 +184,7 @@ reduce_graph(struct node *root)
 						++reduction_counter;
 						POP(stack, 2);
 						D {printf("M reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
+						T print_graph(root, 0, 0);
 						SS;
 					} else
 						POP(stack, 1);
