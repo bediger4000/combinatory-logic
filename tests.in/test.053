@@ -6,6 +6,8 @@ S p q r
 W a b
 C p q r
 B p q r
+T p q
+M p
 elaborate
 I a
 K a b
@@ -13,3 +15,5 @@ S p q r
 W a b
 C p q r
 B p q r
+T p q
+M p
