@@ -1,4 +1,7 @@
 # Exercize the "interpreter commands"
+# and yes, this might cause runtests script
+# to fail periodically, as the "timer" command
+# might time the reduction differently.
 load "tests.in/test.050"
 timer
 timer
@@ -14,3 +17,6 @@ timeout 15
 timer
 C K K a
 [x] (x S x x (x x))
+count 10
+W W W
+count 0
