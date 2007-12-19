@@ -15,7 +15,7 @@ for TNAME in tests.in/test.???
 do
 	OUTPUT=`basename $TNAME`
 	echo "Running test $OUTPUT"
-	./cl -p < $TNAME > tests.output/$OUTPUT
+	./cl -p < $TNAME > tests.output/$OUTPUT 2> /dev/null
 	DESIRED=tests.out/$OUTPUT
 	if [ -r $DESIRED ]
 	then

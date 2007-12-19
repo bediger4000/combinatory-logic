@@ -267,13 +267,20 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 }
 
 /*
-	[x] x   -> B (T M) K
-	[x] Z   -> K Z                   x not appearing in Z
-	[x] Q x -> Q                     x not appearing in Q
-	[x] Q P -> B Q ([x] P)           x appears only in P, not in Q
-	[x] Q P -> B (T P) ([x]Q)        x appears only in Q, not in P
-	[x] Q P -> W(B (B (T ([x]P)) B) ([x]Q))    x appears in both Q and P
  */
+/*
+    [x] x   -> B (T M) K
+    [x] Z   -> K Z                   x not appearing in Z
+    [x] Q x -> Q                     x not appearing in Q
+    [x] P Q -> B P ([x] Q)           x appears only in Q, not in P
+    [x] P Q -> B (T Q) ([x]P)        x appears only in P, not in Q
+    [x] P Q -> B (T (B (T [x]Q) (B B [x]P))) (B M (B B T))   x appears in both P and Q
+    alternatively,
+	[x] Q P -> W(B (B (T ([x]P)) B) ([x]Q))    x appears in both Q and P
+    but W = B(T(B M (B B T)))(B B T) or W = B(T(B(B M B)T))(B B T)
+    Either gives a 16-combinator expression, more than the 13 in the one used.
+ */
+
 struct node *
 btmk_bracket_abstraction(struct node *var, struct node *tree)
 {
@@ -290,25 +297,43 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 			{
 				if (var_appears_in_graph(var, tree->right))
 				{
-					/* [x] Q P -> W(B (B (T ([x]P)) B) ([x]Q))    x appears in both Q and P */
+    				/* [x] P Q -> B (T (B (T [x]Q) (B B [x]P))) (B M (B B T))   x appears in both P and Q */
 					r = new_application(
-						new_combinator(COMB_W),
+						new_application(
+							new_combinator(COMB_B),
 							new_application(
+								new_combinator(COMB_T),
 								new_application(
-									new_combinator(COMB_B),
+									new_application(
+										new_combinator(COMB_B),
+										new_application(
+											new_combinator(COMB_T),
+											btmk_bracket_abstraction(var, tree->right) /* [x]Q */
+										)
+									),
 									new_application(
 										new_application(
 											new_combinator(COMB_B),
-											new_application(
-												new_combinator(COMB_T),
-												btmk_bracket_abstraction(var, tree->right)
-											)
+											new_combinator(COMB_B)
 										),
-										new_combinator(COMB_B)
+										btmk_bracket_abstraction(var, tree->left) /* [x]P */
 									)
-								),
-								btmk_bracket_abstraction(var, tree->left)
+								)
 							)
+						),
+						new_application(
+							new_application(
+								new_combinator(COMB_B),
+								new_combinator(COMB_M)
+							),
+							new_application(
+								new_application(
+									new_combinator(COMB_B),
+									new_combinator(COMB_B)
+								),
+								new_combinator(COMB_T)
+							)
+						)
 					);
 				} else {
 					/* [x] Q P -> B (T P) ([x]Q)       x appears only in Q, not in P */
