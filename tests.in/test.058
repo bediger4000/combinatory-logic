@@ -1,0 +1,30 @@
+# From "The Mechanization of Lambda Calculus", W.L. van der Poel,
+# version 7th Nov, 1987
+def zero K I
+def one I
+def succ S B
+def plus (B S(B B))
+def mult B
+def exp (C I)
+def pred (S (S (S (S (S I (K W)) (K (K I))) (K (S I))) (K (S (K (S B))))) (K (K (K I))))
+def minus (C (C I pred))
+def zerotest (C B K)
+def Y W S (B W B)
+
+zerotest zero false true
+zerotest one false true
+zerotest (pred (succ zero)) false true
+
+def two (succ one)
+
+plus (plus (plus two two) two) two f n
+exp two two f n
+mult (succ two) two f n
+minus two one f n
+
+
+# This next expression tests spine-stack allocation and free list use.
+(exp (exp two two) (exp two (succ two))) f n
+# 4^(2^3) = 4^8 = 65536
+# Verify this: tail -1 tests.out/test.058 | sed 's/[ ()n]//g' | wc -c
+# wc -c will also count the newline, giving 65537

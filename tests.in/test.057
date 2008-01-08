@@ -1,0 +1,12 @@
+# BTMK basis bracket abstraction algoritm testing
+abstraction btmk
+([x] x) a
+([x] Z) a
+([x] Q x) a
+([y] Q (y y)) a
+([x] x Q) a
+([x] x x) a
+([x] x Q x) a
+([x] (x x (x x x))) a
+([x] (x (x (x (x x))))) a
+
