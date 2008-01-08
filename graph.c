@@ -325,8 +325,11 @@ reduce_graph(struct node *root)
 
 			if (max_reduction_count > 0
 				&& reduction_counter > max_reduction_count)
+			{
 					/* The 4 means "too many reductions" */
-						siglongjmp(in_reduce_graph, 4);
+					while (stack) pop_spine_stack(&stack);
+					siglongjmp(in_reduce_graph, 4);
+			}
 		}
 
 		pop_spine_stack(&stack);

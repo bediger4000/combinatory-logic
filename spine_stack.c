@@ -133,6 +133,8 @@ pushnode(struct spine_stack *ss, struct node *n)
 
 	++ss->top;
 
+	if (ss->top > ss->maxdepth) ++ss->maxdepth;
+
 	if (ss->top >= ss->size)
 	{
 		/* resize the allocation pointed to by stack */
