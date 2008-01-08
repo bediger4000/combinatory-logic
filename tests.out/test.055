@@ -1,0 +1,16 @@
+T a b
+b a
+T a b c
+b a c
+T a
+T a
+I T a
+T a
+T a I
+a
+I T a b
+b a
+T I I
+I
+T (I a) (I b)
+b a
