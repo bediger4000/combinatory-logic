@@ -28,6 +28,7 @@ static struct spine_stack *spine_stack_free_list = NULL;
 static int stack_malloc_cnt = 0;
 static int stack_reused_cnt = 0;
 static int new_stack_cnt   = 0;
+static int spine_stack_resizes = 0;
 
 extern int interpreter_interrupted;
 
@@ -73,8 +74,10 @@ push_spine_stack(struct spine_stack **ss)
 {
 	/* dual use of prev field: linked list of "free" spine stacks,
 	 * and FIFO stack of actually in-use spine stacks.
- 	 * This constitutes the FIFO stack of in-use spine stacks usage. */
-	struct spine_stack *p = new_spine_stack(32);
+ 	 * This constitutes the FIFO stack of in-use spine stacks usage.
+	 * The 64-depth comes from experience, totally empirical.
+	 */
+	struct spine_stack *p = new_spine_stack(64);
 	p->prev = *ss;
 	*ss = p;
 }
@@ -123,6 +126,7 @@ free_all_spine_stacks(int memory_info_flag)
 		fprintf(stderr, "Maximum spine stack depth: %d\n", maxdepth);
 		fprintf(stderr, "Maximum spine stack size:  %d\n", maxsize);
 		fprintf(stderr, "Mean spine stack depth:    %.02f\n", mean_depth);
+		fprintf(stderr, "Reallocated spine stacks:  %d\n", spine_stack_resizes);
 	}
 }
 
@@ -140,6 +144,7 @@ pushnode(struct spine_stack *ss, struct node *n)
 		/* resize the allocation pointed to by stack */
 		struct node **old_stack = ss->stack;
 		size_t new_size = ss->size * 2;  /* XXX !!! */
+		++spine_stack_resizes;
 		ss->stack = realloc(old_stack, sizeof(struct node *)*new_size);
 		if (!ss->stack)
 			ss->stack = old_stack;  /* realloc failed */
