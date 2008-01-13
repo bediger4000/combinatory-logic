@@ -96,10 +96,7 @@ reduce_graph(struct node *root)
 				switch (TOPNODE(stack)->cn)
 				{
 				case COMB_I:
-					D {
-						printf("I combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
-						printf("I combinator: "); print_graph(root, 0, TOPNODE(stack)->sn);
-					}
+					D printf("I combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 2)
 					{
 						D {printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
@@ -110,6 +107,7 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
 						PARENTNODE(stack, 1)->examined = 0;
 						free_node(PARENTNODE(stack, 1));
+						++reduction_counter;
 						POP(stack, 2);
 						D{printf("I reduction, after (%d): ", STACK_SIZE(stack)); print_graph(root, 0, TOPNODE(stack)->sn);}
 						T print_graph(root, 0, 0);
