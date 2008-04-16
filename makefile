@@ -27,7 +27,7 @@ all:
 cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
-	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall' build
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall  ' build
 mudflap:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -fmudflap -Wall' LIBS=-lmudflap build
 coverage:
@@ -42,7 +42,7 @@ special:
 	make CC=gcc YACC='yacc -d -v' LEX=flex sbuild
 
 sbuild:
-	make CFLAGS='-Wunused -Wpointer-arith -Wshadow -Wsequence-point -Wnonnull -Wstrict-aliasing -Wswitch -Wswitch-enum -O2 -g  -I.'  build
+	make CFLAGS='-Wunused -Wpointer-arith -Wunused-parameter -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wreturn-type -Wcast-qual -Wswitch -Wshadow -Wcast-align -Wwrite-strings -Wchar-subscripts -Winline -Wnested-externs -Wshadow -Wsequence-point -Wnonnull -Wstrict-aliasing -Wswitch -Wswitch-enum -O2 -g  -I.'  build
 
 build: cl
 

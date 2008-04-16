@@ -88,7 +88,9 @@ extern void reset_yyin(void);
 extern void  push_and_open(const char *filename);
 
 extern int yylex(void);
-int yyerror(char *s1);
+int yyerror(const char *s1);
+
+extern int yyparse(void);
 
 /* Various "treat as combinator" flags.
  * For example: S_as_combinator, when set (default) causes
@@ -234,7 +236,6 @@ main(int ac, char **av)
 	struct filename_node *p, *load_files = NULL, *load_tail = NULL;
 	struct hashtable *h = init_hashtable(64, 10);
 	struct node *(*dba)(struct node *, struct node *);
-	extern int yyparse();
 
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
@@ -389,7 +390,7 @@ void top_level_cleanup(int syntax_error_occurred)
 }
 
 int
-yyerror(char *s1)
+yyerror(const char *s1)
 {
     fprintf(stderr, "%s\n", s1);
 

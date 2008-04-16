@@ -32,6 +32,7 @@ void rehash_hashtable(struct hashtable *h);
 void reallocate_buckets(struct hashtable *h);
 int  sparsebit(long i);
 int  msbbit(long i);
+void insert_node(struct hashnode *chain, struct hashnode *n);
 
 /* chain is the dummy node at head of hash chain */
 void

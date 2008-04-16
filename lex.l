@@ -51,6 +51,8 @@ struct stream_node {
 struct stream_node *file_stack = NULL;
 
 void set_yyin_stdin(void);
+void reset_yyin(void);
+void set_yyin(const char *filename);
 
 extern int S_as_combinator;
 extern int K_as_combinator;
@@ -65,6 +67,9 @@ extern int prompting;
 int old_prompting = -1;
 
 
+	extern FILE *yyin;
+	extern int lineno;
+	extern const char *current_input_stream;
 %}
 
 %%
@@ -172,9 +177,6 @@ void
 push_and_open(const char *filename)
 {
 	FILE *fin;
-	extern FILE *yyin;
-	extern int lineno;
-	extern const char *current_input_stream;
 
 	if (NULL != (fin = fopen(filename, "r")))
 	{
@@ -247,10 +249,6 @@ reset_yyin(void)
 int
 yywrap()
 {
-	extern FILE *yyin;
-	extern int lineno;
-	extern struct stream_node *file_stack;
-
 	int r = 1;
 	if (file_stack)
 	{
