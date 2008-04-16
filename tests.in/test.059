@@ -1,0 +1,46 @@
+# Scott Numerals, and Lots of fixed point combinators.
+abstraction grz
+def zero [a][b] a
+define succ [c][d][e] e c
+define case [f][i][h]f i h
+define pred [i] (i ([j][k]j) ([l]l))
+define one reduce succ zero
+define two reduce succ one
+define three reduce succ two
+
+def Ynonstd B M (B (B M) B)
+def Ytromp ([x][y] x y x)([y][x] y (x y x))
+
+# OTTER discovered these fixed-point combinators
+def theta1 B(B(B(W W)W)B)B
+def theta2 B(B(W W)W)(B B B)
+def theta3 B(B(W W)(B W B))B
+def theta4 B (W W)(B W (B B B))
+def theta5 B(W W)(B(B W B)B)
+
+
+define R ([o][n][m]( case m n (o (succ n)) ))
+
+def four0 reduce Ynonstd R two two
+def four1 reduce theta1 R two two
+def four2 reduce theta2 R two two
+def four3 reduce theta3 R two two
+def four4 reduce theta4 R two two
+def four5 reduce theta5 R two two
+def four6 reduce Ytromp R two two
+
+four0
+four1
+four2
+four3
+four4
+four5
+four6
+
+def five0 reduce Ynonstd R three two
+def five3 reduce theta3 R two three
+def five6 reduce Ytromp R two three
+
+five0
+five3
+five6
