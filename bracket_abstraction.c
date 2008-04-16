@@ -269,7 +269,7 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 /*
  */
 /*
-    [x] x   -> B (T M) K
+    [x] x   -> B M K
     [x] Z   -> K Z                   x not appearing in Z
     [x] Q x -> Q                     x not appearing in Q
     [x] P Q -> B P ([x] Q)           x appears only in Q, not in P
@@ -368,14 +368,11 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 		break;
 	case COMBINATOR:
 		if (var->cn == tree->cn && var->name == tree->name)
-			/* [x] x -> B (T M) K */
+			/* [x] x -> B M K */
 			r = new_application(
 				new_application(
 					new_combinator(COMB_B),
-					new_application(
-						new_combinator(COMB_T),
-						new_combinator(COMB_M)
-					)
+					new_combinator(COMB_M)
 				),
 				new_combinator(COMB_K)
 			);
