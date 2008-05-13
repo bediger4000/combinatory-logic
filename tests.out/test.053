@@ -2,7 +2,6 @@ I a
 push left branch on current stack
 push left branch on current stack
 I combinator 1, stack depth 3
-I combinator: I+ a 
 I reduction, before: I*+ a 
 I reduction, after (1): a + 
 a 
@@ -159,7 +158,6 @@ I{58} {60} a{59}
 push left branch on current stack
 push left branch on current stack
 I combinator 58, stack depth 3
-I combinator: I{58}+ {60} a{59} {61}  {61}
 I reduction, before: I{58}+ {60} a{59} {61}  {61}
 I reduction, after (1): a{59} {61}+  {61}
 a{59} {61}  {61}
