@@ -46,6 +46,7 @@ new_spine_stack(int sz)
 		r = spine_stack_free_list;
 		spine_stack_free_list = r->prev;
 		r->prev = NULL;
+		r->top = 0;
 		++stack_reused_cnt;
 	} else {
 		r = malloc(sizeof(*r));
