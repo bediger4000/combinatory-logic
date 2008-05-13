@@ -1,0 +1,6 @@
+# Spine stacks from free list did not get reset,
+# so the nodes "remaining" on the stack caused
+# problems.
+count 10
+M M
+I
