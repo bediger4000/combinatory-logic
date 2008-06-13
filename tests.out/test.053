@@ -3,11 +3,10 @@ push left branch on current stack
 push left branch on current stack
 I combinator 1, stack depth 3
 I reduction, before: I*+ a 
-I reduction, after (1): a + 
+I reduction, after: a + 
 a 
 push left branch on current stack
 a, no reduction: a+ 
-after pop: a + 
 pop spine stack
 a
 K a b
@@ -20,7 +19,6 @@ K reduction, after: a +
 a 
 push left branch on current stack
 a, no reduction: a+ 
-after pop: a + 
 pop spine stack
 a
 S p q r
@@ -35,18 +33,14 @@ p r (q r)
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p+ r (q r) 
-after pop: p + r (q r) 
 push right branch on new stack
 r, no reduction: p r+ (q r+) 
-after pop: p + r (q r) 
 pop spine stack
 push right branch on new stack
 push left branch on current stack
 q, no reduction: p r (q+ r) 
-after pop: p r (q + r) 
 push right branch on new stack
 r, no reduction: p r+ (q r+) 
-after pop: p r (q + r) 
 pop spine stack
 pop spine stack
 pop spine stack
@@ -62,14 +56,11 @@ a b b
 push left branch on current stack
 push left branch on current stack
 a, no reduction: a+ b b 
-after pop: a + b b 
 push right branch on new stack
 b, no reduction: a b+ b+ 
-after pop: a + b b 
 pop spine stack
 push right branch on new stack
 b, no reduction: a b+ b+ 
-after pop: a b + b 
 pop spine stack
 pop spine stack
 a b b
@@ -85,14 +76,11 @@ p r q
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p+ r q 
-after pop: p + r q 
 push right branch on new stack
 r, no reduction: p r+ q 
-after pop: p + r q 
 pop spine stack
 push right branch on new stack
 q, no reduction: p r q+ 
-after pop: p r + q 
 pop spine stack
 pop spine stack
 p r q
@@ -107,14 +95,11 @@ B reduction, after: p + (q r)
 p (q r) 
 push left branch on current stack
 p, no reduction: p+ (q r) 
-after pop: p + (q r) 
 push right branch on new stack
 push left branch on current stack
 q, no reduction: p (q+ r) 
-after pop: p (q + r) 
 push right branch on new stack
 r, no reduction: p (q r+) 
-after pop: p (q + r) 
 pop spine stack
 pop spine stack
 pop spine stack
@@ -130,10 +115,8 @@ q p
 push left branch on current stack
 push left branch on current stack
 q, no reduction: q+ p 
-after pop: q + p 
 push right branch on new stack
 p, no reduction: q p+ 
-after pop: q + p 
 pop spine stack
 pop spine stack
 q p
@@ -147,10 +130,8 @@ p p
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p+ p+ 
-after pop: p + p 
 push right branch on new stack
 p, no reduction: p+ p+ 
-after pop: p + p 
 pop spine stack
 pop spine stack
 p p
@@ -159,11 +140,10 @@ push left branch on current stack
 push left branch on current stack
 I combinator 58, stack depth 3
 I reduction, before: I{58}+ {60} a{59} {61}  {61}
-I reduction, after (1): a{59} {61}+  {61}
+I reduction, after: a{59} {61}+  {61}
 a{59} {61}  {61}
 push left branch on current stack
 a, no reduction: a{59}+ {61}  {61}
-after pop: a{59} {61}+  {61}
 pop spine stack
 a{59}
 K{62} {64} a{63} {66} b{65}
@@ -176,7 +156,6 @@ K reduction, after: a{63} {67}+  {67}
 a{63} {67}  {67}
 push left branch on current stack
 a, no reduction: a{63}+ {67}  {67}
-after pop: a{63} {67}+  {67}
 pop spine stack
 a{63}
 S{68} {70} p{69} {72} q{71} {74} r{73}
@@ -191,18 +170,14 @@ p{69} {76} r{73} {74} (q{71} {77} r{73}) {75}  {75}
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p{69}+ {76} r{73} {74} (q{71} {77} r{73}) {75}  {75}
-after pop: p{69} {76}+ r{73} {74} (q{71} {77} r{73}) {75}  {75}
 push right branch on new stack
 r, no reduction: p{69} {76} r{73}+ {74} (q{71} {77} r{73}+) {75}  {75}
-after pop: p{69} {76}+ r{73} {74} (q{71} {77} r{73}) {75}  {75}
 pop spine stack
 push right branch on new stack
 push left branch on current stack
 q, no reduction: p{69} {76} r{73} {74} (q{71}+ {77} r{73}) {75}  {75}
-after pop: p{69} {76} r{73} {74} (q{71} {77}+ r{73}) {75}  {75}
 push right branch on new stack
 r, no reduction: p{69} {76} r{73}+ {74} (q{71} {77} r{73}+) {75}  {75}
-after pop: p{69} {76} r{73} {74} (q{71} {77}+ r{73}) {75}  {75}
 pop spine stack
 pop spine stack
 pop spine stack
@@ -218,14 +193,11 @@ a{79} {84} b{81} {82} b{81} {83}  {83}
 push left branch on current stack
 push left branch on current stack
 a, no reduction: a{79}+ {84} b{81} {82} b{81} {83}  {83}
-after pop: a{79} {84}+ b{81} {82} b{81} {83}  {83}
 push right branch on new stack
 b, no reduction: a{79} {84} b{81}+ {82} b{81}+ {83}  {83}
-after pop: a{79} {84}+ b{81} {82} b{81} {83}  {83}
 pop spine stack
 push right branch on new stack
 b, no reduction: a{79} {84} b{81}+ {82} b{81}+ {83}  {83}
-after pop: a{79} {84} b{81} {82}+ b{81} {83}  {83}
 pop spine stack
 pop spine stack
 a{79} {84} b{81} {82} b{81}
@@ -241,14 +213,11 @@ p{86} {93} r{90} {91} q{88} {92}  {92}
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p{86}+ {93} r{90} {91} q{88} {92}  {92}
-after pop: p{86} {93}+ r{90} {91} q{88} {92}  {92}
 push right branch on new stack
 r, no reduction: p{86} {93} r{90}+ {91} q{88} {92}  {92}
-after pop: p{86} {93}+ r{90} {91} q{88} {92}  {92}
 pop spine stack
 push right branch on new stack
 q, no reduction: p{86} {93} r{90} {91} q{88}+ {92}  {92}
-after pop: p{86} {93} r{90} {91}+ q{88} {92}  {92}
 pop spine stack
 pop spine stack
 p{86} {93} r{90} {91} q{88}
@@ -263,14 +232,11 @@ B reduction, after: p{95} {100}+ (q{97} {102} r{99}) {101}  {101}
 p{95} {100} (q{97} {102} r{99}) {101}  {101}
 push left branch on current stack
 p, no reduction: p{95}+ {100} (q{97} {102} r{99}) {101}  {101}
-after pop: p{95} {100}+ (q{97} {102} r{99}) {101}  {101}
 push right branch on new stack
 push left branch on current stack
 q, no reduction: p{95} {100} (q{97}+ {102} r{99}) {101}  {101}
-after pop: p{95} {100} (q{97} {102}+ r{99}) {101}  {101}
 push right branch on new stack
 r, no reduction: p{95} {100} (q{97} {102} r{99}+) {101}  {101}
-after pop: p{95} {100} (q{97} {102}+ r{99}) {101}  {101}
 pop spine stack
 pop spine stack
 pop spine stack
@@ -286,10 +252,8 @@ q{106} {109} p{104} {108}  {108}
 push left branch on current stack
 push left branch on current stack
 q, no reduction: q{106}+ {109} p{104} {108}  {108}
-after pop: q{106} {109}+ p{104} {108}  {108}
 push right branch on new stack
 p, no reduction: q{106} {109} p{104}+ {108}  {108}
-after pop: q{106} {109}+ p{104} {108}  {108}
 pop spine stack
 pop spine stack
 q{106} {109} p{104}
@@ -303,10 +267,8 @@ p{111} {114} p{111} {113}  {113}
 push left branch on current stack
 push left branch on current stack
 p, no reduction: p{111}+ {114} p{111}+ {113}  {113}
-after pop: p{111} {114}+ p{111} {113}  {113}
 push right branch on new stack
 p, no reduction: p{111}+ {114} p{111}+ {113}  {113}
-after pop: p{111} {114}+ p{111} {113}  {113}
 pop spine stack
 pop spine stack
 p{111} {114} p{111}
