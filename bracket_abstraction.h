@@ -27,3 +27,5 @@ struct node *btmk_bracket_abstraction(struct node *var, struct node *tree);
 typedef struct node *(*bracket_abstraction_function)(struct node *, struct node *);
 bracket_abstraction_function determine_bracket_abstraction(const char *algorithm_name);
 extern bracket_abstraction_function default_bracket_abstraction;
+int equivalent_graphs(struct node *graph1, struct node *graph2);
+

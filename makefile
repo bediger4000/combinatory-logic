@@ -47,7 +47,7 @@ sbuild:
 build: cl
 
 OBJS = node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
-	spine_stack.o bracket_abstraction.o
+	spine_stack.o bracket_abstraction.o buffer.o cycle_detector.o
 
 y.tab.c y.tab.h: grammar.y
 	$(YACC) grammar.y
@@ -68,6 +68,8 @@ arena.o: arena.c arena.h
 abbreviations.o: abbreviations.c abbreviations.h node.h hashtable.h
 spine_stack.o: spine_stack.c spine_stack.h
 bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h
+buffer.o: buffer.c buffer.h
+cycle_detector.o: cycle_detector.c node.h graph.h buffer.h cycle_detector.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
 	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)

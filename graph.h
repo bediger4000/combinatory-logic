@@ -21,3 +21,4 @@
 void reduce_graph(struct node *graph_root);
 
 void         print_graph(struct node *node, int node_sn_reducing, int current_node_sn);
+char         *canonicalize_graph(struct node *node);

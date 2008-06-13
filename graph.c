@@ -21,14 +21,18 @@
 #include <stdio.h>
 #include <stdlib.h>  /* malloc() and free() */
 #include <assert.h>
+#include <string.h>
 #include <setjmp.h>   /* longjmp(), jmp_buf */
 
 #include <node.h>
 #include <graph.h>
+#include <buffer.h>
 #include <spine_stack.h>
+#include <cycle_detector.h>
 
 int read_line(void);
 
+extern int cycle_detection;
 extern int trace_reduction;
 extern int debug_reduction;
 extern int elaborate_output;
@@ -38,6 +42,7 @@ extern int max_reduction_count;
 
 extern sigjmp_buf in_reduce_graph;
 
+#define C if(cycle_detection)
 #define D if(debug_reduction)
 #define T if(trace_reduction)
 #define NT if(debug_reduction && !trace_reduction)
@@ -45,11 +50,53 @@ extern sigjmp_buf in_reduce_graph;
 /* can't do single_step && read_line() - compilers optimize it away */
 #define SS if (single_step) read_line()
 
+
+void canonicalize(struct node *node, struct buffer *b);
+
 void print_graph(struct node *node, int sn_to_reduce, int current_sn)
 {
 	print_tree(node, sn_to_reduce, current_sn);
 	putc('\n', stdout);
 }
+
+char *canonicalize_graph(struct node *node)
+{
+	struct buffer *b;
+	char *s;
+
+	b = new_buffer(256);
+
+	canonicalize(node, b);
+
+	s = b->buffer;
+	s[b->offset] = '\0';
+	b->buffer = NULL;
+
+	delete_buffer(b);
+
+	return s;
+}
+
+void canonicalize(struct node *node, struct buffer *b)
+{
+	switch (node->typ)
+	{
+	case APPLICATION:
+		buffer_append(b, ".", 1);
+		canonicalize(node->left, b);
+		if (node->right->typ == COMBINATOR)
+			buffer_append(b, " ", 1);
+		canonicalize(node->right, b);
+		break;
+	case COMBINATOR:
+		buffer_append(b, node->name, strlen(node->name));
+		break;
+	case UNTYPED:
+	default:
+		break;
+	}
+}
+
 
 /* Graph reduction function. Destructively modifies the graph passed in.
  */
@@ -67,6 +114,11 @@ reduce_graph(struct node *root)
 
 		while (STACK_NOT_EMPTY(stack))
 		{
+
+			int pop_stack_cnt = 1;
+			int performed_reduction = 0;
+			enum combinatorName cn = TOPNODE(stack)->cn;
+
 			switch (TOPNODE(stack)->typ)
 			{
 			case APPLICATION:
@@ -77,6 +129,7 @@ reduce_graph(struct node *root)
 					MARK_LEFT_BRANCH_TRAVERSED(TOPNODE(stack));
 					PUSHNODE(stack, TOPNODE(stack)->left);
 					D printf("push left branch on current stack\n");
+					pop_stack_cnt = 0;
 				} else if (!RIGHT_BRANCH_TRAVERSED(TOPNODE(stack))) {
 					struct node *tmp = TOPNODE(stack);
 					MARK_RIGHT_BRANCH_TRAVERSED(TOPNODE(stack));
@@ -86,8 +139,8 @@ reduce_graph(struct node *root)
 					push_spine_stack(&stack);
 					PUSHNODE(stack, tmp);  /* "dummy" node at top of stack */
 					PUSHNODE(stack, tmp->right);
-				} else
-					POP(stack, 1);  /* both sides of application node traversed */
+					pop_stack_cnt = 0;
+				}
 				break;
 			case COMBINATOR:
 				/* node->typ indicates a combinator, which can comprise a built-in,
@@ -107,13 +160,9 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
 						PARENTNODE(stack, 1)->examined = 0;
 						free_node(PARENTNODE(stack, 1));
-						++reduction_counter;
-						POP(stack, 2);
-						D{printf("I reduction, after (%d): ", STACK_SIZE(stack)); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 2;
+					}
 					break;
 				case COMB_K:
 					D printf("K combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
@@ -127,13 +176,9 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined ^= LEFT;
 						PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
 						free_node(PARENTNODE(stack, 2));
-						++reduction_counter;
-						POP(stack, 3);
-						D {printf("K reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 3;
+					}
 					break;
 				case COMB_T:
 					/* T x y -> y x */
@@ -154,13 +199,9 @@ reduce_graph(struct node *root)
 						*(PARENTNODE(stack, 3)->updateable) = n;
 						++n->refcnt;
 						free_node(tmp);
-						++reduction_counter;
-						POP(stack, 3);
-						D {printf("T reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 3;
+					}
 					break;
 				case COMB_M:
 					/* M x  -> x x */
@@ -180,13 +221,9 @@ reduce_graph(struct node *root)
 						*(PARENTNODE(stack, 2)->updateable) = n;
 						++n->refcnt;
 						free_node(tmp);
-						++reduction_counter;
-						POP(stack, 2);
-						D {printf("M reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 2;
+					}
 					break;
 				case COMB_S:
 					D printf("S combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
@@ -212,13 +249,9 @@ reduce_graph(struct node *root)
 						free_node(ltmp);
 						free_node(rtmp);
 						n3->examined = 0;
-						++reduction_counter;
-						POP(stack, 3);
-						D {printf("S reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 3;
+					}
 					break;
 				case COMB_B:
 					D {printf("B combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));}
@@ -245,13 +278,9 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 2)->examined = 0;
 						PARENTNODE(stack, 3)->examined = 0;
 
-						++reduction_counter;
-						POP(stack, 3);
-						D {printf("B reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 3;
+					}
 					break;
 				case COMB_C:
 					D printf("C combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
@@ -277,13 +306,9 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						PARENTNODE(stack, 3)->examined = 0;
-						++reduction_counter;
-						POP(stack, 3);
-						D{printf("C reduction, after: "); print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 3;
+					}
 					break;
 				case COMB_W:
 					D printf("W combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
@@ -301,32 +326,57 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						free_node(ltmp);
-						++reduction_counter;
-						POP(stack, 2);
-						D{printf("W reduction, after: ");  print_graph(root, 0, TOPNODE(stack)->sn);}
-						T print_graph(root, 0, 0);
-						SS;
-					} else
-						POP(stack, 1);
+						performed_reduction = 1;
+						pop_stack_cnt = 2;
+					}
 					break;
 				case COMB_NONE:  /* A combinator that's not a built-in */
 					D{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root, 0, TOPNODE(stack)->sn);}
-					POP(stack, 1);
-					D{printf("after pop: "); print_graph(root, 0, TOPNODE(stack)->sn);}
 					break;
 				}
+				if (performed_reduction) SS;
 				break;  /* end of case COMBINATOR, switch on node->cn */
 			case UNTYPED:
-				POP(stack, 1);
 				break;
 			}
 
-			if (max_reduction_count > 0
-				&& reduction_counter > max_reduction_count)
+			POP(stack, pop_stack_cnt);
+
+			if (performed_reduction)
 			{
+				++reduction_counter;
+
+				D {
+					printf("%s reduction, after: ",
+						(cn == COMB_I? "I":
+						(cn == COMB_K? "K":
+						(cn == COMB_S? "S":
+						(cn == COMB_B? "B":
+						(cn == COMB_W? "W":
+						(cn == COMB_C? "C":
+						(cn == COMB_M? "M":
+						(cn == COMB_T? "T": "unknown"))))))))
+					);
+					print_graph(root, 0, TOPNODE(stack)->sn);
+				}
+
+				T print_graph(root, 0, 0);
+
+				if (cycle_detection && cycle_detector(root))
+				{
+					while (stack) pop_spine_stack(&stack);
+					reset_detection();
+					siglongjmp(in_reduce_graph, 5);
+				}
+
+				if (max_reduction_count > 0
+					&& reduction_counter > max_reduction_count)
+				{
 					/* The 4 means "too many reductions" */
 					while (stack) pop_spine_stack(&stack);
+					C reset_detection();
 					siglongjmp(in_reduce_graph, 4);
+				}
 			}
 		}
 
@@ -334,6 +384,8 @@ reduce_graph(struct node *root)
 		D printf("pop spine stack\n");
 
 	} while (stack);
+
+	C reset_detection();
 }
 
 /* Control can longjmp() back to reduce_tree()
@@ -347,16 +399,27 @@ read_line(void)
 		printf("continue? ");
 		fflush(stdout);
 		fgets(buf, sizeof(buf), stdin);
-		if (*buf == 'x' || *buf == 'e') exit(0);
-		if (*buf == 'n' || *buf == 'q') siglongjmp(in_reduce_graph, 3);
-		if (*buf == 'c') single_step = 0;
-		if (*buf == '?')
+		switch (*buf)
 		{
+		case 'x': case 'e':
+			exit(0);
+			break;
+		case 'n': case 'q':
+			C reset_detection();
+			siglongjmp(in_reduce_graph, 3);
+			break;
+		case 'c':
+			single_step = 0;
+			break;
+		case '?':
 			fprintf(stderr,
 				"e, x -> exit now\n"
 				"n, q -> terminate current reduction, return to top level\n"
 				"c -> continue current reduction without further stops\n"
 			);
+			break;
+		default:
+			break;
 		}
 	} while ('?' == *buf);
 	return single_step;

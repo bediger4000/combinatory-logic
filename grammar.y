@@ -37,12 +37,14 @@ extern char *optarg;
 #include <abbreviations.h>
 #include <spine_stack.h>
 #include <bracket_abstraction.h>
+#include <cycle_detector.h>
 
 #ifdef YYBISON
 #define YYERROR_VERBOSE
 #endif
 
 /* flags, binary on/off for various outputs */
+int cycle_detection  = 0;
 int debug_reduction  = 0;
 int elaborate_output = 0;
 int trace_reduction  = 0;
@@ -129,7 +131,7 @@ int M_as_combinator = 1;
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
 %token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
-%token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION 
+%token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 
 %type <node> expression stmnt application term constant interpreter_command
 %type <node> bracket_abstraction 
@@ -173,6 +175,34 @@ interpreter_command
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
 	| TK_SET_BRACKET_ABSTRACTION TK_ALGORITHM_NAME TK_EOL { default_bracket_abstraction = determine_bracket_abstraction($2); }
+	| expression TK_EQUALS expression TK_EOL
+		{
+			if (equivalent_graphs($1, $3))
+				printf("Equivalent\n");
+			else
+				printf("Not equivalent\n");
+
+			++$1->refcnt;
+			++$3->refcnt;
+			free_node($1);
+			free_node($3);
+			$1 = $3 = NULL;
+		}
+	| TK_PRINT expression TK_EOL {
+			printf("Literal: ");
+			print_graph($2, 0, 0); 
+			++$2->refcnt;
+			free_node($2);
+		}
+	| TK_CANONICALIZE expression TK_EOL {
+			char *buf = NULL;
+			printf("Canonically: ");
+			buf = canonicalize_graph($2); 
+			printf("%s\n", buf);
+			++$2->refcnt;
+			free_node($2);
+			free(buf);
+		}
 	;
 
 expression
@@ -240,10 +270,13 @@ main(int ac, char **av)
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:C:B:x")))
+	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:cC:B:x")))
 	{
 		switch (c)
 		{
+		case 'c':
+			cycle_detection = 1;
+			break;
 		case 'd':
 			debug_reduction = 1;
 			break;
@@ -378,6 +411,8 @@ main(int ac, char **av)
 	free_all_nodes(memory_info);
 	free_hashtable(h);
 	free_all_spine_stacks(memory_info);
+	if (cycle_detection) free_detection();
+	reset_yyin();
 
 	return r;
 }
@@ -458,6 +493,10 @@ reduce_tree(struct node *real_root)
 		case 4:
 			phrase = "Reduction limit";
 			reduction_interrupted = 0;
+			break;
+		case 5:
+			phrase = "";
+			reduction_interrupted = 1;
 			break;
 		default:
 			phrase = "Unknown";

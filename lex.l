@@ -97,6 +97,8 @@ int old_prompting = -1;
 	}
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
 "count" { return TK_MAX_COUNT; }
+"print" { return TK_PRINT; }
+"printc" { return TK_CANONICALIZE; }
 [0-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {
@@ -130,6 +132,7 @@ T { if (T_as_combinator) {yylval.cn = COMB_T; return TK_PRIMITIVE;}
 M { if (M_as_combinator) {yylval.cn = COMB_M; return TK_PRIMITIVE;}
 	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
  }
+= { return TK_EQUALS; }
 [a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }
 .		    { /* Just eat it. */ }
 

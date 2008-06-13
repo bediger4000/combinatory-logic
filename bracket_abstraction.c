@@ -27,7 +27,6 @@
 
 bracket_abstraction_function default_bracket_abstraction = curry_bracket_abstraction;
 int var_appears_in_graph(struct node *var, struct node *tree);
-int equivalent_graphs(struct node *g1, struct node *g2);
 
 int
 var_appears_in_graph(struct node *var, struct node *tree)
