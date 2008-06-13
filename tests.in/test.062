@@ -1,0 +1,19 @@
+# Check equivalent graph function
+x = x
+a = b
+a (b c) = a (b c)
+a (b c) = ((a b) c)
+a (b c) d = (a b c d)
+a (b c) d = (a (b c) d)
+a (b c) d = (a (b c d))
+a (b c) d = (a b (c d))
+a (b c) d = (a (b (c d)))
+x (y z) = a (b c)
+(reduce S I I x) = x x
+(reduce S I I x) = (reduce I x x)
+(reduce S I I x) = (reduce ([a]a a) x )
+(reduce S (S I I) I x) = (reduce ([a]a a) x )
+def doubleX (X X)
+doubleX = doubleX
+doubleX = (X X)
+(X X) = doubleX

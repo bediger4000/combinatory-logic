@@ -1,0 +1,50 @@
+# "Ogre" or "eater" terms.
+# Ogre x -> Ogre,  for any x
+# Even better if Ogre has a normal form, like below.
+# The easy solution is: U U K, where U x y -> y (x x y)
+# U U constitutes Turing's fixed point combinator.
+# U U K x
+# = K (U U K) x
+# = U U K
+#
+# A simple way to think about it:
+# F x y -> x x    Which seems like an easy term F: B K M works.
+# F F x -> F F
+# The problem lies in finding F F with a normal form.
+
+abstraction tromp
+
+def N (K I)
+def myM ([x][y][z] y (x z))
+def WP ([x][y] y x x)
+def SP ([x][y][z][u] (x z (y u)))
+
+def myC (SP ((SP WP) (SP N)))
+def myB (SP (SP WP (WP N (WP SP))) myM)
+def myW (SP WP (myM WP (WP N (WP SP))))
+def myK1 (SP WP ((WP N) (SP myM)))  # prover9-generated
+def myK2 (myC N)      # C N
+
+def ogre (reduce (SP WP N (SP WP N)))
+
+(reduce (ogre x)) = ogre
+
+def SP [a][b][c][d] a c (b d)
+def WP [x][y] (y x x)
+def N  [x][y] y
+
+def A (SP WP N)
+def ogre (reduce A A)
+
+(reduce (ogre x)) = ogre
+
+def SP (B C (B B))
+def WP (C W)
+def N  (C K)
+
+def F (SP WP N)
+
+def ogre (reduce (F F))
+
+(reduce (ogre x)) = ogre
+(reduce (ogre x y z w u v)) = ogre
