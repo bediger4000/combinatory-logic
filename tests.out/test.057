@@ -1,18 +1,18 @@
-B (T M) K a
+B M K a
 a
 K Z a
 Z
 Q a
 Q a
-B Q (B (T (B (T (B (T M) K)) (B B (B (T M) K)))) (B M (B B T))) a
+B Q (B (T (B (T (B M K)) (B B (B M K)))) (B M (B B T))) a
 Q (a a)
-B (T Q) (B (T M) K) a
+B (T Q) (B M K) a
 a Q
-B (T (B (T (B (T M) K)) (B B (B (T M) K)))) (B M (B B T)) a
+B (T (B (T (B M K)) (B B (B M K)))) (B M (B B T)) a
 a a
-B (T (B (T (B (T M) K)) (B B (B (T Q) (B (T M) K))))) (B M (B B T)) a
+B (T (B (T (B M K)) (B B (B (T Q) (B M K))))) (B M (B B T)) a
 a Q a
-B (T (B (T (B (T (B (T (B (T M) K)) (B B (B (T (B (T (B (T M) K)) (B B (B (T M) K)))) (B M (B B T)))))) (B M (B B T)))) (B B (B (T (B (T (B (T M) K)) (B B (B (T M) K)))) (B M (B B T)))))) (B M (B B T)) a
+B (T (B (T (B (T (B (T (B M K)) (B B (B (T (B (T (B M K)) (B B (B M K)))) (B M (B B T)))))) (B M (B B T)))) (B B (B (T (B (T (B M K)) (B B (B M K)))) (B M (B B T)))))) (B M (B B T)) a
 a a (a a a)
-B (T (B (T (B (T (B (T (B (T (B (T (B (T (B (T (B (T M) K)) (B B (B (T M) K)))) (B M (B B T)))) (B B (B (T M) K)))) (B M (B B T)))) (B B (B (T M) K)))) (B M (B B T)))) (B B (B (T M) K)))) (B M (B B T)) a
+B (T (B (T (B (T (B (T (B (T (B (T (B (T (B (T (B M K)) (B B (B M K)))) (B M (B B T)))) (B B (B M K)))) (B M (B B T)))) (B B (B M K)))) (B M (B B T)))) (B B (B M K)))) (B M (B B T)) a
 a (a (a (a a)))
