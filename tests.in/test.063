@@ -29,6 +29,7 @@ def ogre (reduce (SP WP N (SP WP N)))
 
 (reduce (ogre x)) = ogre
 
+abstraction curry
 def SP [a][b][c][d] a c (b d)
 def WP [x][y] (y x x)
 def N  [x][y] y
@@ -46,5 +47,10 @@ def F (SP WP N)
 
 def ogre (reduce (F F))
 
+(reduce (ogre x)) = ogre
+(reduce (ogre x y z w u v)) = ogre
+
+def F C (K M)
+def ogre (reduce (F F))
 (reduce (ogre x)) = ogre
 (reduce (ogre x y z w u v)) = ogre
