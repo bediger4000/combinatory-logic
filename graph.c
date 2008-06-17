@@ -146,10 +146,19 @@ reduce_graph(struct node *root)
 				/* node->typ indicates a combinator, which can comprise a built-in,
 				 * or it can comprise a mere variable. Let node->cn decide. */
 				if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
+				D printf("%s combinator %d, stack depth %d\n",
+					(cn == COMB_I? "I":
+					(cn == COMB_K? "K":
+					(cn == COMB_S? "S":
+					(cn == COMB_B? "B":
+					(cn == COMB_W? "W":
+					(cn == COMB_C? "C":
+					(cn == COMB_M? "M":
+					(cn == COMB_T? "T": TOPNODE(stack)->name)))))))),
+					TOPNODE(stack)->sn, STACK_SIZE(stack));
 				switch (TOPNODE(stack)->cn)
 				{
 				case COMB_I:
-					D printf("I combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 2)
 					{
 						D {printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
@@ -165,7 +174,6 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_K:
-					D printf("K combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 3)
 					{
 						D {printf("K reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
@@ -182,7 +190,6 @@ reduce_graph(struct node *root)
 					break;
 				case COMB_T:
 					/* T x y -> y x */
-					D printf("T combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 3)
 					{
 						struct node *n;
@@ -205,7 +212,6 @@ reduce_graph(struct node *root)
 					break;
 				case COMB_M:
 					/* M x  -> x x */
-					D printf("M combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 2)
 					{
 						struct node *n;
@@ -226,7 +232,6 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_S:
-					D printf("S combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 4)
 					{
 						struct node *n3 = PARENTNODE(stack, 3);
@@ -254,7 +259,6 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_B:
-					D {printf("B combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));}
 					if (STACK_SIZE(stack) > 4)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
@@ -283,7 +287,6 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_C:
-					D printf("C combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 4)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
@@ -311,7 +314,6 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_W:
-					D printf("W combinator %d, stack depth %d\n", TOPNODE(stack)->sn, STACK_SIZE(stack));
 					if (STACK_SIZE(stack) > 3)
 					{
 						struct node *ltmp = PARENTNODE(stack, 2)->left;
@@ -355,7 +357,7 @@ reduce_graph(struct node *root)
 						(cn == COMB_W? "W":
 						(cn == COMB_C? "C":
 						(cn == COMB_M? "M":
-						(cn == COMB_T? "T": "unknown"))))))))
+						(cn == COMB_T? "T": TOPNODE(stack)->name))))))))
 					);
 					print_graph(root, 0, TOPNODE(stack)->sn);
 				}
