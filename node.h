@@ -18,6 +18,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
+#ifndef _TCC_
+#ident "$Id$"
+#endif
+
 enum nodeType { UNTYPED, APPLICATION, COMBINATOR };
 enum combinatorName { COMB_NONE, COMB_S, COMB_K, COMB_I, COMB_C, COMB_B, COMB_W, COMB_T, COMB_M };
 

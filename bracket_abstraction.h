@@ -18,6 +18,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
+#ifndef _TCC_
+#ident "$Id$"
+#endif
+
 struct node *curry_bracket_abstraction(struct node *var, struct node *tree);
 struct node *turner_bracket_abstraction(struct node *var, struct node *tree);
 struct node *tromp_bracket_abstraction(struct node *var, struct node *tree);

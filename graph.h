@@ -18,6 +18,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
+#ifndef _TCC_
+#ident "$Id$"
+#endif
+
 void reduce_graph(struct node *graph_root);
 
 void         print_graph(struct node *node, int node_sn_reducing, int current_node_sn);
