@@ -1,0 +1,45 @@
+# Scott Numerals, and Klop's fixed point combinator
+#define zero %a.%b.a
+def zero [a][b] a
+#define succ %c.%d.%e.(e c)
+define succ [c][d][e] e c
+#define case %f.%g.%h.f g h
+define case [f][i][h]f i h
+#define pred %i.(i (%j.%k.j) (%l.l))
+define pred [i] (i ([j][k]j) ([l]l))
+define one reduce succ zero
+define two reduce succ one
+
+define zerotest reduce [a](case a true ([d]false))
+zerotest zero
+zerotest one
+zerotest two
+zerotest (pred (pred two))
+
+define R ([o][n][m]( case m n (o (succ n)) ))
+
+# Totally abuse the bracket abstraction code
+
+def L [a] [b] [c] [d] [e] [f] [gg] [h] [i] [j] [k] [l] [m] [n] [o] [p] [q] [s] [t] [u] [v] [w] [x] [y] [z] [r] (r (t h i s i s a f i x e d p o i n t c o m b i n a t o r))
+def YK (L L L L L L L L L L L L L L L L L L L L L L L L L L)
+
+def L [a]turner [b]turner [c]turner [d]turner [e]turner [f]turner [gg]turner [h]turner [i]turner [j]turner [k]turner [l]turner [m]turner [n]turner [o]turner [p]turner [q]turner [s]turner [t]turner [u]turner [v]turner [w]turner [x]turner [y]turner [z]turner [r]turner (r (t h i s i s a f i x e d p o i n t c o m b i n a t o r))
+def YK2 (L L L L L L L L L L L L L L L L L L L L L L L L L L)
+
+define add (YK R)
+add zero zero
+zero_plus_zero1
+add one zero
+add zero one 
+add one one 
+add two two 
+two_plus_two_1
+
+define add (YK2 R)
+add zero zero
+zero_plus_zero2
+add one zero
+add zero one 
+add one one 
+add two two 
+two_plus_two_2

@@ -3,18 +3,18 @@
 # to fail periodically, as the "timer" command
 # might time the reduction differently.
 load "tests.in/test.050"
-timer
-timer
-elaborate
-elaborate
-debug
-debug
-trace
-trace
-step
-step
+timer on
+timer off
+elaborate on
+elaborate off
+debug on
+debug off
+trace on
+trace off
+step on
+step off
 timeout 15
-timer
+timer on
 C K K a
 [x] (x S x x (x x))
 count 10

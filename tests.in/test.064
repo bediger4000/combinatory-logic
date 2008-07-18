@@ -1,0 +1,5 @@
+# A fixed-length expression with no normal form.
+# Run with "-m" to ensure that nodes get allocated
+# from the free list almost exclusively.
+timeout 15
+W W W

@@ -1,7 +1,7 @@
 # Ensure that the reduction of common sub-graphs still
 # happens.  M-combinator used to get the same I-nodes
 # into the repeating expression
-trace
+trace on
 count 9
 # All 3 (I I I) sub-expressions will reduce in the
 # same "step", since we set them up as reference-
