@@ -1,5 +1,5 @@
-debug
-trace
+debug on
+trace on
 I a
 K a b
 S p q r
@@ -8,7 +8,7 @@ C p q r
 B p q r
 T p q
 M p
-elaborate
+elaborate on
 I a
 K a b
 S p q r
