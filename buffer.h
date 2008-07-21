@@ -32,9 +32,3 @@ struct buffer *new_buffer(int desired_size);
 void           resize_buffer(struct buffer *b, int increment);
 void           buffer_append(struct buffer *b, const char *bytes, int length);
 void           delete_buffer(struct buffer *b);
-
-void           print_buffer(int lineno, struct buffer *b);
-void           print_buffer_size(int lineno, struct buffer *b);
-void           print_buffer_contents(char *buffer, int length);
-
-void           consume_message(struct buffer *b, int end_of_msg_marker);
