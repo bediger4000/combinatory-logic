@@ -1,2 +1,30 @@
-W W W
-Timeout
+reduction timer off
+elaborate debugging output off
+debugging output off
+tracing off
+single-stepping off
+reduction timer on
+elaborate debugging output off
+debugging output off
+tracing off
+single-stepping off
+reduction timer off
+elaborate debugging output on
+debugging output off
+tracing off
+single-stepping off
+reduction timer off
+elaborate debugging output off
+debugging output on
+tracing off
+single-stepping off
+reduction timer off
+elaborate debugging output off
+debugging output off
+tracing on
+single-stepping off
+reduction timer off
+elaborate debugging output off
+debugging output off
+tracing off
+single-stepping on
