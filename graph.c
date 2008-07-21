@@ -371,7 +371,6 @@ reduce_graph(struct node *root)
 				if (cycle_detection && cycle_detector(root))
 				{
 					while (stack) pop_spine_stack(&stack);
-					reset_detection();
 					siglongjmp(in_reduce_graph, 5);
 				}
 
