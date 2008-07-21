@@ -68,6 +68,7 @@ int cycle_detector(struct node *root)
 			printf("Found a cycle of length %d\n", (cycle_stack_depth - i + 1));
 			reset_detection();
 			detected_cycle = 1;
+			break;
 		}
 	}
 
