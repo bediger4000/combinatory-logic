@@ -1,6 +1,6 @@
 %{
 /*
-	Copyright (C) 2007, Bruce Ediger
+	Copyright (C) 2007-2008, Bruce Ediger
 
     This file is part of cl.
 
@@ -42,6 +42,7 @@ extern char *optarg;
 #include <spine_stack.h>
 #include <bracket_abstraction.h>
 #include <cycle_detector.h>
+#include <parser.h>
 
 #ifdef YYBISON
 #define YYERROR_VERBOSE
@@ -57,6 +58,10 @@ int single_step      = 0;
 int memory_info      = 0;
 int count_reductions = 0;    /* produce a count of reductions */
 
+int found_binary_command = 0;  /* lex and yacc coordinate on this */
+int look_for_algorithm = 0;
+int looking_for_filename = 0;
+
 int reduction_timeout = 0;   /* how long to let a graph reduction run, seconds */
 int max_reduction_count = 0; /* when non-zero, how many reductions to perform */
 
@@ -65,13 +70,19 @@ int prompting = 1;
 /* Signal handling.  in_reduce_graph used to (a) handle
  * contrl-C interruptions (b) reduction-run-time timeouts,
  * (c) getting out of single-stepped graph reduction in reduce_graph()
+ * (d) quitting when enough reductions have occurred.
  */
 void sigint_handler(int signo);
 sigjmp_buf in_reduce_graph;
-int interpreter_interrupted = 0;
+int interpreter_interrupted = 0;  /* communicates with spine_stack.c code */
 int reduction_interrupted = 0;
 
 void top_level_cleanup(int syntax_error_processing);
+
+/* related to "output_command" non-terminal */
+void set_output_command(enum OutputModifierCommands cmd, const char *setting);
+void show_output_command(enum OutputModifierCommands cmd);
+int *find_cmd_variable(enum OutputModifierCommands cmd);
 
 struct node *reduce_tree(struct node *root);
 struct node *execute_bracket_abstraction(
@@ -99,20 +110,13 @@ int yyerror(const char *s1);
 extern int yyparse(void);
 
 /* Various "treat as combinator" flags.
- * For example: S_as_combinator, when set (default) causes
+ * For example: as_combinator[COMB_S], when set (default) causes
  * the lexer to treat "S" as an S-combinator.  When unset,
  * the lexer treats "S" as any other variable. This can interact
  * strangely with bracket abstraction, which assumes that its
  * own use of "S" (again, as example) always constitutes a combinator.
  */
-int S_as_combinator = 1;
-int K_as_combinator = 1;
-int I_as_combinator = 1;
-int B_as_combinator = 1;
-int C_as_combinator = 1;
-int W_as_combinator = 1;
-int T_as_combinator = 1;
-int M_as_combinator = 1;
+int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 %}
 
@@ -120,6 +124,7 @@ int M_as_combinator = 1;
 	const char *identifier;
 	const char *string_constant;
 	int   numerical_constant;
+	enum OutputModifierCommands command;
 	struct node *node;
 	enum combinatorName cn;
 	struct node *(*bafunc)(struct node *, struct node *);
@@ -130,16 +135,19 @@ int M_as_combinator = 1;
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
-%token <string_constant> STRING_LITERAL
+%token <string_constant> FILE_NAME
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
-%token TK_DEF TK_TIME TK_LOAD TK_ELABORATE TK_TRACE TK_SINGLE_STEP TK_DEBUG
+%token TK_DEF TK_LOAD
+%token <command> TK_COMMAND
 %token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
+%token <string_constant> BINARY_MODIFIER
 
 %type <node> expression stmnt application term constant interpreter_command
 %type <node> bracket_abstraction 
 %type <bafunc> abstraction_algorithm
+%type <command> output_command
 
 %%
 
@@ -170,15 +178,18 @@ stmnt
 	;
 
 interpreter_command
-	: TK_TIME TK_EOL { reduction_timer ^= 1; }
-	| TK_ELABORATE TK_EOL { elaborate_output ^= 1; }
-	| TK_DEBUG TK_EOL { debug_reduction ^= 1; }
-	| TK_TRACE TK_EOL { trace_reduction ^= 1; }
-	| TK_SINGLE_STEP TK_EOL { single_step ^= 1; }
-	| TK_LOAD STRING_LITERAL TK_EOL { push_and_open($2); }
+	: output_command BINARY_MODIFIER TK_EOL { found_binary_command = 0; set_output_command($1, $2); }
+	| output_command TK_EOL { found_binary_command = 0; show_output_command($1); }
+	| TK_LOAD {looking_for_filename = 1; } FILE_NAME TK_EOL { looking_for_filename = 0; push_and_open($3); }
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
+	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
 	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
-	| TK_SET_BRACKET_ABSTRACTION TK_ALGORITHM_NAME TK_EOL { default_bracket_abstraction = determine_bracket_abstraction($2); }
+	| TK_MAX_COUNT TK_EOL { printf("perform %d reductions at maximum\n", max_reduction_count); }
+	| TK_SET_BRACKET_ABSTRACTION { look_for_algorithm = 1;} TK_ALGORITHM_NAME TK_EOL
+		{
+			default_bracket_abstraction = determine_bracket_abstraction($3);
+			look_for_algorithm = 0;
+		}
 	| expression TK_EQUALS expression TK_EOL
 		{
 			if (equivalent_graphs($1, $3))
@@ -209,6 +220,13 @@ interpreter_command
 		}
 	;
 
+/* Interpreter commands like "timer", "trace", "debug",
+ * that take "on" or "off" as arguments, or, when called
+ * without an argument, print their current status. */
+output_command
+	: TK_COMMAND { found_binary_command = 1; $$ = $1; }
+	;
+
 expression
 	: application          { $$ = $1; }
 	| term                 { $$ = $1; }
@@ -223,6 +241,7 @@ expression
 		}
 	| bracket_abstraction abstraction_algorithm expression
 		{
+			look_for_algorithm = 0;
 			$$ = execute_bracket_abstraction($2, $1, $3);
 			++$1->refcnt;
 			free_node($1);
@@ -233,7 +252,7 @@ expression
 
 abstraction_algorithm
 	: TK_ALGORITHM_NAME  { $$ = determine_bracket_abstraction($1); }
-	| { $$ = default_bracket_abstraction; }
+	| { $$ = default_bracket_abstraction; };
 	;
 
 application
@@ -243,7 +262,7 @@ application
 
 bracket_abstraction
 	: TK_LBRACK TK_IDENTIFIER TK_RBRACK
-		{ $$ = new_term($2); }
+		{ $$ = new_term($2); look_for_algorithm = 1; }
 	;
 
 term
@@ -266,7 +285,7 @@ constant
 int
 main(int ac, char **av)
 {
-	int c, r;
+	int c, r, x;
 	struct filename_node *p, *load_files = NULL, *load_tail = NULL;
 	struct hashtable *h = init_hashtable(64, 10);
 	struct node *(*dba)(struct node *, struct node *);
@@ -326,37 +345,23 @@ main(int ac, char **av)
 			break;
 		case 'C':
 			/* Turn *off* selected combinators: they become mere identifiers */
+			x = COMB_NONE;
 			switch(optarg[0])
 			{
-			case 'S':
-				S_as_combinator = 0;
-				break;
-			case 'K':
-				K_as_combinator = 0;
-				break;
-			case 'I':
-				I_as_combinator = 0;
-				break;
-			case 'B':
-				B_as_combinator = 0;
-				break;
-			case 'C':
-				C_as_combinator = 0;
-				break;
-			case 'W':
-				W_as_combinator = 0;
-				break;
-			case 'M':
-				M_as_combinator = 0;
-				break;
-			case 'T':
-				T_as_combinator = 0;
-				break;
+			case 'S': x = COMB_S; break;
+			case 'K': x = COMB_K; break;
+			case 'I': x = COMB_I; break;
+			case 'B': x = COMB_B; break;
+			case 'C': x = COMB_C; break;
+			case 'W': x = COMB_W; break;
+			case 'M': x = COMB_M; break;
+			case 'T': x = COMB_T; break;
 			default:
 				fprintf(stderr, "Unknown primitive combinator \"%s\"\n", optarg);
 				usage(av[0]);
 				break;
 			}
+			as_combinator[x] = 0;
 			break;
 		case 'N':
 			max_reduction_count = strtol(optarg, NULL, 10);
@@ -480,19 +485,17 @@ reduce_tree(struct node *real_root)
 		const char *phrase = "Unset";
 		alarm(0);
 		gettimeofday(&after, NULL);
+		reduction_interrupted = 1;
 		switch (cc)
 		{
 		case 1:
 			phrase = "Interrupt";
-			reduction_interrupted = 1;
 			break;
 		case 2:
-			reduction_interrupted = 1;
 			phrase = "Timeout";
 			break;
 		case 3:
 			phrase = "Terminated";
-			reduction_interrupted = 1;
 			break;
 		case 4:
 			phrase = "Reduction limit";
@@ -500,7 +503,6 @@ reduce_tree(struct node *real_root)
 			break;
 		case 5:
 			phrase = "";
-			reduction_interrupted = 1;
 			break;
 		default:
 			phrase = "Unknown";
@@ -596,6 +598,7 @@ usage(char *progname)
 	fprintf(stderr, "%s: Combinatory Logic like language interpreter\n",
 		progname);
 	fprintf(stderr, "Flags:\n"
+		"-c             enable reduction cycle detection\n"
 		"-d             debug reductions\n"
 		"-e             elaborate output\n"
 		"-L  filename   Load and interpret a filenamed filename\n"
@@ -608,4 +611,40 @@ usage(char *progname)
 		"-B algoritm    Use algorithm as default for bracket abstraction.  One of curry, tromp, grz, btmk\n"
 		""
 	);
+}
+
+static int *command_variables[] = {
+	&debug_reduction,
+	&elaborate_output,
+	&trace_reduction,
+	&reduction_timer,
+	&single_step,
+	&cycle_detection
+};
+
+int *
+find_cmd_variable(enum OutputModifierCommands cmd)
+{
+	return command_variables[cmd];
+}
+
+void
+set_output_command(enum OutputModifierCommands cmd, const char *setting)
+{
+	*(find_cmd_variable(cmd)) = strcmp(setting, "on")? 0: 1;
+}
+
+const static char *command_phrases[] = {
+	"debugging output",
+	"elaborate debugging output",
+	"tracing",
+	"reduction timer",
+	"single-stepping",
+	"reduction cycle detection"
+};
+
+void
+show_output_command(enum OutputModifierCommands cmd)
+{
+	printf("%s %s\n", command_phrases[cmd], *(find_cmd_variable(cmd))? "on": "off");
 }

@@ -31,6 +31,7 @@
 #include <hashtable.h>
 #include <atom.h>
 #include <node.h>
+#include <parser.h>
 
 #include "y.tab.h"
 int lineno = 0;
@@ -56,15 +57,13 @@ struct stream_node *file_stack = NULL;
 void set_yyin_stdin(void);
 void reset_yyin(void);
 void set_yyin(const char *filename);
+int possible_combinator_decision(enum combinatorName potential_combinator);
 
-extern int S_as_combinator;
-extern int K_as_combinator;
-extern int I_as_combinator;
-extern int B_as_combinator;
-extern int C_as_combinator;
-extern int W_as_combinator;
-extern int T_as_combinator;
-extern int M_as_combinator;
+extern int as_combinator[];
+
+extern int found_binary_command;
+extern int look_for_algorithm;
+extern int looking_for_filename;
 
 extern int prompting;
 int old_prompting = -1;
@@ -87,56 +86,82 @@ int old_prompting = -1;
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
-"timer"     { return TK_TIME; }
+"timer"     { yylval.command = TIME_O; return TK_COMMAND; }
+"cycles"    { yylval.command = CYCLES_O; return TK_COMMAND; }
 "timeout"   { return TK_TIMEOUT; }
-"debug"     { return TK_DEBUG; }
-"step"      { return TK_SINGLE_STEP; }
-"trace"     { return TK_TRACE; }
-"elaborate" { return TK_ELABORATE; }
+"debug"     { yylval.command = DEBUG_O; return TK_COMMAND; }
+"step"      { yylval.command = STEP_O; return TK_COMMAND; }
+"trace"     { yylval.command = TRACE_O; return TK_COMMAND; }
+"elaborate" { yylval.command = ELABORATE_O; return TK_COMMAND; }
 "load"      { return TK_LOAD; }
-"curry"|"turner"|"grz"|"tromp"|"btmk" {
-		yylval.identifier = Atom_string(yytext);
-		return TK_ALGORITHM_NAME;
-	}
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
 "count" { return TK_MAX_COUNT; }
 "print" { return TK_PRINT; }
 "printc" { return TK_CANONICALIZE; }
+"on" {
+	const char *p = Atom_string("on");
+	if (found_binary_command)
+	{
+		yylval.string_constant = p;
+		return BINARY_MODIFIER;
+	} else {
+		yylval.identifier = p;
+		return TK_IDENTIFIER;
+	}
+}
+"off" {
+	const char *p = Atom_string("off");
+	if (found_binary_command)
+	{
+		yylval.string_constant = p;
+		return BINARY_MODIFIER;
+	} else {
+		yylval.identifier = p;
+		return TK_IDENTIFIER;
+	}
+}
 [0-9][0-9]* { yylval.numerical_constant = strtol(yytext, NULL, 10);
 				return NUMERICAL_CONSTANT; }
 \"(\\.|[^\\"])*\" {
+	/* quoted string, for file names with spaces, escaped characters, etc */
 	char *tmp;
 	tmp = unescape_string(yytext);
 	yylval.string_constant = Atom_string(tmp);
 	free(tmp);
-	return STRING_LITERAL;
+	return FILE_NAME;
 }
-S { if (S_as_combinator) { yylval.cn = COMB_S; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-K { if (K_as_combinator) { yylval.cn = COMB_K; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-I { if (I_as_combinator) {yylval.cn = COMB_I; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-B { if (B_as_combinator) {yylval.cn = COMB_B; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-C { if (C_as_combinator) {yylval.cn = COMB_C; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-W { if (W_as_combinator) {yylval.cn = COMB_W; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-T { if (T_as_combinator) {yylval.cn = COMB_T; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
-M { if (M_as_combinator) {yylval.cn = COMB_M; return TK_PRIMITIVE;}
-	else {yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER;}
- }
+S { return possible_combinator_decision(COMB_S); }
+K { return possible_combinator_decision(COMB_K); }
+I { return possible_combinator_decision(COMB_I); }
+B { return possible_combinator_decision(COMB_B); }
+C { return possible_combinator_decision(COMB_C); }
+W { return possible_combinator_decision(COMB_W); }
+T { return possible_combinator_decision(COMB_T); }
+M { return possible_combinator_decision(COMB_M); }
+
 = { return TK_EQUALS; }
-[a-zA-Z][a-zA-Z_0-9]* { yylval.identifier = Atom_string(yytext); return TK_IDENTIFIER; }
+"curry"|"turner"|"grz"|"tromp"|"btmk" {
+	yylval.identifier = Atom_string(yytext);
+	if (look_for_algorithm)
+		return TK_ALGORITHM_NAME;
+	return TK_IDENTIFIER;
+}
+
+[a-zA-Z_][a-zA-Z_0-9]* {
+	if (looking_for_filename)
+	{
+		yylval.string_constant = Atom_string(yytext);
+		return FILE_NAME;
+	} else {
+		yylval.identifier = Atom_string(yytext);
+		return TK_IDENTIFIER;
+	}
+}
+
+(\/*[a-zA-Z_0-9\.:][a-zA-Z_0-9\.:]*)(\/[a-zA-Z0-9_\.:][a-zA-Z0-9_\.:]*)* {
+	yylval.string_constant = Atom_string(yytext);
+	return FILE_NAME;
+}
 .		    { /* Just eat it. */ }
 
 %%
@@ -285,3 +310,28 @@ yywrap()
 	}
 	return r;
 }
+
+int
+possible_combinator_decision(enum combinatorName potential_combinator)
+{
+	int treat_as_combinator = as_combinator[potential_combinator];
+	int r = TK_IDENTIFIER;
+
+	if (treat_as_combinator)
+	{
+		yylval.cn = potential_combinator;
+		r = TK_PRIMITIVE;
+	} else {
+		yylval.identifier = Atom_string(yytext);
+		r = TK_IDENTIFIER;
+	}
+
+	/* This overrides the other two cases, I believe */
+	if (looking_for_filename)
+	{
+		yylval.string_constant = Atom_string(yytext);
+		return FILE_NAME;
+	}
+
+	return r;
+ }
