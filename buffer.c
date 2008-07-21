@@ -22,7 +22,7 @@
 #ident "$Id$"
 #endif
 
-#include <stdio.h>    /* stderr */
+#include <stdio.h>    /* NULL manifest constant */
 #include <stdlib.h>   /* malloc(), free(), realloc() */
 #include <string.h>   /* memcpy() */
 
