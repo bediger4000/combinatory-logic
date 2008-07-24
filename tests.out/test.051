@@ -6,6 +6,14 @@ B (B W) (B B C) p q r
 p r (q r)
 B (B (B W) C) (B B) p q r
 p r (q r)
+S p q r
+p r (q r)
+B (B (B W) B) C p q r
+p r (q r)
+B (B W) (B B C) p q r
+p r (q r)
+B (B (B W) C) (B B) p q r
+p r (q r)
 C K K a
 elapsed time 0.000 seconds
 a

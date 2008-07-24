@@ -2,6 +2,7 @@
 abstraction btmk
 ([x] x) a
 ([x] Z) a
+([x] P Q) a
 ([x] Q x) a
 ([y] Q (y y)) a
 ([x] x Q) a

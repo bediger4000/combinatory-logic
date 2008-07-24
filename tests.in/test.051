@@ -3,6 +3,7 @@
 # to fail periodically, as the "timer" command
 # might time the reduction differently.
 load "tests.in/test.050"
+load tests.in/test.050
 timer on
 timer off
 elaborate on
@@ -20,3 +21,17 @@ C K K a
 count 10
 W W W
 count 0
+# Try to get it to give a syntax error on "on" or "off".
+# That would indicate a failure in lexer/parser communications.
+load on
+load off
+# Hit one regular expression in lex.l when it wants a filename
+load nomag666
+# Use combinator names as file names
+load S
+load K
+load I
+# Use "on" and "off" as regular identifiers
+on on off off
+# Use bracket-abstraction-algorithm names as identifiers
+I curry turner grz tromp btmk

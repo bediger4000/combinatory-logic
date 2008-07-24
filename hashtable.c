@@ -339,19 +339,6 @@ void free_hashtable(struct hashtable *h)
 	h = NULL;
 }
 
-const char *
-string_lookup(struct hashtable *h, const char *string_to_lookup)
-{
-	struct hashnode *hn = NULL;
-	char *r = NULL;
-	unsigned int hv;  /* dummy - not used in this function */
-
-	if (NULL != (hn = node_lookup(h, string_to_lookup, &hv)))
-		r = hn->string;
-
-	return r;
-}
-
 void *
 data_lookup(struct hashtable *h, const char *string_to_lookup)
 {

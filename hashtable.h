@@ -59,7 +59,6 @@ struct hashtable {
 
 const char *add_string(struct hashtable *h, const char *key);
 void *add_data(struct hashtable *h, const char *key, void *data);
-const char *string_lookup(struct hashtable *h, const char *string_to_lookup);
 void *data_lookup(struct hashtable *h, const char *key_string);
 struct hashnode *node_lookup(
 	struct hashtable *h, const char *string_to_lookup, unsigned int *hashval

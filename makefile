@@ -87,4 +87,5 @@ clean:
 	-rm y.tab.c y.tab.h lex.yy.c y.output
 	-rm -rf y.tab.o lex.yy.o $(OBJS)
 	-rm -rf core *.a *.o *.bb *.bbg .da
+	-rm -rf *.gcda *.gcno
 	-rm -f tests.output/* fuzz.in

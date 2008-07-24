@@ -104,6 +104,9 @@ int old_prompting = -1;
 	{
 		yylval.string_constant = p;
 		return BINARY_MODIFIER;
+	} else if (looking_for_filename) {
+		yylval.string_constant = p;
+		return FILE_NAME;
 	} else {
 		yylval.identifier = p;
 		return TK_IDENTIFIER;
@@ -115,6 +118,9 @@ int old_prompting = -1;
 	{
 		yylval.string_constant = p;
 		return BINARY_MODIFIER;
+	} else if (looking_for_filename) {
+		yylval.string_constant = p;
+		return FILE_NAME;
 	} else {
 		yylval.identifier = p;
 		return TK_IDENTIFIER;
