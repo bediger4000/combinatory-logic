@@ -1,0 +1,31 @@
+# Get it to reallocate a struct spine_stack's actual stack
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I
+# That should get it to reallocate the stock 64-entry depth stack
+# Now reallocate that much-larger depth stack
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I \
+I I I I I I I I I I

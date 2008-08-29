@@ -1,0 +1,9 @@
+cycles on
+cycles
+W W W
+cycles off
+cycles
+# This checks for a bug in cycle detection when a cycle has a
+# leading context.
+cycles on
+I I M M

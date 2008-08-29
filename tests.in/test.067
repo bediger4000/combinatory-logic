@@ -1,0 +1,10 @@
+# Test the "=" lexical equivalence feature
+A = A
+(A A) = (A A)
+(A (A A)) = (A (A A))
+(A (B A)) = (A (A B))
+(x x) = (reduce (S I I x))
+(reduce (S I I x)) = (x x)
+(reduce K a b) = (reduce K a (M x))
+(reduce K x (M x)) = (reduce K a (M x))
+(x x) = (reduce (S (S I I) I x))
