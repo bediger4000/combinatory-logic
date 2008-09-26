@@ -50,6 +50,7 @@ extern char *optarg;
 
 /* flags, binary on/off for various outputs */
 int cycle_detection  = 0;
+int multiple_reduction_detection  = 0;
 int debug_reduction  = 0;
 int elaborate_output = 0;
 int trace_reduction  = 0;
@@ -116,7 +117,7 @@ extern int yyparse(void);
  * strangely with bracket abstraction, which assumes that its
  * own use of "S" (again, as example) always constitutes a combinator.
  */
-int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
 %}
 
@@ -131,7 +132,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 }
 
 
-%token <node> TK_EOL
+%token TK_EOL TK_COUNT_REDUCTIONS
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
@@ -205,6 +206,8 @@ interpreter_command
 		}
 	| TK_PRINT expression TK_EOL {
 			printf("Literal: ");
+			if (multiple_reduction_detection)
+				printf("[%d] ", reduction_count($2, 0));
 			print_graph($2, 0, 0); 
 			++$2->refcnt;
 			free_node($2);
@@ -217,6 +220,12 @@ interpreter_command
 			++$2->refcnt;
 			free_node($2);
 			free(buf);
+		}
+	| TK_COUNT_REDUCTIONS expression TK_EOL {
+			int cnt = reduction_count($2, 0);
+			printf("Found %d possible reductions\n", cnt);
+			++$2->refcnt;
+			free_node($2);
 		}
 	;
 
@@ -252,7 +261,7 @@ expression
 
 abstraction_algorithm
 	: TK_ALGORITHM_NAME  { $$ = determine_bracket_abstraction($1); }
-	| { $$ = default_bracket_abstraction; };
+	| { $$ = default_bracket_abstraction; }
 	;
 
 application
@@ -490,12 +499,15 @@ reduce_tree(struct node *real_root)
 		{
 		case 1:
 			phrase = "Interrupt";
+			if (cycle_detection) reset_detection();
 			break;
 		case 2:
 			phrase = "Timeout";
+			if (cycle_detection) reset_detection();
 			break;
 		case 3:
 			phrase = "Terminated";
+			if (cycle_detection) reset_detection();
 			break;
 		case 4:
 			phrase = "Reduction limit";
@@ -619,7 +631,8 @@ static int *command_variables[] = {
 	&trace_reduction,
 	&reduction_timer,
 	&single_step,
-	&cycle_detection
+	&cycle_detection,
+	&multiple_reduction_detection
 };
 
 int *
@@ -640,7 +653,8 @@ const static char *command_phrases[] = {
 	"tracing",
 	"reduction timer",
 	"single-stepping",
-	"reduction cycle detection"
+	"reduction cycle detection",
+	"non-head reduction detection"
 };
 
 void
