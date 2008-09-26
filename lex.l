@@ -86,6 +86,7 @@ int old_prompting = -1;
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }
+"redexes"    { return TK_COUNT_REDUCTIONS; }
 "timer"     { yylval.command = TIME_O; return TK_COMMAND; }
 "cycles"    { yylval.command = CYCLES_O; return TK_COMMAND; }
 "timeout"   { return TK_TIMEOUT; }
@@ -93,6 +94,7 @@ int old_prompting = -1;
 "step"      { yylval.command = STEP_O; return TK_COMMAND; }
 "trace"     { yylval.command = TRACE_O; return TK_COMMAND; }
 "elaborate" { yylval.command = ELABORATE_O; return TK_COMMAND; }
+"detect"    { yylval.command = DETECT_O; return TK_COMMAND; }
 "load"      { return TK_LOAD; }
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
 "count" { return TK_MAX_COUNT; }
