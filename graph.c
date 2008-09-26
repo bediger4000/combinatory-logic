@@ -36,6 +36,7 @@
 
 int read_line(void);
 
+extern int multiple_reduction_detection;
 extern int cycle_detection;
 extern int trace_reduction;
 extern int debug_reduction;
@@ -366,6 +367,9 @@ reduce_graph(struct node *root)
 					print_graph(root, 0, TOPNODE(stack)->sn);
 				}
 
+				if (trace_reduction && multiple_reduction_detection)
+					printf("[%d] ", reduction_count(root->left, 0));  /* root: a dummy node */
+
 				T print_graph(root, 0, 0);
 
 				if (cycle_detection && cycle_detector(root))
@@ -428,4 +432,49 @@ read_line(void)
 		}
 	} while ('?' == *buf);
 	return single_step;
+}
+
+int
+reduction_count(struct node *node, int stack_depth)
+{
+	int reductions = 0;
+
+	if (node)
+	{
+		switch (node->typ)
+		{
+		case APPLICATION:
+			reductions += reduction_count(node->left, stack_depth + 1);
+			reductions += reduction_count(node->right, 0);
+			break;
+		case COMBINATOR:
+			switch (node->cn)
+			{
+			case COMB_I:
+			case COMB_M:
+				if (stack_depth > 0)
+					reductions = 1;
+				break;
+			case COMB_K:
+			case COMB_W:
+			case COMB_T:
+				if (stack_depth > 1)
+					reductions = 1;
+				break;
+			case COMB_B:
+			case COMB_C:
+			case COMB_S:
+				if (stack_depth > 2)
+					reductions = 1;
+				break;
+			case COMB_NONE:
+				break;
+			}
+			break;
+		case UNTYPED:
+			break;
+		}
+	}
+
+	return reductions;
 }
