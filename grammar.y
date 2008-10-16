@@ -85,6 +85,8 @@ void set_output_command(enum OutputModifierCommands cmd, const char *setting);
 void show_output_command(enum OutputModifierCommands cmd);
 int *find_cmd_variable(enum OutputModifierCommands cmd);
 
+void print_commands(void);
+
 struct node *reduce_tree(struct node *root);
 struct node *execute_bracket_abstraction(
 	struct node *(*bafunc)(struct node *, struct node *),
@@ -140,7 +142,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
-%token TK_DEF TK_LOAD
+%token TK_DEF TK_LOAD TK_HELP
 %token <command> TK_COMMAND
 %token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 %token <string_constant> BINARY_MODIFIER
@@ -181,6 +183,7 @@ stmnt
 interpreter_command
 	: output_command BINARY_MODIFIER TK_EOL { found_binary_command = 0; set_output_command($1, $2); }
 	| output_command TK_EOL { found_binary_command = 0; show_output_command($1); }
+	| TK_HELP TK_EOL { print_commands(); }
 	| TK_LOAD {looking_for_filename = 1; } FILE_NAME TK_EOL { looking_for_filename = 0; push_and_open($3); }
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
@@ -661,4 +664,10 @@ void
 show_output_command(enum OutputModifierCommands cmd)
 {
 	printf("%s %s\n", command_phrases[cmd], *(find_cmd_variable(cmd))? "on": "off");
+}
+
+void
+print_commands(void)
+{
+	printf("Help Section\n");
 }

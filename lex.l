@@ -90,6 +90,7 @@ int old_prompting = -1;
 "timer"     { yylval.command = TIME_O; return TK_COMMAND; }
 "cycles"    { yylval.command = CYCLES_O; return TK_COMMAND; }
 "timeout"   { return TK_TIMEOUT; }
+"help"      { return TK_HELP; }
 "debug"     { yylval.command = DEBUG_O; return TK_COMMAND; }
 "step"      { yylval.command = STEP_O; return TK_COMMAND; }
 "trace"     { yylval.command = TRACE_O; return TK_COMMAND; }
