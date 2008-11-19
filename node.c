@@ -91,6 +91,7 @@ new_combinator(enum combinatorName cn)
 	case COMB_W: r->name = "W"; break;
 	case COMB_T: r->name = "T"; break;
 	case COMB_M: r->name = "M"; break;
+	case COMB_J: r->name = "J"; break;
 	case COMB_NONE:
 	default: r->name = "none"; break;
 	}
