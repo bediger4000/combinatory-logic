@@ -1,3 +1,8 @@
+/*
+Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
+%a 10000
+%o 10000
+*/
 %{
 /*
 	Copyright (C) 2007, Bruce Ediger
@@ -147,6 +152,7 @@ C { return possible_combinator_decision(COMB_C); }
 W { return possible_combinator_decision(COMB_W); }
 T { return possible_combinator_decision(COMB_T); }
 M { return possible_combinator_decision(COMB_M); }
+J { return possible_combinator_decision(COMB_J); }
 
 = { return TK_EQUALS; }
 "curry"|"turner"|"grz"|"tromp"|"btmk" {

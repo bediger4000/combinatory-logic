@@ -119,7 +119,7 @@ extern int yyparse(void);
  * strangely with bracket abstraction, which assumes that its
  * own use of "S" (again, as example) always constitutes a combinator.
  */
-int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
+int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 %}
 
@@ -368,6 +368,7 @@ main(int ac, char **av)
 			case 'W': x = COMB_W; break;
 			case 'M': x = COMB_M; break;
 			case 'T': x = COMB_T; break;
+			case 'J': x = COMB_J; break;
 			default:
 				fprintf(stderr, "Unknown primitive combinator \"%s\"\n", optarg);
 				usage(av[0]);
@@ -613,17 +614,18 @@ usage(char *progname)
 	fprintf(stderr, "%s: Combinatory Logic like language interpreter\n",
 		progname);
 	fprintf(stderr, "Flags:\n"
-		"-c             enable reduction cycle detection\n"
-		"-d             debug reductions\n"
-		"-e             elaborate output\n"
+		"-c             Enable reduction cycle detection\n"
+		"-d             Debug reductions\n"
+		"-e             Elaborate output\n"
 		"-L  filename   Load and interpret a filenamed filename\n"
 		"-m             on exit, print memory usage summary\n"
-		"-N number      perform up to number reductions\n"
-		"-s             single-step reductions\n"
-		"-T number      evaluate an expression for up to number seconds\n"
+		"-N number      Perform up to number reductions\n"
+		"-p             Don't print prompts\n"
+		"-s             Single-step reductions\n"
+		"-T number      Evaluate an expression for up to number seconds\n"
 		"-t             trace reductions\n"
-		"-C combinator  treat combinator as a non-primitive. Combinator one of S, K, I, B, C, W, M, T\n"
-		"-B algoritm    Use algorithm as default for bracket abstraction.  One of curry, tromp, grz, btmk\n"
+		"-C combinator  Treat combinator as a non-primitive. Combinator one of S, K, I, B, C, W, M, T\n"
+		"-B algorithm   Use algorithm as default for bracket abstraction.  One of curry, tromp, grz, btmk, or turner\n"
 		""
 	);
 }

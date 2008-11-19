@@ -110,6 +110,7 @@ reduce_graph(struct node *root)
 {
 	struct spine_stack *stack = NULL;
 	unsigned long reduction_counter = 0;
+	int max_redex_count = 0;
 
 	push_spine_stack(&stack);
 
@@ -153,13 +154,14 @@ reduce_graph(struct node *root)
 				if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
 				D printf("%s combinator %d, stack depth %d\n",
 					(cn == COMB_I? "I":
+					(cn == COMB_J? "J":
 					(cn == COMB_K? "K":
 					(cn == COMB_S? "S":
 					(cn == COMB_B? "B":
 					(cn == COMB_W? "W":
 					(cn == COMB_C? "C":
 					(cn == COMB_M? "M":
-					(cn == COMB_T? "T": TOPNODE(stack)->name)))))))),
+					(cn == COMB_T? "T": TOPNODE(stack)->name))))))))),
 					TOPNODE(stack)->sn, STACK_SIZE(stack));
 				switch (TOPNODE(stack)->cn)
 				{
@@ -176,6 +178,39 @@ reduce_graph(struct node *root)
 						free_node(PARENTNODE(stack, 1));
 						performed_reduction = 1;
 						pop_stack_cnt = 2;
+					}
+					break;
+				case COMB_J:
+					if (STACK_SIZE(stack) > 5)
+					{
+						struct node *n4 = PARENTNODE(stack, 4);
+						struct node *ltmp = n4->left;
+						struct node *rtmp = n4->right;
+						D {printf("J reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
+						NT SS;
+
+						n4->left = new_application(
+								PARENTNODE(stack, 1)->right,
+								PARENTNODE(stack, 2)->right
+							);
+						++n4->left->refcnt;
+
+						n4->right = new_application(
+								new_application(
+									PARENTNODE(stack, 1)->right,
+									n4->right
+								),
+								PARENTNODE(stack, 3)->right
+							);
+						++n4->right->refcnt;
+						PARENTNODE(stack, 1)->examined = 0;
+						PARENTNODE(stack, 2)->examined = 0;
+						PARENTNODE(stack, 3)->examined = 0;
+						free_node(ltmp);
+						free_node(rtmp);
+						n4->examined = 0;
+						performed_reduction = 1;
+						pop_stack_cnt = 4;
 					}
 					break;
 				case COMB_K:
@@ -367,12 +402,17 @@ reduce_graph(struct node *root)
 					print_graph(root, 0, TOPNODE(stack)->sn);
 				}
 
-				if (trace_reduction && multiple_reduction_detection)
-					printf("[%d] ", reduction_count(root->left, 0));  /* root: a dummy node */
+				if (multiple_reduction_detection)
+				{
+					int redex_count = reduction_count(root->left, 0);  /* root: a dummy node */
+					if (redex_count > max_redex_count) max_redex_count = redex_count;
+					if (trace_reduction)
+						printf("[%d] ", redex_count);
+				}
 
 				T print_graph(root, 0, 0);
 
-				if (cycle_detection && cycle_detector(root))
+				if (cycle_detection && cycle_detector(root, max_redex_count))
 				{
 					while (stack) pop_spine_stack(&stack);
 					siglongjmp(in_reduce_graph, 5);
@@ -465,6 +505,10 @@ reduction_count(struct node *node, int stack_depth)
 			case COMB_C:
 			case COMB_S:
 				if (stack_depth > 2)
+					reductions = 1;
+				break;
+			case COMB_J:
+				if (stack_depth > 3)
 					reductions = 1;
 				break;
 			case COMB_NONE:
