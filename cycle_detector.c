@@ -38,20 +38,23 @@ static char **cycle_stack = NULL;
 static int    cycle_stack_depth = 0;
 static int    cycle_stack_size = 0;
 
-void free_detection(void)
+void
+free_detection(void)
 {
 	reset_detection();
 	if (cycle_stack) free(cycle_stack);
 	cycle_stack = NULL;
 }
 
-void reset_detection(void)
+void
+reset_detection(void)
 {
 	while (cycle_stack_depth)
 		free(cycle_stack[--cycle_stack_depth]);
 }
 
-int cycle_detector(struct node *root)
+int
+cycle_detector(struct node *root, int max_redex_count)
 {
 	char *graph = NULL;
 	int i;
@@ -63,9 +66,13 @@ int cycle_detector(struct node *root)
 	{
 		if (!strcmp(graph, cycle_stack[i-1]))
 		{
+			printf("Found a %scycle of length %d, %d terms evaluated, ends with \"%s\"\n",
+				(max_redex_count == 1)? "pure ": "", (cycle_stack_depth - i + 1),
+				cycle_stack_depth,
+				graph
+			);
 			free(graph);
 			graph = NULL;
-			printf("Found a cycle of length %d\n", (cycle_stack_depth - i + 1));
 			reset_detection();
 			detected_cycle = 1;
 			break;
