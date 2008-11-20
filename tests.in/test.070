@@ -1,0 +1,14 @@
+# J combinator simple cases
+J
+J a
+J a b
+J a b c
+J a b c d
+J a b c d e
+J a b c d e f
+J a b c d e f g
+J I I a b
+J (J I I) a b c
+def myR (J (J I I))
+def myC (myR myR myR)
+myC a b c
