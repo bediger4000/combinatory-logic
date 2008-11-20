@@ -1,0 +1,22 @@
+J
+J
+J a
+J a
+J a b
+J a b
+J a b c
+J a b c
+J a b c d
+a b (a d c)
+J a b c d e
+a b (a d c) e
+J a b c d e f
+a b (a d c) e f
+J a b c d e f g
+a b (a d c) e f g
+J I I a b
+b a
+J (J I I) a b c
+b c a
+J (J I I) (J (J I I)) (J (J I I)) a b c
+a c b
