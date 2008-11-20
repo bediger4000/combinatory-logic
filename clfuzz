@@ -36,7 +36,7 @@ foreach my $loops (1..$count) {
 # You could add ("W", "J") extra combinators, or remove them
 # ("B", "C") as your spirit moves you.
 
-my @tokens = ("S ", "K ", "I ", "B ", "C ", "W ", "T ", "M ", $lparen, $lparen, $lparen);
+my @tokens = ("S ", "K ", "I ", "B ", "C ", "W ", "T ", "M ", "J ", $lparen, $lparen, $lparen);
 my @term_count_stack = ();  # New element goes on this stack for every '(' output.
 my $term_count = 0;  # Number of terms between parens so far.
 my $n = 0;  # Number of atoms (elements of @tokens) output so far.
