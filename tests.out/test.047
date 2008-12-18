@@ -16,3 +16,4 @@ S M N
 S M N
 S (S (K M) (S I (K I))) (S (K N) (S I (K K)))
 S (S (K M) (S I (K I))) (S (K N) (S I (K K)))
+Literal: S (K (S S (S (S S K)))) K
