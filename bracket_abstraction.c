@@ -31,6 +31,7 @@
 
 bracket_abstraction_function default_bracket_abstraction = curry_bracket_abstraction;
 int var_appears_in_graph(struct node *var, struct node *tree);
+int free_var_appears_in_graph(struct node *tree);
 
 int
 var_appears_in_graph(struct node *var, struct node *tree)
@@ -52,6 +53,29 @@ var_appears_in_graph(struct node *var, struct node *tree)
 			} else 
 				r = 1;
 		} else if (var->name == tree->name)
+			r = 1;
+		break;
+	case UNTYPED: /* XXX */
+	default:
+		break;
+	}
+	return r;
+}
+
+int
+free_var_appears_in_graph(struct node *tree)
+{
+	int r = 0;
+
+	switch (tree->typ)
+	{
+	case APPLICATION:
+		r = free_var_appears_in_graph(tree->left);
+		if (!r)
+			r = free_var_appears_in_graph(tree->right);
+		break;
+	case COMBINATOR:
+		if (COMB_NONE == tree->cn)
 			r = 1;
 		break;
 	case UNTYPED: /* XXX */
@@ -458,9 +482,7 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 {
 	if (APPLICATION == tree->typ
 		&& APPLICATION == tree->left->typ
-		&& COMBINATOR == tree->left->left->typ
 		&& COMB_S == tree->left->left->cn
-		&& COMBINATOR == tree->left->right->typ
 		&& COMB_K == tree->left->right->cn
 	)
 	{
@@ -523,11 +545,9 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 	}
 
 	if (APPLICATION == tree->typ
-		&& COMBINATOR == tree->left->typ
-		&& COMB_NONE != tree->left->cn
+		&& !free_var_appears_in_graph(tree->left)
 		&& APPLICATION == tree->right->typ
-		&& COMBINATOR == tree->right->left->typ
-		&& COMB_NONE != tree->right->left->cn
+		&& !free_var_appears_in_graph(tree->right->left)
 	)
 	{
  		/* [x] (M (N L))     -> [x] (S ([x] M) N L)  (M, N combinators) */
@@ -550,10 +570,8 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 
 	if (APPLICATION == tree->typ
 		&& APPLICATION == tree->left->typ
-		&& COMBINATOR == tree->left->left->typ
-		&& COMB_NONE != tree->left->left->cn
-		&& COMBINATOR == tree->right->typ
-		&& COMB_NONE != tree->right->cn
+		&& !free_var_appears_in_graph(tree->left->left)
+		&& !free_var_appears_in_graph(tree->right)
 	)
 	{
 		/* [x] ((M N) L)     -> [x] (S M ([x] L) N)  (M, L combinators) */
@@ -577,8 +595,8 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 	if (APPLICATION == tree->typ
 		&& APPLICATION == tree->left->typ
 		&& APPLICATION == tree->right->typ
-		&& COMBINATOR == tree->left->left->typ
-		&& COMBINATOR == tree->right->left->typ
+		&& !free_var_appears_in_graph(tree->left->left)
+		&& !free_var_appears_in_graph(tree->right->left)
 		&& equivalent_graphs(tree->left->right, tree->right->right)
 
 	)
