@@ -1,0 +1,14 @@
+trace on
+# All the "W B W" terms change to "B W W" in a
+# single step, due to the "five" term's duplicating
+# W B W to all 5 places.  Check's S and W combinator's
+# correct copying of application nodes
+def wbw (W B W)
+def five ([x]tromp (x x x x x))
+count 5
+five wbw
+# Check M and W sharing
+count 0
+M (I I I)
+#
+W W (I I I)

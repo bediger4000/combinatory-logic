@@ -8,3 +8,7 @@
 [x]tromp (S (K x) K)
 [x]tromp (M x)(N x)
 [x]tromp (M (x I))(N (x K))
+# The one example from John Tromp's paper that my previous cut got
+# differently than he did
+abstraction tromp
+print [y][x] y(x y x)

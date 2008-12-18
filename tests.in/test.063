@@ -54,3 +54,7 @@ def F C (K M)
 def ogre (reduce (F F))
 (reduce (ogre x)) = ogre
 (reduce (ogre x y z w u v)) = ogre
+
+def ogre (reduce S (K (S (S (K S) K) K)) (K (S (S (K S) K) K)))
+(reduce ogre x) = ogre
+(reduce ogre x y z w u v) = ogre
