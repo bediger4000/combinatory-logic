@@ -24,6 +24,7 @@
 
 void reduce_graph(struct node *graph_root);
 int  reduction_count(struct node *node, int stack_depth);
+int  leaf_node_count(struct node *node);
 
 void         print_graph(struct node *node, int node_sn_reducing, int current_node_sn);
 char         *canonicalize_graph(struct node *node);
