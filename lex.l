@@ -106,6 +106,7 @@ int old_prompting = -1;
 "count" { return TK_MAX_COUNT; }
 "print" { return TK_PRINT; }
 "printc" { return TK_CANONICALIZE; }
+"length" { return TK_LENGTH; }
 "on" {
 	const char *p = Atom_string("on");
 	if (found_binary_command)

@@ -134,7 +134,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 }
 
 
-%token TK_EOL TK_COUNT_REDUCTIONS
+%token TK_EOL TK_COUNT_REDUCTIONS TK_LENGTH
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
@@ -227,6 +227,12 @@ interpreter_command
 	| TK_COUNT_REDUCTIONS expression TK_EOL {
 			int cnt = reduction_count($2, 0);
 			printf("Found %d possible reductions\n", cnt);
+			++$2->refcnt;
+			free_node($2);
+		}
+	| TK_LENGTH expression TK_EOL {
+			int cnt = leaf_node_count($2);
+			printf("%d combinators\n", cnt);
 			++$2->refcnt;
 			free_node($2);
 		}

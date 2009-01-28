@@ -522,3 +522,27 @@ reduction_count(struct node *node, int stack_depth)
 
 	return reductions;
 }
+
+int
+leaf_node_count(struct node *node)
+{
+	int count = 0;
+
+	if (node)
+	{
+		switch (node->typ)
+		{
+		case APPLICATION:
+			count += leaf_node_count(node->left);
+			count += leaf_node_count(node->right);
+			break;
+		case COMBINATOR:
+			count = 1;
+			break;
+		case UNTYPED:
+			break;
+		}
+	}
+
+	return count;
+}
