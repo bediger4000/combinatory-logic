@@ -52,6 +52,7 @@ struct node *new_term(const char *name);
 void init_node_allocation(int memory_info_flag);
 void reset_node_allocation(void);
 void print_tree(struct node *root, int reduction_node_sn, int current_node_sn);
+void graph_to_file(const char *filename, struct node *real_root);
 void free_all_nodes(int memory_info_flag);
 void free_node(struct node *root);
 

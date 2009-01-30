@@ -85,6 +85,7 @@ void set_output_command(enum OutputModifierCommands cmd, const char *setting);
 void show_output_command(enum OutputModifierCommands cmd);
 int *find_cmd_variable(enum OutputModifierCommands cmd);
 
+
 void print_commands(void);
 
 struct node *reduce_tree(struct node *root);
@@ -142,7 +143,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
-%token TK_DEF TK_LOAD TK_HELP
+%token TK_DEF TK_LOAD TK_HELP TK_GRAPH
 %token <command> TK_COMMAND
 %token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 %token <string_constant> BINARY_MODIFIER
@@ -185,6 +186,12 @@ interpreter_command
 	| output_command TK_EOL { found_binary_command = 0; show_output_command($1); }
 	| TK_HELP TK_EOL { print_commands(); }
 	| TK_LOAD {looking_for_filename = 1; } FILE_NAME TK_EOL { looking_for_filename = 0; push_and_open($3); }
+	| TK_GRAPH {looking_for_filename = 1; } FILE_NAME { looking_for_filename = 0; } expression TK_EOL 
+		{
+			graph_to_file($3, $5);
+			++$5->refcnt;
+			free_node($5);
+		}
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
 	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
@@ -482,11 +489,13 @@ reduce_tree(struct node *real_root)
 	void (*old_sigalm_handler)(int);
 	struct timeval before, after;
 	int cc;
-	struct node *new_root = new_application(real_root, NULL);
+	struct node *new_root = new_application(real_root, new_application(NULL, NULL));
 
 	/* new_root - points to a "dummy" node, necessary for I and
 	 * K reductions, if the expression is something like "I x" or
-	 * K a b. */
+	 * K a b. It has a dummy right-child so as to avoid continually
+	 * testing for a missing right-hand-child node.
+	 */
 	++new_root->refcnt;
 	MARK_RIGHT_BRANCH_TRAVERSED(new_root);
 
@@ -679,3 +688,4 @@ print_commands(void)
 {
 	printf("Help Section\n");
 }
+

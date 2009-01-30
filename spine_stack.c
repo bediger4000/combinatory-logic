@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 #include <spine_stack.h>
+#include <node.h>
 
 static struct spine_stack *spine_stack_free_list = NULL;
 
@@ -141,6 +142,12 @@ pushnode(struct spine_stack *ss, struct node *n)
 	ss->stack[ss->top] = n;
 
 	++ss->top;
+
+	if (APPLICATION == n->typ)
+	{
+		n->left->examined = 0;
+		n->right->examined = 0;
+	}
 
 	if (ss->top > ss->maxdepth) ++ss->maxdepth;
 

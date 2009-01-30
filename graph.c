@@ -168,7 +168,7 @@ reduce_graph(struct node *root)
 				case COMB_I:
 					if (STACK_SIZE(stack) > 2)
 					{
-						D {printf("I reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
+						D {printf("I reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
 						NT SS;
 						*(PARENTNODE(stack, 2)->updateable)
 							= PARENTNODE(stack, 1)->right;
@@ -186,7 +186,7 @@ reduce_graph(struct node *root)
 						struct node *n4 = PARENTNODE(stack, 4);
 						struct node *ltmp = n4->left;
 						struct node *rtmp = n4->right;
-						D {printf("J reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
+						D {printf("J reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0); }
 						NT SS;
 
 						n4->left = new_application(
@@ -216,7 +216,7 @@ reduce_graph(struct node *root)
 				case COMB_K:
 					if (STACK_SIZE(stack) > 3)
 					{
-						D {printf("K reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						D {printf("K reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
@@ -234,7 +234,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 3)->updateable);
-						D {printf("T reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						D {printf("T reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 2)->right,
@@ -256,7 +256,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 2)->updateable);
-						D {printf("M reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						D {printf("M reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 1)->right,
@@ -277,7 +277,7 @@ reduce_graph(struct node *root)
 						struct node *n3 = PARENTNODE(stack, 3);
 						struct node *ltmp = n3->left;
 						struct node *rtmp = n3->right;
-						D {printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
+						D {printf("S reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0); }
 						NT SS;
 						n3->left = new_application(
 								PARENTNODE(stack, 1)->right,
@@ -303,7 +303,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
-						D {printf("B reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						D {printf("B reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						PARENTNODE(stack, 3)->left
 							= PARENTNODE(stack, 1)->right;
@@ -331,7 +331,7 @@ reduce_graph(struct node *root)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
-						D {printf("C reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0);}
+						D {printf("C reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						PARENTNODE(stack, 3)->left
 							= new_application(
@@ -357,7 +357,7 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						struct node *ltmp = PARENTNODE(stack, 2)->left;
-						D{printf("W reduction, before: "); print_graph(root, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
+						D{printf("W reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
 						NT SS;
 						PARENTNODE(stack, 2)->left
 							= new_application(
@@ -373,7 +373,7 @@ reduce_graph(struct node *root)
 					}
 					break;
 				case COMB_NONE:  /* A combinator that's not a built-in */
-					D{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root, 0, TOPNODE(stack)->sn);}
+					D{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root->left, 0, TOPNODE(stack)->sn);}
 					break;
 				}
 				if (performed_reduction) SS;
@@ -399,7 +399,7 @@ reduce_graph(struct node *root)
 						(cn == COMB_M? "M":
 						(cn == COMB_T? "T": TOPNODE(stack)->name))))))))
 					);
-					print_graph(root, 0, TOPNODE(stack)->sn);
+					print_graph(root->left, 0, TOPNODE(stack)->sn);
 				}
 
 				if (multiple_reduction_detection)
@@ -410,7 +410,7 @@ reduce_graph(struct node *root)
 						printf("[%d] ", redex_count);
 				}
 
-				T print_graph(root, 0, 0);
+				T print_graph(root->left, 0, 0);
 
 				if (cycle_detection && cycle_detector(root, max_redex_count))
 				{
@@ -460,8 +460,19 @@ read_line(void)
 		case 'c':
 			single_step = 0;
 			break;
+		case 'g':
+			/* print "dot" graph in a file: assume buffer holds something like:
+			 * "g filename\n" */
+			{
+				char *filename = buf + 2;
+				size_t l = strlen(filename);
+				filename[l - 1] = '\0';
+				*buf = '?';
+			}
+			break;
 		case '?':
 			fprintf(stderr,
+				"g filename -> write graph in filename\n"
 				"e, x -> exit now\n"
 				"n, q -> terminate current reduction, return to top level\n"
 				"c -> continue current reduction without further stops\n"
@@ -533,6 +544,7 @@ leaf_node_count(struct node *node)
 		switch (node->typ)
 		{
 		case APPLICATION:
+			++count;
 			count += leaf_node_count(node->left);
 			count += leaf_node_count(node->right);
 			break;
