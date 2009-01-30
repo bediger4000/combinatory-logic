@@ -2,25 +2,25 @@ I a
 push left branch on current stack
 push left branch on current stack
 I combinator 1, stack depth 3
-I reduction, before: I*+ a 
-I reduction, after: a + 
-a 
+I reduction, before: I*+ a
+I reduction, after: a
+a
 push left branch on current stack
 a combinator 2, stack depth 2
-a, no reduction: a+ 
+a, no reduction: a+
 pop spine stack
 a
 K a b
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-K combinator 5, stack depth 4
-K reduction, before: K* a b 
-K reduction, after: a + 
-a 
+K combinator 6, stack depth 4
+K reduction, before: K* a b
+K reduction, after: a
+a
 push left branch on current stack
-a combinator 6, stack depth 2
-a, no reduction: a+ 
+a combinator 7, stack depth 2
+a, no reduction: a+
 pop spine stack
 a
 S p q r
@@ -28,25 +28,25 @@ push left branch on current stack
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-S combinator 11, stack depth 5
-S reduction, before: S* p q r 
-S reduction, after: p r + (q r) 
-p r (q r) 
+S combinator 13, stack depth 5
+S reduction, before: S* p q r
+S reduction, after: p r + (q r)
+p r (q r)
 push left branch on current stack
 push left branch on current stack
-p combinator 12, stack depth 4
-p, no reduction: p+ r (q r) 
+p combinator 14, stack depth 4
+p, no reduction: p+ r (q r)
 push right branch on new stack
-r combinator 16, stack depth 2
-r, no reduction: p r+ (q r+) 
+r combinator 18, stack depth 2
+r, no reduction: p r+ (q r+)
 pop spine stack
 push right branch on new stack
 push left branch on current stack
-q combinator 14, stack depth 3
-q, no reduction: p r (q+ r) 
+q combinator 16, stack depth 3
+q, no reduction: p r (q+ r)
 push right branch on new stack
-r combinator 16, stack depth 2
-r, no reduction: p r+ (q r+) 
+r combinator 18, stack depth 2
+r, no reduction: p r+ (q r+)
 pop spine stack
 pop spine stack
 pop spine stack
@@ -55,21 +55,21 @@ W a b
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-W combinator 21, stack depth 4
-W reduction, before: W*+ a b 
-W reduction, after: a b + b 
-a b b 
+W combinator 24, stack depth 4
+W reduction, before: W*+ a b
+W reduction, after: a b + b
+a b b
 push left branch on current stack
 push left branch on current stack
-a combinator 22, stack depth 4
-a, no reduction: a+ b b 
+a combinator 25, stack depth 4
+a, no reduction: a+ b b
 push right branch on new stack
-b combinator 24, stack depth 2
-b, no reduction: a b+ b+ 
+b combinator 27, stack depth 2
+b, no reduction: a b+ b+
 pop spine stack
 push right branch on new stack
-b combinator 24, stack depth 2
-b, no reduction: a b+ b+ 
+b combinator 27, stack depth 2
+b, no reduction: a b+ b+
 pop spine stack
 pop spine stack
 a b b
@@ -78,21 +78,21 @@ push left branch on current stack
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-C combinator 28, stack depth 5
-C reduction, before: C* p q r 
-C reduction, after: p r + q 
-p r q 
+C combinator 32, stack depth 5
+C reduction, before: C* p q r
+C reduction, after: p r + q
+p r q
 push left branch on current stack
 push left branch on current stack
-p combinator 29, stack depth 4
-p, no reduction: p+ r q 
+p combinator 33, stack depth 4
+p, no reduction: p+ r q
 push right branch on new stack
-r combinator 33, stack depth 2
-r, no reduction: p r+ q 
+r combinator 37, stack depth 2
+r, no reduction: p r+ q
 pop spine stack
 push right branch on new stack
-q combinator 31, stack depth 2
-q, no reduction: p r q+ 
+q combinator 35, stack depth 2
+q, no reduction: p r q+
 pop spine stack
 pop spine stack
 p r q
@@ -101,20 +101,20 @@ push left branch on current stack
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-B combinator 37, stack depth 5
-B reduction, before: B* p q r 
-B reduction, after: p + (q r) 
-p (q r) 
+B combinator 42, stack depth 5
+B reduction, before: B* p q r
+B reduction, after: p + (q r)
+p (q r)
 push left branch on current stack
-p combinator 38, stack depth 3
-p, no reduction: p+ (q r) 
+p combinator 43, stack depth 3
+p, no reduction: p+ (q r)
 push right branch on new stack
 push left branch on current stack
-q combinator 40, stack depth 3
-q, no reduction: p (q+ r) 
+q combinator 45, stack depth 3
+q, no reduction: p (q+ r)
 push right branch on new stack
-r combinator 42, stack depth 2
-r, no reduction: p (q r+) 
+r combinator 47, stack depth 2
+r, no reduction: p (q r+)
 pop spine stack
 pop spine stack
 pop spine stack
@@ -123,190 +123,190 @@ T p q
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-T combinator 46, stack depth 4
-T reduction, before: T* p q 
-T reduction, after: q p + 
-q p 
+T combinator 52, stack depth 4
+T reduction, before: T* p q
+T reduction, after: q p
+q p
 push left branch on current stack
 push left branch on current stack
-q combinator 49, stack depth 3
-q, no reduction: q+ p 
+q combinator 55, stack depth 3
+q, no reduction: q+ p
 push right branch on new stack
-p combinator 47, stack depth 2
-p, no reduction: q p+ 
+p combinator 53, stack depth 2
+p, no reduction: q p+
 pop spine stack
 pop spine stack
 q p
 M p
 push left branch on current stack
 push left branch on current stack
-M combinator 53, stack depth 3
-M reduction, before: M* p 
-M reduction, after: p p + 
-p p 
+M combinator 60, stack depth 3
+M reduction, before: M* p
+M reduction, after: p p
+p p
 push left branch on current stack
 push left branch on current stack
-p combinator 54, stack depth 3
-p, no reduction: p+ p+ 
+p combinator 61, stack depth 3
+p, no reduction: p+ p+
 push right branch on new stack
-p combinator 54, stack depth 2
-p, no reduction: p+ p+ 
+p combinator 61, stack depth 2
+p, no reduction: p+ p+
 pop spine stack
 pop spine stack
 p p
-I{58} {60} a{59}
+I{66} {68} a{67}
 push left branch on current stack
 push left branch on current stack
-I combinator 58, stack depth 3
-I reduction, before: I{58}+ {60} a{59} {61}  {61}
-I reduction, after: a{59} {61}+  {61}
-a{59} {61}  {61}
+I combinator 66, stack depth 3
+I reduction, before: I{66}+ {68} a{67}
+I reduction, after: a{67}
+a{67}
 push left branch on current stack
-a combinator 59, stack depth 2
-a, no reduction: a{59}+ {61}  {61}
+a combinator 67, stack depth 2
+a, no reduction: a{67}+
 pop spine stack
-a{59}
-K{62} {64} a{63} {66} b{65}
+a{67}
+K{71} {73} a{72} {75} b{74}
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-K combinator 62, stack depth 4
-K reduction, before: K{62} {64} a{63} {66} b{65} {67}  {67}
-K reduction, after: a{63} {67}+  {67}
-a{63} {67}  {67}
+K combinator 71, stack depth 4
+K reduction, before: K{71} {73} a{72} {75} b{74}
+K reduction, after: a{72}
+a{72}
 push left branch on current stack
-a combinator 63, stack depth 2
-a, no reduction: a{63}+ {67}  {67}
+a combinator 72, stack depth 2
+a, no reduction: a{72}+
 pop spine stack
-a{63}
-S{68} {70} p{69} {72} q{71} {74} r{73}
+a{72}
+S{78} {80} p{79} {82} q{81} {84} r{83}
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-S combinator 68, stack depth 5
-S reduction, before: S{68} {70} p{69} {72} q{71} {74} r{73} {75}  {75}
-S reduction, after: p{69} {76} r{73} {74}+ (q{71} {77} r{73}) {75}  {75}
-p{69} {76} r{73} {74} (q{71} {77} r{73}) {75}  {75}
+S combinator 78, stack depth 5
+S reduction, before: S{78} {80} p{79} {82} q{81} {84} r{83}
+S reduction, after: p{79} {87} r{83} {84}+ (q{81} {88} r{83})
+p{79} {87} r{83} {84} (q{81} {88} r{83})
 push left branch on current stack
 push left branch on current stack
-p combinator 69, stack depth 4
-p, no reduction: p{69}+ {76} r{73} {74} (q{71} {77} r{73}) {75}  {75}
+p combinator 79, stack depth 4
+p, no reduction: p{79}+ {87} r{83} {84} (q{81} {88} r{83})
 push right branch on new stack
-r combinator 73, stack depth 2
-r, no reduction: p{69} {76} r{73}+ {74} (q{71} {77} r{73}+) {75}  {75}
-pop spine stack
-push right branch on new stack
-push left branch on current stack
-q combinator 71, stack depth 3
-q, no reduction: p{69} {76} r{73} {74} (q{71}+ {77} r{73}) {75}  {75}
-push right branch on new stack
-r combinator 73, stack depth 2
-r, no reduction: p{69} {76} r{73}+ {74} (q{71} {77} r{73}+) {75}  {75}
-pop spine stack
-pop spine stack
-pop spine stack
-p{69} {76} r{73} {74} (q{71} {77} r{73})
-W{78} {80} a{79} {82} b{81}
-push left branch on current stack
-push left branch on current stack
-push left branch on current stack
-W combinator 78, stack depth 4
-W reduction, before: W{78}+ {80} a{79} {82} b{81} {83}  {83}
-W reduction, after: a{79} {84} b{81} {82}+ b{81} {83}  {83}
-a{79} {84} b{81} {82} b{81} {83}  {83}
-push left branch on current stack
-push left branch on current stack
-a combinator 79, stack depth 4
-a, no reduction: a{79}+ {84} b{81} {82} b{81} {83}  {83}
-push right branch on new stack
-b combinator 81, stack depth 2
-b, no reduction: a{79} {84} b{81}+ {82} b{81}+ {83}  {83}
+r combinator 83, stack depth 2
+r, no reduction: p{79} {87} r{83}+ {84} (q{81} {88} r{83}+)
 pop spine stack
 push right branch on new stack
-b combinator 81, stack depth 2
-b, no reduction: a{79} {84} b{81}+ {82} b{81}+ {83}  {83}
-pop spine stack
-pop spine stack
-a{79} {84} b{81} {82} b{81}
-C{85} {87} p{86} {89} q{88} {91} r{90}
 push left branch on current stack
-push left branch on current stack
-push left branch on current stack
-push left branch on current stack
-C combinator 85, stack depth 5
-C reduction, before: C{85} {87} p{86} {89} q{88} {91} r{90} {92}  {92}
-C reduction, after: p{86} {93} r{90} {91}+ q{88} {92}  {92}
-p{86} {93} r{90} {91} q{88} {92}  {92}
-push left branch on current stack
-push left branch on current stack
-p combinator 86, stack depth 4
-p, no reduction: p{86}+ {93} r{90} {91} q{88} {92}  {92}
+q combinator 81, stack depth 3
+q, no reduction: p{79} {87} r{83} {84} (q{81}+ {88} r{83})
 push right branch on new stack
-r combinator 90, stack depth 2
-r, no reduction: p{86} {93} r{90}+ {91} q{88} {92}  {92}
+r combinator 83, stack depth 2
+r, no reduction: p{79} {87} r{83}+ {84} (q{81} {88} r{83}+)
+pop spine stack
+pop spine stack
+pop spine stack
+p{79} {87} r{83} {84} (q{81} {88} r{83})
+W{89} {91} a{90} {93} b{92}
+push left branch on current stack
+push left branch on current stack
+push left branch on current stack
+W combinator 89, stack depth 4
+W reduction, before: W{89}+ {91} a{90} {93} b{92}
+W reduction, after: a{90} {96} b{92} {93}+ b{92}
+a{90} {96} b{92} {93} b{92}
+push left branch on current stack
+push left branch on current stack
+a combinator 90, stack depth 4
+a, no reduction: a{90}+ {96} b{92} {93} b{92}
+push right branch on new stack
+b combinator 92, stack depth 2
+b, no reduction: a{90} {96} b{92}+ {93} b{92}+
 pop spine stack
 push right branch on new stack
-q combinator 88, stack depth 2
-q, no reduction: p{86} {93} r{90} {91} q{88}+ {92}  {92}
+b combinator 92, stack depth 2
+b, no reduction: a{90} {96} b{92}+ {93} b{92}+
 pop spine stack
 pop spine stack
-p{86} {93} r{90} {91} q{88}
-B{94} {96} p{95} {98} q{97} {100} r{99}
+a{90} {96} b{92} {93} b{92}
+C{97} {99} p{98} {101} q{100} {103} r{102}
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-B combinator 94, stack depth 5
-B reduction, before: B{94} {96} p{95} {98} q{97} {100} r{99} {101}  {101}
-B reduction, after: p{95} {100}+ (q{97} {102} r{99}) {101}  {101}
-p{95} {100} (q{97} {102} r{99}) {101}  {101}
+C combinator 97, stack depth 5
+C reduction, before: C{97} {99} p{98} {101} q{100} {103} r{102}
+C reduction, after: p{98} {106} r{102} {103}+ q{100}
+p{98} {106} r{102} {103} q{100}
 push left branch on current stack
-p combinator 95, stack depth 3
-p, no reduction: p{95}+ {100} (q{97} {102} r{99}) {101}  {101}
+push left branch on current stack
+p combinator 98, stack depth 4
+p, no reduction: p{98}+ {106} r{102} {103} q{100}
+push right branch on new stack
+r combinator 102, stack depth 2
+r, no reduction: p{98} {106} r{102}+ {103} q{100}
+pop spine stack
+push right branch on new stack
+q combinator 100, stack depth 2
+q, no reduction: p{98} {106} r{102} {103} q{100}+
+pop spine stack
+pop spine stack
+p{98} {106} r{102} {103} q{100}
+B{107} {109} p{108} {111} q{110} {113} r{112}
+push left branch on current stack
+push left branch on current stack
+push left branch on current stack
+push left branch on current stack
+B combinator 107, stack depth 5
+B reduction, before: B{107} {109} p{108} {111} q{110} {113} r{112}
+B reduction, after: p{108} {113}+ (q{110} {116} r{112})
+p{108} {113} (q{110} {116} r{112})
+push left branch on current stack
+p combinator 108, stack depth 3
+p, no reduction: p{108}+ {113} (q{110} {116} r{112})
 push right branch on new stack
 push left branch on current stack
-q combinator 97, stack depth 3
-q, no reduction: p{95} {100} (q{97}+ {102} r{99}) {101}  {101}
+q combinator 110, stack depth 3
+q, no reduction: p{108} {113} (q{110}+ {116} r{112})
 push right branch on new stack
-r combinator 99, stack depth 2
-r, no reduction: p{95} {100} (q{97} {102} r{99}+) {101}  {101}
+r combinator 112, stack depth 2
+r, no reduction: p{108} {113} (q{110} {116} r{112}+)
 pop spine stack
 pop spine stack
 pop spine stack
-p{95} {100} (q{97} {102} r{99})
-T{103} {105} p{104} {107} q{106}
+p{108} {113} (q{110} {116} r{112})
+T{117} {119} p{118} {121} q{120}
 push left branch on current stack
 push left branch on current stack
 push left branch on current stack
-T combinator 103, stack depth 4
-T reduction, before: T{103} {105} p{104} {107} q{106} {108}  {108}
-T reduction, after: q{106} {109} p{104} {108}+  {108}
-q{106} {109} p{104} {108}  {108}
+T combinator 117, stack depth 4
+T reduction, before: T{117} {119} p{118} {121} q{120}
+T reduction, after: q{120} {124} p{118}
+q{120} {124} p{118}
 push left branch on current stack
 push left branch on current stack
-q combinator 106, stack depth 3
-q, no reduction: q{106}+ {109} p{104} {108}  {108}
+q combinator 120, stack depth 3
+q, no reduction: q{120}+ {124} p{118}
 push right branch on new stack
-p combinator 104, stack depth 2
-p, no reduction: q{106} {109} p{104}+ {108}  {108}
+p combinator 118, stack depth 2
+p, no reduction: q{120} {124} p{118}+
 pop spine stack
 pop spine stack
-q{106} {109} p{104}
-M{110} {112} p{111}
+q{120} {124} p{118}
+M{125} {127} p{126}
 push left branch on current stack
 push left branch on current stack
-M combinator 110, stack depth 3
-M reduction, before: M{110} {112} p{111} {113}  {113}
-M reduction, after: p{111} {114} p{111} {113}+  {113}
-p{111} {114} p{111} {113}  {113}
+M combinator 125, stack depth 3
+M reduction, before: M{125} {127} p{126}
+M reduction, after: p{126} {130} p{126}
+p{126} {130} p{126}
 push left branch on current stack
 push left branch on current stack
-p combinator 111, stack depth 3
-p, no reduction: p{111}+ {114} p{111}+ {113}  {113}
+p combinator 126, stack depth 3
+p, no reduction: p{126}+ {130} p{126}+
 push right branch on new stack
-p combinator 111, stack depth 2
-p, no reduction: p{111}+ {114} p{111}+ {113}  {113}
+p combinator 126, stack depth 2
+p, no reduction: p{126}+ {130} p{126}+
 pop spine stack
 pop spine stack
-p{111} {114} p{111}
+p{126} {130} p{126}

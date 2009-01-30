@@ -1,26 +1,26 @@
 S (S (S (S S K) I) I) I (W B W)
-S (S (S S K) I) I (W B W) (I (W B W)) 
-S (S S K) I (W B W) (I (W B W)) (I (W B W)) 
-S S K (W B W) (I (W B W)) (I (W B W)) (I (W B W)) 
-S (W B W) (K (W B W)) (I (W B W)) (I (W B W)) (I (W B W)) 
-W B W (I (W B W)) (K (W B W) (I (W B W))) (I (W B W)) (I (W B W)) 
-B W W (I (B W W)) (K (B W W) (I (B W W))) (I (B W W)) (I (B W W)) 
+S (S (S S K) I) I (W B W) (I (W B W))
+S (S S K) I (W B W) (I (W B W)) (I (W B W))
+S S K (W B W) (I (W B W)) (I (W B W)) (I (W B W))
+S (W B W) (K (W B W)) (I (W B W)) (I (W B W)) (I (W B W))
+W B W (I (W B W)) (K (W B W) (I (W B W))) (I (W B W)) (I (W B W))
+B W W (I (B W W)) (K (B W W) (I (B W W))) (I (B W W)) (I (B W W))
 Reduction limit
 B W W (I (B W W)) (K (B W W) (I (B W W))) (I (B W W)) (I (B W W))
 M (I I I)
-I I I (I I I) 
-I I (I I) 
-I (I I) 
-I I 
-I 
+I I I (I I I)
+I I (I I)
+I (I I)
+I I
+I
 I
 W W (I I I)
-W (I I I) (I I I) 
-I I I (I I I) (I I I) 
-I I (I I) (I I) 
-I (I I) (I I) 
-I I (I I) 
-I (I I) 
-I I 
-I 
+W (I I I) (I I I)
+I I I (I I I) (I I I)
+I I (I I) (I I)
+I (I I) (I I)
+I I (I I)
+I (I I)
+I I
+I
 I

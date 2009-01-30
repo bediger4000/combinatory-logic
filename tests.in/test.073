@@ -1,0 +1,6 @@
+# Check a problem that occurs only with  the 2nd of two
+# copied arguments - they wouldn't get executed, even
+# if they had enough arguments.  Not a problem with
+# any given combinator's code, however.
+([x] a x (x c)) (S a b)
+([x] a x (x c)) (K b)

@@ -1,0 +1,4 @@
+S (S (K a) I) (S I (K c)) (S a b)
+a (S a b) (a c (b c))
+S (S (K a) I) (S I (K c)) (K b)
+a (K b) b
