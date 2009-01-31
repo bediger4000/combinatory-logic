@@ -34,7 +34,7 @@
 #include <spine_stack.h>
 #include <cycle_detector.h>
 
-int read_line(void);
+int read_line(struct node *printing_root);
 
 extern int multiple_reduction_detection;
 extern int cycle_detection;
@@ -53,7 +53,7 @@ extern sigjmp_buf in_reduce_graph;
 #define NT if(debug_reduction && !trace_reduction)
 
 /* can't do single_step && read_line() - compilers optimize it away */
-#define SS if (single_step) read_line()
+#define SS if (single_step) read_line(root->left)
 
 
 void canonicalize(struct node *node, struct buffer *b);
@@ -440,7 +440,7 @@ reduce_graph(struct node *root)
 /* Control can longjmp() back to reduce_tree()
  * in grammar.y for certain input(s). */
 int
-read_line(void)
+read_line(struct node *root)
 {
 	char buf[64];
 	*buf = 'A';
@@ -464,10 +464,12 @@ read_line(void)
 			/* print "dot" graph in a file: assume buffer holds something like:
 			 * "g filename\n" */
 			{
+				FILE *fout;
 				char *filename = buf + 2;
 				size_t l = strlen(filename);
 				filename[l - 1] = '\0';
 				*buf = '?';
+				graph_to_file(filename, root);
 			}
 			break;
 		case '?':
@@ -534,8 +536,12 @@ reduction_count(struct node *node, int stack_depth)
 	return reductions;
 }
 
+/* when total_count evaluates to true (non-zero),
+ * this counts interior and leaf nodes.  Otherwise,
+ * it just counts leaf nodes.
+ */
 int
-leaf_node_count(struct node *node)
+node_count(struct node *node, int count_interior_nodes)
 {
 	int count = 0;
 
@@ -544,9 +550,9 @@ leaf_node_count(struct node *node)
 		switch (node->typ)
 		{
 		case APPLICATION:
-			++count;
-			count += leaf_node_count(node->left);
-			count += leaf_node_count(node->right);
+			if (count_interior_nodes) ++count;
+			count += node_count(node->left, count_interior_nodes);
+			count += node_count(node->right, count_interior_nodes);
 			break;
 		case COMBINATOR:
 			count = 1;

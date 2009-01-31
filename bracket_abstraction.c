@@ -349,8 +349,6 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 }
 
 /*
- */
-/*
     [x] x   -> B M K
     [x] Z   -> K Z                   x not appearing in Z
     [x] Q x -> Q                     x not appearing in Q
@@ -693,6 +691,7 @@ determine_bracket_abstraction(const char *algorithm_name)
 		bracket_abstraction_function f;
 	} afmap[] = {
 		{"curry", curry_bracket_abstraction},
+		{"curry2", curry2_bracket_abstraction},
 		{"grz", grzegorczyk_bracket_abstraction},
 		{"tromp", tromp_bracket_abstraction},
 		{"turner", turner_bracket_abstraction},

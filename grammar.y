@@ -135,7 +135,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 }
 
 
-%token TK_EOL TK_COUNT_REDUCTIONS TK_LENGTH
+%token TK_EOL TK_COUNT_REDUCTIONS TK_SIZE
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
@@ -237,9 +237,9 @@ interpreter_command
 			++$2->refcnt;
 			free_node($2);
 		}
-	| TK_LENGTH expression TK_EOL {
-			int cnt = leaf_node_count($2);
-			printf("%d combinators\n", cnt);
+	| TK_SIZE expression TK_EOL {
+			int cnt = node_count($2, 1);  /* count interior nodes, too. */
+			printf("%d nodes\n", cnt);
 			++$2->refcnt;
 			free_node($2);
 		}
