@@ -1,0 +1,13 @@
+# Test size-of-tree function
+size I
+size (K I)
+size (I K)
+size (S a b c)
+size (S (a b) c)
+size (S (a b c))
+size (S a (b c))
+size (reduce I I I I I I I)
+# Monster S A (S S S S S S) S S S from Johannes Waldmann's
+# "The Combinator S".  size 6131, according to Waldmann.
+def A (S S S)
+size (reduce (S A (S S S S S S) S S S))
