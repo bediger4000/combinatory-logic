@@ -464,7 +464,6 @@ read_line(struct node *root)
 			/* print "dot" graph in a file: assume buffer holds something like:
 			 * "g filename\n" */
 			{
-				FILE *fout;
 				char *filename = buf + 2;
 				size_t l = strlen(filename);
 				filename[l - 1] = '\0';
