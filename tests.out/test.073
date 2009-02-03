@@ -2,3 +2,21 @@ S (S (K a) I) (S I (K c)) (S a b)
 a (S a b) (a c (b c))
 S (S (K a) I) (S I (K c)) (K b)
 a (K b) b
+S (S (S (K a) I) (S I (K c))) (S I (K c)) (S a b)
+a (S a b) (a c (b c)) (a c (b c))
+S a (S I (K c)) (S a b)
+a (S a b) (a c (b c))
+S a (S I (K c)) (K b)
+a (K b) b
+W (B (C a) (C I d)) (C b c)
+a (C b c) (b d c)
+W (B (C a) (C I d)) (B b c)
+a (B b c) (b (c d))
+W (B (C a) (C I c)) (K b)
+a (K b) b
+B (T (B (T (B (T d) (B M K))) (B B a))) (B M (B B T)) (B b c)
+a (B b c) (b (c d))
+B (T (B (T (B (T c) (B M K))) (B B a))) (B M (B B T)) (K b)
+a (K b) b
+B (T (B (T (B (T c) (B M K))) (B B a))) (B M (B B T)) (T b)
+a (T b) (c b)

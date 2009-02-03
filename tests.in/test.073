@@ -13,6 +13,7 @@
 abstraction curry
 ([x] a x (x c)) (S a b)
 ([x] a x (x c)) (K b)
+([x] a x (x c) (x c)) (S a b)  # 2nd and 3rd instances reduce
 abstraction tromp
 ([x] a x (x c)) (S a b)
 ([x] a x (x c)) (K b)
