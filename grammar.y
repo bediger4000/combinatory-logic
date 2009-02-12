@@ -168,7 +168,14 @@ stmnt
 			print_graph($1, 0, 0); 
 			$$ = reduce_tree($1);
 			if (!reduction_interrupted)
+			{
+				if (multiple_reduction_detection)
+				{
+					int redex_count = reduction_count($$->left, 0);
+					printf("[%d] ", redex_count);
+				}
 				print_graph($$->left, 0, 0);
+			}
 			free_node($$);
 		}
 	| TK_DEF TK_IDENTIFIER expression TK_EOL

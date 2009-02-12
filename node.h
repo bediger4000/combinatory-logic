@@ -33,6 +33,8 @@ struct node {
 	struct node *left;
 	struct node *right;
 	struct node **updateable;
+	struct node **left_addr;
+	struct node **right_addr;
 	int branch_marker;
 	int examined;
 	int refcnt;

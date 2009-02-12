@@ -199,6 +199,8 @@ new_node(void)
 		++sn_counter;
 		++allocated_node_count;
 		r->sn = sn_counter;
+		r->right_addr = &(r->right);
+		r->left_addr = &(r->left);
 	}
 
 	/* r->sn stays unchanged throughout */

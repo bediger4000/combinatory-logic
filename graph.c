@@ -135,7 +135,7 @@ reduce_graph(struct node *root)
 				topnode = TOPNODE(stack);
 				if (!LEFT_BRANCH_TRAVERSED(topnode))
 				{
-					topnode->updateable = &(topnode->left);
+					topnode->updateable = topnode->left_addr;
 					topnode->branch_marker = LEFT;
 					MARK_LEFT_BRANCH_TRAVERSED(topnode);
 					pushnode(stack, topnode->left);
@@ -143,7 +143,7 @@ reduce_graph(struct node *root)
 					pop_stack_cnt = 0;
 				} else if (!RIGHT_BRANCH_TRAVERSED(topnode)) {
 					MARK_RIGHT_BRANCH_TRAVERSED(topnode);
-					topnode->updateable = &(topnode->right);
+					topnode->updateable = topnode->right_addr;
 					topnode->branch_marker = RIGHT;
 					push_spine_stack(&stack);
 					pushnode(stack, topnode);  /* "dummy" node at top of stack */
