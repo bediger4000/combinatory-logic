@@ -55,6 +55,8 @@ def ogre (reduce (F F))
 (reduce (ogre x)) = ogre
 (reduce (ogre x y z w u v)) = ogre
 
+# http://www.cotilliongroup.com/arts/void-meditations.html
+# Douglas M. Auclair
 def ogre (reduce S (K (S (S (K S) K) K)) (K (S (S (K S) K) K)))
 (reduce ogre x) = ogre
 (reduce ogre x y z w u v) = ogre
