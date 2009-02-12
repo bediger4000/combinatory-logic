@@ -274,28 +274,32 @@ reduce_graph(struct node *root)
 				case COMB_S:
 					if (STACK_SIZE(stack) > 4)
 					{
-						struct node *n3 = PARENTNODE(stack, 3);
-						struct node *ltmp = n3->left;
-						struct node *rtmp = n3->right;
-						D {printf("S reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0); }
+						struct node *n4 = PARENTNODE(stack, 4);
+						struct node *tmp, *f = *(n4->updateable);
+						D {printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
 						NT SS;
-						n3->left = new_application(
+
+						tmp = new_application(
+							new_application(
 								PARENTNODE(stack, 1)->right,
-								n3->right
-							);
-						++n3->left->refcnt;
-						n3->right = new_application(
+								PARENTNODE(stack, 3)->right
+							),
+							new_application(
 								PARENTNODE(stack, 2)->right,
-								n3->right
-							);
-						++n3->right->refcnt;
+								PARENTNODE(stack, 3)->right
+							)
+						);
+						*(n4->updateable) = tmp;
+						++tmp->refcnt;
+
 						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
-						free_node(ltmp);
-						free_node(rtmp);
-						n3->examined = 0;
+						PARENTNODE(stack, 3)->examined = 0;
+						n4->examined ^= n4->branch_marker;
+
+						free_node(f);
 						performed_reduction = 1;
-						pop_stack_cnt = 3;
+						pop_stack_cnt = 4;
 					}
 					break;
 				case COMB_B:
