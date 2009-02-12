@@ -58,13 +58,15 @@ extern sigjmp_buf in_reduce_graph;
 
 void canonicalize(struct node *node, struct buffer *b);
 
-void print_graph(struct node *node, int sn_to_reduce, int current_sn)
+void
+print_graph(struct node *node, int sn_to_reduce, int current_sn)
 {
 	print_tree(node, sn_to_reduce, current_sn);
 	putc('\n', stdout);
 }
 
-char *canonicalize_graph(struct node *node)
+char *
+canonicalize_graph(struct node *node)
 {
 	struct buffer *b;
 	char *s;
@@ -82,7 +84,8 @@ char *canonicalize_graph(struct node *node)
 	return s;
 }
 
-void canonicalize(struct node *node, struct buffer *b)
+void
+canonicalize(struct node *node, struct buffer *b)
 {
 	switch (node->typ)
 	{
@@ -114,7 +117,7 @@ reduce_graph(struct node *root)
 
 	push_spine_stack(&stack);
 
-	PUSHNODE(stack, root);
+	pushnode(stack, root);
 
 	do {
 
@@ -124,27 +127,28 @@ reduce_graph(struct node *root)
 			int pop_stack_cnt = 1;
 			int performed_reduction = 0;
 			enum combinatorName cn = TOPNODE(stack)->cn;
+			struct node *topnode;
 
 			switch (TOPNODE(stack)->typ)
 			{
 			case APPLICATION:
-				if (!LEFT_BRANCH_TRAVERSED(TOPNODE(stack)))
+				topnode = TOPNODE(stack);
+				if (!LEFT_BRANCH_TRAVERSED(topnode))
 				{
-					TOPNODE(stack)->updateable = &(TOPNODE(stack)->left);
-					TOPNODE(stack)->branch_marker = LEFT;
-					MARK_LEFT_BRANCH_TRAVERSED(TOPNODE(stack));
-					PUSHNODE(stack, TOPNODE(stack)->left);
+					topnode->updateable = &(topnode->left);
+					topnode->branch_marker = LEFT;
+					MARK_LEFT_BRANCH_TRAVERSED(topnode);
+					pushnode(stack, topnode->left);
 					D printf("push left branch on current stack\n");
 					pop_stack_cnt = 0;
-				} else if (!RIGHT_BRANCH_TRAVERSED(TOPNODE(stack))) {
-					struct node *tmp = TOPNODE(stack);
-					MARK_RIGHT_BRANCH_TRAVERSED(TOPNODE(stack));
-					D printf("push right branch on new stack\n");
-					TOPNODE(stack)->updateable = &(TOPNODE(stack)->right);
-					TOPNODE(stack)->branch_marker = RIGHT;
+				} else if (!RIGHT_BRANCH_TRAVERSED(topnode)) {
+					MARK_RIGHT_BRANCH_TRAVERSED(topnode);
+					topnode->updateable = &(topnode->right);
+					topnode->branch_marker = RIGHT;
 					push_spine_stack(&stack);
-					PUSHNODE(stack, tmp);  /* "dummy" node at top of stack */
-					PUSHNODE(stack, tmp->right);
+					pushnode(stack, topnode);  /* "dummy" node at top of stack */
+					pushnode(stack, topnode->right);
+					D printf("push right branch on new stack\n");
 					pop_stack_cnt = 0;
 				}
 				break;
