@@ -29,8 +29,8 @@
 #include <setjmp.h>   /* longjmp(), jmp_buf */
 
 #include <node.h>
-#include <graph.h>
 #include <buffer.h>
+#include <graph.h>
 #include <spine_stack.h>
 #include <cycle_detector.h>
 
@@ -143,42 +143,47 @@ reduce_graph(struct node *root)
 					pop_stack_cnt = 0;
 				} else if (!RIGHT_BRANCH_TRAVERSED(topnode)) {
 					MARK_RIGHT_BRANCH_TRAVERSED(topnode);
-					topnode->updateable = topnode->right_addr;
-					topnode->branch_marker = RIGHT;
-					push_spine_stack(&stack);
-					pushnode(stack, topnode);  /* "dummy" node at top of stack */
-					pushnode(stack, topnode->right);
-					D printf("push right branch on new stack\n");
-					pop_stack_cnt = 0;
+					if (topnode->right->typ == APPLICATION)
+					{
+						topnode->updateable = topnode->right_addr;
+						topnode->branch_marker = RIGHT;
+						push_spine_stack(&stack);
+						pushnode(stack, topnode);  /* "dummy" node at top of stack */
+						pushnode(stack, topnode->right);
+						D printf("push right branch on new stack\n");
+						pop_stack_cnt = 0;
+					}
 				}
 				break;
 			case COMBINATOR:
 				/* node->typ indicates a combinator, which can comprise a built-in,
 				 * or it can comprise a mere variable. Let node->cn decide. */
 				if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
-				D printf("%s combinator %d, stack depth %d\n",
-					(cn == COMB_I? "I":
-					(cn == COMB_J? "J":
-					(cn == COMB_K? "K":
-					(cn == COMB_S? "S":
-					(cn == COMB_B? "B":
-					(cn == COMB_W? "W":
-					(cn == COMB_C? "C":
-					(cn == COMB_M? "M":
-					(cn == COMB_T? "T": TOPNODE(stack)->name))))))))),
-					TOPNODE(stack)->sn, STACK_SIZE(stack));
+				D {
+					printf("%s reduction, stack depth %d, before: ",
+						(cn == COMB_I? "I":
+						(cn == COMB_J? "J":
+						(cn == COMB_K? "K":
+						(cn == COMB_S? "S":
+						(cn == COMB_B? "B":
+						(cn == COMB_W? "W":
+						(cn == COMB_C? "C":
+						(cn == COMB_M? "M":
+						(cn == COMB_T? "T": TOPNODE(stack)->name))))))))),
+					 	STACK_SIZE(stack));
+					print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);
+				}
 				switch (TOPNODE(stack)->cn)
 				{
 				case COMB_I:
 					if (STACK_SIZE(stack) > 2)
 					{
-						D {printf("I reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
 						NT SS;
 						*(PARENTNODE(stack, 2)->updateable)
 							= PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
-						PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
 						PARENTNODE(stack, 1)->examined = 0;
+						PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
 						free_node(PARENTNODE(stack, 1));
 						performed_reduction = 1;
 						pop_stack_cnt = 2;
@@ -190,7 +195,7 @@ reduce_graph(struct node *root)
 						struct node *n4 = PARENTNODE(stack, 4);
 						struct node *ltmp = n4->left;
 						struct node *rtmp = n4->right;
-						D {printf("J reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0); }
+
 						NT SS;
 
 						n4->left = new_application(
@@ -207,12 +212,11 @@ reduce_graph(struct node *root)
 								PARENTNODE(stack, 3)->right
 							);
 						++n4->right->refcnt;
-						PARENTNODE(stack, 1)->examined = 0;
-						PARENTNODE(stack, 2)->examined = 0;
-						PARENTNODE(stack, 3)->examined = 0;
+
+						n4->examined = 0;
+
 						free_node(ltmp);
 						free_node(rtmp);
-						n4->examined = 0;
 						performed_reduction = 1;
 						pop_stack_cnt = 4;
 					}
@@ -220,7 +224,6 @@ reduce_graph(struct node *root)
 				case COMB_K:
 					if (STACK_SIZE(stack) > 3)
 					{
-						D {printf("K reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
@@ -238,7 +241,6 @@ reduce_graph(struct node *root)
 					{
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 3)->updateable);
-						D {printf("T reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 2)->right,
@@ -260,7 +262,6 @@ reduce_graph(struct node *root)
 					{
 						struct node *n;
 						struct node *tmp = *(PARENTNODE(stack, 2)->updateable);
-						D {printf("M reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						n = new_application(
 								PARENTNODE(stack, 1)->right,
@@ -280,7 +281,6 @@ reduce_graph(struct node *root)
 					{
 						struct node *n4 = PARENTNODE(stack, 4);
 						struct node *tmp, *f = *(n4->updateable);
-						D {printf("S reduction, before: "); print_graph(root, TOPNODE(stack)->sn, 0); }
 						NT SS;
 
 						tmp = new_application(
@@ -296,9 +296,6 @@ reduce_graph(struct node *root)
 						*(n4->updateable) = tmp;
 						++tmp->refcnt;
 
-						PARENTNODE(stack, 1)->examined = 0;
-						PARENTNODE(stack, 2)->examined = 0;
-						PARENTNODE(stack, 3)->examined = 0;
 						n4->examined ^= n4->branch_marker;
 
 						free_node(f);
@@ -311,7 +308,6 @@ reduce_graph(struct node *root)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
-						D {printf("B reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						PARENTNODE(stack, 3)->left
 							= PARENTNODE(stack, 1)->right;
@@ -322,13 +318,10 @@ reduce_graph(struct node *root)
 								PARENTNODE(stack, 3)->right
 							);
 						++PARENTNODE(stack, 3)->right->refcnt;
+						PARENTNODE(stack, 3)->examined = 0;
 
 						free_node(ltmp);
 						free_node(rtmp);
-
-						PARENTNODE(stack, 1)->examined = 0;
-						PARENTNODE(stack, 2)->examined = 0;
-						PARENTNODE(stack, 3)->examined = 0;
 
 						performed_reduction = 1;
 						pop_stack_cnt = 3;
@@ -339,7 +332,6 @@ reduce_graph(struct node *root)
 					{
 						struct node *ltmp = PARENTNODE(stack, 3)->left;
 						struct node *rtmp = PARENTNODE(stack, 3)->right;
-						D {printf("C reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, 0);}
 						NT SS;
 						PARENTNODE(stack, 3)->left
 							= new_application(
@@ -350,13 +342,11 @@ reduce_graph(struct node *root)
 						PARENTNODE(stack, 3)->right
 							= PARENTNODE(stack, 2)->right;
 						++PARENTNODE(stack, 3)->right->refcnt;
+						PARENTNODE(stack, 3)->examined = 0;
 
 						free_node(ltmp);
 						free_node(rtmp);
 
-						PARENTNODE(stack, 1)->examined = 0;
-						PARENTNODE(stack, 2)->examined = 0;
-						PARENTNODE(stack, 3)->examined = 0;
 						performed_reduction = 1;
 						pop_stack_cnt = 3;
 					}
@@ -365,7 +355,6 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 3)
 					{
 						struct node *ltmp = PARENTNODE(stack, 2)->left;
-						D{printf("W reduction, before: "); print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);}
 						NT SS;
 						PARENTNODE(stack, 2)->left
 							= new_application(
@@ -373,7 +362,6 @@ reduce_graph(struct node *root)
 								PARENTNODE(stack, 2)->right
 							);
 						++PARENTNODE(stack, 2)->left->refcnt;
-						PARENTNODE(stack, 1)->examined = 0;
 						PARENTNODE(stack, 2)->examined = 0;
 						free_node(ltmp);
 						performed_reduction = 1;
@@ -412,13 +400,17 @@ reduce_graph(struct node *root)
 
 				if (multiple_reduction_detection)
 				{
-					int redex_count = reduction_count(root->left, 0);  /* root: a dummy node */
-					if (redex_count > max_redex_count) max_redex_count = redex_count;
 					if (trace_reduction)
-						printf("[%d] ", redex_count);
-				}
-
-				T print_graph(root->left, 0, 0);
+					{
+						struct buffer *b = new_buffer(256);
+						int ignore, redex_count = reduction_count(root->left, 0, &ignore, b);  /* root: a dummy node */
+						if (redex_count > max_redex_count) max_redex_count = redex_count;
+						b->buffer[b->offset] = '\0';
+						printf("[%d] %s\n", redex_count, b->buffer);
+						delete_buffer(b);
+					}
+				} else
+					T print_graph(root->left, 0, 0);
 
 				if (cycle_detection && cycle_detector(root, max_redex_count))
 				{
@@ -494,6 +486,7 @@ read_line(struct node *root)
 	return single_step;
 }
 
+#ifdef KRUNK
 int
 reduction_count(struct node *node, int stack_depth)
 {
@@ -530,6 +523,86 @@ reduction_count(struct node *node, int stack_depth)
 			case COMB_J:
 				if (stack_depth > 3)
 					reductions = 1;
+				break;
+			case COMB_NONE:
+				break;
+			}
+			break;
+		case UNTYPED:
+			break;
+		}
+	}
+
+	return reductions;
+}
+#endif
+
+int
+reduction_count(struct node *node, int stack_depth, int *child_redex, struct buffer *b)
+{
+	int reductions = 0;
+	int left_child_redex = 0, right_child_redex = 0;
+	int print_right_paren = 0;
+
+	if (node)
+	{
+		switch (node->typ)
+		{
+		case APPLICATION:
+
+			if (!node->left && !node->right) return 0;
+
+			reductions += reduction_count(node->left, stack_depth + 1, &left_child_redex, b);
+			if (left_child_redex) buffer_append(b, "*", 1);
+
+			buffer_append(b, " ", 1);
+
+			if (APPLICATION == node->right->typ)
+			{
+				buffer_append(b, "(", 1);
+				print_right_paren = 1;
+			}
+			reductions += reduction_count(node->right, 0, &right_child_redex, b);
+			if (right_child_redex) buffer_append(b, "*", 1);
+			if (print_right_paren) buffer_append(b, ")", 1);
+
+			break;
+		case COMBINATOR:
+			buffer_append(b, node->name, strlen(node->name));
+			switch (node->cn)
+			{
+			case COMB_I:
+			case COMB_M:
+				if (stack_depth > 0)
+				{
+					reductions = 1;
+					*child_redex = 1;
+				}
+				break;
+			case COMB_K:
+			case COMB_W:
+			case COMB_T:
+				if (stack_depth > 1)
+				{
+					reductions = 1;
+					*child_redex = 1;
+				}
+				break;
+			case COMB_B:
+			case COMB_C:
+			case COMB_S:
+				if (stack_depth > 2)
+				{
+					reductions = 1;
+					*child_redex = 1;
+				}
+				break;
+			case COMB_J:
+				if (stack_depth > 3)
+				{
+					reductions = 1;
+					*child_redex = 1;
+				}
 				break;
 			case COMB_NONE:
 				break;

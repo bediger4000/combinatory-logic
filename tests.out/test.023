@@ -8,3 +8,9 @@ I C (I P) (I Q) (I R)
 P R Q
 I S (I P) (I Q) (I R)
 P R (Q R)
+I T (I a) (I b)
+b a
+I M (I a)
+a a
+I J (I a) (I b) (I c) (I d)
+a b (a d c)

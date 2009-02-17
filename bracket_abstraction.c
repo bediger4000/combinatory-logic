@@ -25,6 +25,7 @@
 #include <stdio.h>  /* NULL */
 #include <string.h> /* strcmp() */
 
+#include <buffer.h>
 #include <node.h>
 #include <graph.h>
 #include <bracket_abstraction.h>

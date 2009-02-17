@@ -28,8 +28,8 @@
 #include <string.h>  /* strcmp() */
 
 #include <node.h>
-#include <graph.h>
 #include <buffer.h>
+#include <graph.h>
 #include <cycle_detector.h>
 
 extern sigjmp_buf in_reduce_graph;

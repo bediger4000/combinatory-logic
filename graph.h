@@ -23,7 +23,7 @@
 #endif
 
 void reduce_graph(struct node *graph_root);
-int  reduction_count(struct node *node, int stack_depth);
+int  reduction_count(struct node *node, int stack_depth, int *child_reduces, struct buffer *b);
 int  node_count(struct node *node, int count_interior_nodes);
 
 void         print_graph(struct node *node, int node_sn_reducing, int current_node_sn);

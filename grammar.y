@@ -37,6 +37,7 @@ extern char *optarg;
 #include <node.h>
 #include <hashtable.h>
 #include <atom.h>
+#include <buffer.h>
 #include <graph.h>
 #include <abbreviations.h>
 #include <spine_stack.h>
@@ -171,10 +172,14 @@ stmnt
 			{
 				if (multiple_reduction_detection)
 				{
-					int redex_count = reduction_count($$->left, 0);
-					printf("[%d] ", redex_count);
-				}
-				print_graph($$->left, 0, 0);
+					int ignore;
+					struct buffer *b = new_buffer(256);
+					int redex_count = reduction_count($$->left, 0, &ignore, b);
+					b->buffer[b->offset] = '\0';
+					printf("[%d] %s\n", redex_count, b->buffer);
+					delete_buffer(b);
+				} else
+					print_graph($$->left, 0, 0);
 			}
 			free_node($$);
 		}
@@ -224,8 +229,15 @@ interpreter_command
 	| TK_PRINT expression TK_EOL {
 			printf("Literal: ");
 			if (multiple_reduction_detection)
-				printf("[%d] ", reduction_count($2, 0));
-			print_graph($2, 0, 0); 
+			{
+				int ignore;
+				struct buffer *b = new_buffer(256);
+				int n = reduction_count($2, 0, &ignore, b);
+				b->buffer[b->offset] = '\0';
+				printf("[%d] %s\n", n, b->buffer);
+				delete_buffer(b);
+			} else
+				print_graph($2, 0, 0); 
 			++$2->refcnt;
 			free_node($2);
 		}
@@ -239,7 +251,8 @@ interpreter_command
 			free(buf);
 		}
 	| TK_COUNT_REDUCTIONS expression TK_EOL {
-			int cnt = reduction_count($2, 0);
+			int ignore;
+			int cnt = reduction_count($2, 0, &ignore, NULL);
 			printf("Found %d possible reductions\n", cnt);
 			++$2->refcnt;
 			free_node($2);
