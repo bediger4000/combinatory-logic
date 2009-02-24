@@ -227,8 +227,6 @@ reduce_graph(struct node *root)
 						NT SS;
 						*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
-						PARENTNODE(stack, 1)->examined ^= LEFT;
-						PARENTNODE(stack, 2)->examined ^= LEFT;
 						PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
 						free_node(PARENTNODE(stack, 2));
 						performed_reduction = 1;
@@ -246,8 +244,6 @@ reduce_graph(struct node *root)
 								PARENTNODE(stack, 2)->right,
 								PARENTNODE(stack, 1)->right
 							);
-						PARENTNODE(stack, 1)->examined ^= LEFT;
-						PARENTNODE(stack, 2)->examined ^= LEFT;
 						PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
 						*(PARENTNODE(stack, 3)->updateable) = n;
 						++n->refcnt;
@@ -261,15 +257,13 @@ reduce_graph(struct node *root)
 					if (STACK_SIZE(stack) > 2)
 					{
 						struct node *n;
-						struct node *tmp = *(PARENTNODE(stack, 2)->updateable);
+						struct node *n1 = PARENTNODE(stack, 1)->right;
+						struct node *n2 = PARENTNODE(stack, 2);
+						struct node *tmp = *(n2->updateable);
 						NT SS;
-						n = new_application(
-								PARENTNODE(stack, 1)->right,
-								PARENTNODE(stack, 1)->right
-							);
-						PARENTNODE(stack, 1)->examined ^= LEFT;
-						PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
-						*(PARENTNODE(stack, 2)->updateable) = n;
+						n2->examined ^= n2->branch_marker;
+						n = new_application(n1, n1);
+						*(n2->updateable) = n;
 						++n->refcnt;
 						free_node(tmp);
 						performed_reduction = 1;
@@ -306,19 +300,20 @@ reduce_graph(struct node *root)
 				case COMB_B:
 					if (STACK_SIZE(stack) > 4)
 					{
-						struct node *ltmp = PARENTNODE(stack, 3)->left;
-						struct node *rtmp = PARENTNODE(stack, 3)->right;
+						struct node *n3 =  PARENTNODE(stack, 3);
+						struct node *ltmp = n3->left;
+						struct node *rtmp = n3->right;
 						NT SS;
-						PARENTNODE(stack, 3)->left
+						n3->left
 							= PARENTNODE(stack, 1)->right;
-						++PARENTNODE(stack, 3)->left->refcnt;
-						PARENTNODE(stack, 3)->right
+						++n3->left->refcnt;
+						n3->right
 							= new_application(
 								PARENTNODE(stack, 2)->right,
-								PARENTNODE(stack, 3)->right
+								n3->right
 							);
-						++PARENTNODE(stack, 3)->right->refcnt;
-						PARENTNODE(stack, 3)->examined = 0;
+						++n3->right->refcnt;
+						n3->examined = 0;
 
 						free_node(ltmp);
 						free_node(rtmp);
@@ -330,19 +325,20 @@ reduce_graph(struct node *root)
 				case COMB_C:
 					if (STACK_SIZE(stack) > 4)
 					{
-						struct node *ltmp = PARENTNODE(stack, 3)->left;
-						struct node *rtmp = PARENTNODE(stack, 3)->right;
+						struct node *n3 =  PARENTNODE(stack, 3);
+						struct node *ltmp = n3->left;
+						struct node *rtmp = n3->right;
 						NT SS;
-						PARENTNODE(stack, 3)->left
+						n3->left
 							= new_application(
 								PARENTNODE(stack, 1)->right,
-								PARENTNODE(stack, 3)->right
+								n3->right
 							);
-						++PARENTNODE(stack, 3)->left->refcnt;
-						PARENTNODE(stack, 3)->right
+						++n3->left->refcnt;
+						n3->right
 							= PARENTNODE(stack, 2)->right;
-						++PARENTNODE(stack, 3)->right->refcnt;
-						PARENTNODE(stack, 3)->examined = 0;
+						++n3->right->refcnt;
+						n3->examined = 0;
 
 						free_node(ltmp);
 						free_node(rtmp);
@@ -354,15 +350,16 @@ reduce_graph(struct node *root)
 				case COMB_W:
 					if (STACK_SIZE(stack) > 3)
 					{
-						struct node *ltmp = PARENTNODE(stack, 2)->left;
+						struct node *n2 = PARENTNODE(stack, 2);
+						struct node *ltmp = n2->left;
 						NT SS;
-						PARENTNODE(stack, 2)->left
+						n2->left
 							= new_application(
 								PARENTNODE(stack, 1)->right,
-								PARENTNODE(stack, 2)->right
+								n2->right
 							);
-						++PARENTNODE(stack, 2)->left->refcnt;
-						PARENTNODE(stack, 2)->examined = 0;
+						++n2->left->refcnt;
+						n2->examined = 0;
 						free_node(ltmp);
 						performed_reduction = 1;
 						pop_stack_cnt = 2;
