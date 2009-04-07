@@ -147,7 +147,7 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 			/* [x] A -> K A, x not appearing in A */
 			r = new_application(new_combinator(COMB_K), arena_copy_graph(tree));
 		else {
-			if (tree->right->typ == COMBINATOR && (tree->right->name == var->name) && !var_appears_in_graph(var, tree->left))
+			if ((tree->right->typ == COMBINATOR && tree->right->name == var->name) && !var_appears_in_graph(var, tree->left))
 			{
 				/* [x] N x -> N      x not appearing in N */
 				r = arena_copy_graph(tree->left);
@@ -156,9 +156,9 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 				r = new_application(
 					new_application(
 						new_combinator(COMB_S),
-						curry_bracket_abstraction(var, tree->left)
+						curry2_bracket_abstraction(var, tree->left)
 					),
-					curry_bracket_abstraction(var, tree->right)
+					curry2_bracket_abstraction(var, tree->right)
 				);
 			}
 		}
