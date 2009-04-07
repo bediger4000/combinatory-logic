@@ -60,3 +60,8 @@ def ogre (reduce (F F))
 def ogre (reduce S (K (S (S (K S) K) K)) (K (S (S (K S) K) K)))
 (reduce ogre x) = ogre
 (reduce ogre x y z w u v) = ogre
+
+# Found by Prover9, version 11A, 2009-03-04
+def ogre (reduce S S K (K (S S K)))
+(reduce ogre x) = ogre
+(reduce ogre x y z w u v) = ogre
