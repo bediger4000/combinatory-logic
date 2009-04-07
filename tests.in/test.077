@@ -1,0 +1,35 @@
+# From Johannes Waldmann's thesis, "The Combinator S",
+# section 5.5, "Terms without normal forms",
+trace on
+detect on
+count 10
+
+# This constitutes example 5.5.1.
+# The reduction graph of X0 X0 comprises a "line": each term in
+# the infinite reduction graph has only one redex.
+def X0 S (S S) (S S)
+X0 X0
+
+# example 5.5.2, "An infinite head reduction"
+# The outermost S always reduces, although it does always have
+# more than 1 redex at any given point in the reduction graph.
+def A (S S S)
+A A A
+
+# Un-numbered section, "More infinite unique reductions"
+# Both of the following should have "line" reduction graphs
+def myB (S A S)
+def myC (S (S (S myB)) S)
+myC (S myC)
+
+def myD ((S (S myB)) (S (S myB)))
+myD (S myD)
+
+# Un-numbered section, "A history lesson on terms without normal form"
+# Apparently a Barendregt term.
+S A A (S A A)
+
+# "shortest term with no normal form", has a line reduction graph for the first
+# 12 redexes, then it branches out.
+count 20
+S (S S) S S S S

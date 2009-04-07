@@ -1,0 +1,11 @@
+# Test 4-rule "Curry-Feys" bracket abstraction
+abstraction curry2
+#   [x] x   -> I
+#   [x] N x -> N      x not appearing in N <-- distinguishes from "curry" abstraction
+#   [x] N   -> K N,   x not appearing in N
+#   [x] M N -> S ([x]M) ([x]N)
+([x] x) a
+([x] N x) a
+([x] N ) a
+([x] S x x) a
+([x][y][z] x z (y z)) # Should end up as single S combinator
