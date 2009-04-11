@@ -131,7 +131,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 	int   numerical_constant;
 	enum OutputModifierCommands command;
 	struct node *node;
-	enum combinatorName cn;
+	enum primitiveName cn;
 	struct node *(*bafunc)(struct node *, struct node *);
 }
 

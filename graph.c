@@ -92,11 +92,11 @@ canonicalize(struct node *node, struct buffer *b)
 	case APPLICATION:
 		buffer_append(b, ".", 1);
 		canonicalize(node->left, b);
-		if (node->right->typ == COMBINATOR)
+		if (ATOM == node->right->typ)
 			buffer_append(b, " ", 1);
 		canonicalize(node->right, b);
 		break;
-	case COMBINATOR:
+	case ATOM:
 		buffer_append(b, node->name, strlen(node->name));
 		break;
 	case UNTYPED:
@@ -126,7 +126,7 @@ reduce_graph(struct node *root)
 
 			int pop_stack_cnt = 1;
 			int performed_reduction = 0;
-			enum combinatorName cn = TOPNODE(stack)->cn;
+			enum primitiveName cn = TOPNODE(stack)->cn;
 			struct node *topnode;
 
 			switch (TOPNODE(stack)->typ)
@@ -155,7 +155,7 @@ reduce_graph(struct node *root)
 					}
 				}
 				break;
-			case COMBINATOR:
+			case ATOM:
 				/* node->typ indicates a combinator, which can comprise a built-in,
 				 * or it can comprise a mere variable. Let node->cn decide. */
 				if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
@@ -370,7 +370,7 @@ reduce_graph(struct node *root)
 					break;
 				}
 				if (performed_reduction) SS;
-				break;  /* end of case COMBINATOR, switch on node->cn */
+				break;  /* end of case ATOM, switch on node->cn */
 			case UNTYPED:
 				break;
 			}
@@ -497,7 +497,7 @@ reduction_count(struct node *node, int stack_depth)
 			reductions += reduction_count(node->left, stack_depth + 1);
 			reductions += reduction_count(node->right, 0);
 			break;
-		case COMBINATOR:
+		case ATOM:
 			switch (node->cn)
 			{
 			case COMB_I:
@@ -564,7 +564,7 @@ reduction_count(struct node *node, int stack_depth, int *child_redex, struct buf
 			if (print_right_paren) buffer_append(b, ")", 1);
 
 			break;
-		case COMBINATOR:
+		case ATOM:
 			buffer_append(b, node->name, strlen(node->name));
 			switch (node->cn)
 			{
@@ -631,7 +631,7 @@ node_count(struct node *node, int count_interior_nodes)
 			count += node_count(node->left, count_interior_nodes);
 			count += node_count(node->right, count_interior_nodes);
 			break;
-		case COMBINATOR:
+		case ATOM:
 			count = 1;
 			break;
 		case UNTYPED:

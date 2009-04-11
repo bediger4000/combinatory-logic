@@ -96,7 +96,7 @@ copy_graph(struct node *p)
 		r->right = copy_graph(p->right);
 		r->examined = 0;
 		break;
-	case COMBINATOR:
+	case ATOM:
 		r->name = p->name;
 		r->cn = p->cn;
 		r->left = r->right = NULL;

@@ -22,13 +22,13 @@
 #ident "$Id$"
 #endif
 
-enum nodeType { UNTYPED, APPLICATION, COMBINATOR };
-enum combinatorName { COMB_NONE = 0, COMB_S = 1, COMB_K = 2, COMB_I = 3, COMB_C = 4, COMB_B = 5, COMB_W = 6, COMB_T = 7, COMB_M  = 8, COMB_J = 9};
+enum nodeType { UNTYPED, APPLICATION, ATOM };
+enum primitiveName { COMB_NONE = 0, COMB_S = 1, COMB_K = 2, COMB_I = 3, COMB_C = 4, COMB_B = 5, COMB_W = 6, COMB_T = 7, COMB_M  = 8, COMB_J = 9};
 
 struct node {
 	int sn;
 	enum nodeType typ;
-	enum combinatorName cn;
+	enum primitiveName cn;
 	const char *name;
 	struct node *left;
 	struct node *right;
@@ -48,7 +48,7 @@ struct node {
 #define MARK_RIGHT_BRANCH_TRAVERSED(n) ((n)->examined |= RIGHT)
 
 struct node *new_application(struct node *left_child, struct node *right_child);
-struct node *new_combinator(enum combinatorName cn);
+struct node *new_combinator(enum primitiveName cn);
 struct node *new_term(const char *name);
 
 void init_node_allocation(int memory_info_flag);

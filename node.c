@@ -77,11 +77,11 @@ new_application(struct node *left_child, struct node *right_child)
  * and the name of an "S" combintor allocated here.
  */
 struct node *
-new_combinator(enum combinatorName cn)
+new_combinator(enum primitiveName cn)
 {
 	struct node *r = new_node();
 
-	r->typ = COMBINATOR;
+	r->typ = ATOM;
 	r->cn = cn;
 	switch (r->cn)
 	{
@@ -106,7 +106,7 @@ new_term(const char *name)
 {
 	struct node *r = new_node();
 
-	r->typ = COMBINATOR;
+	r->typ = ATOM;
 	r->cn = COMB_NONE;
 	r->name = name;
 
@@ -162,7 +162,7 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 				node->sn, node->right->sn);
 
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (elaborate_output)
 			printf("%s{%d}", node->name, node->sn);
 		else
@@ -288,7 +288,7 @@ arena_copy_graph(struct node *p)
 		r->right = arena_copy_graph(p->right);
 		++r->right->refcnt;
 		break;
-	case COMBINATOR:
+	case ATOM:
 		r->name = p->name;
 		r->cn = p->cn;
 		break;
@@ -349,7 +349,7 @@ graph_graph(struct node *node, FILE *fout, int reduction_node_sn, int counter)
 			if (node->right) fprintf(fout, "n%x -- n%x;\n", this_node_number, child_counter + 1);
 		}
 
-		if (COMBINATOR == node->typ)
+		if (ATOM == node->typ)
 			r = this_node_number;
 	}
 

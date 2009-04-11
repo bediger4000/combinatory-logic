@@ -62,7 +62,7 @@ struct stream_node *file_stack = NULL;
 void set_yyin_stdin(void);
 void reset_yyin(void);
 void set_yyin(const char *filename);
-int possible_combinator_decision(enum combinatorName potential_combinator);
+int possible_combinator_decision(enum primitiveName potential_combinator);
 
 extern int as_combinator[];
 
@@ -329,7 +329,7 @@ yywrap()
 }
 
 int
-possible_combinator_decision(enum combinatorName potential_combinator)
+possible_combinator_decision(enum primitiveName potential_combinator)
 {
 	int treat_as_combinator = as_combinator[potential_combinator];
 	int r = TK_IDENTIFIER;

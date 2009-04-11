@@ -44,7 +44,7 @@ var_appears_in_graph(struct node *var, struct node *tree)
 		r = var_appears_in_graph(var, tree->left)
 			|| var_appears_in_graph(var, tree->right);
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn)
 		{
 			if (COMB_NONE == var->cn)
@@ -75,7 +75,7 @@ free_var_appears_in_graph(struct node *tree)
 		if (!r)
 			r = free_var_appears_in_graph(tree->right);
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (COMB_NONE == tree->cn)
 			r = 1;
 		break;
@@ -111,7 +111,7 @@ curry_bracket_abstraction(struct node *var, struct node *tree)
 			);
 		}
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn && var->name == tree->name)
 			/* [x] x -> I */
 			r = new_combinator(COMB_I);
@@ -147,7 +147,7 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 			/* [x] A -> K A, x not appearing in A */
 			r = new_application(new_combinator(COMB_K), arena_copy_graph(tree));
 		else {
-			if ((tree->right->typ == COMBINATOR && tree->right->name == var->name) && !var_appears_in_graph(var, tree->left))
+			if ((tree->right->typ == ATOM && tree->right->name == var->name) && !var_appears_in_graph(var, tree->left))
 			{
 				/* [x] N x -> N      x not appearing in N */
 				r = arena_copy_graph(tree->left);
@@ -163,7 +163,7 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 			}
 		}
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn && var->name == tree->name)
 			/* [x] x -> I */
 			r = new_combinator(COMB_I);
@@ -225,7 +225,7 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 					);
 				}
 			} else if (var_appears_in_graph(var, tree->right)) {
-				if (COMBINATOR == tree->right->typ && var->name == tree->right->name)
+				if (ATOM == tree->right->typ && var->name == tree->right->name)
 				{
 					/* [x] N x -> N                x not appearing in N */
 					r = arena_copy_graph(tree->left);
@@ -242,7 +242,7 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 			}
 		}
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn && var->name == tree->name)
 			/* [x] x -> I */
 			r = new_combinator(COMB_I);
@@ -314,7 +314,7 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 					);
 				}
 			} else if (var_appears_in_graph(var, tree->right)) {
-				if (COMBINATOR == tree->right->typ && var->name == tree->right->name)
+				if (ATOM == tree->right->typ && var->name == tree->right->name)
 				{
 					/* [x] N x -> N                x not appearing in N */
 					r = arena_copy_graph(tree->left);
@@ -331,7 +331,7 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 			}
 		}
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn && var->name == tree->name)
 			/* [x] x -> I */
 			r = new_combinator(COMB_I);
@@ -430,7 +430,7 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 					);
 				}
 			} else if (var_appears_in_graph(var, tree->right)) {
-				if (COMBINATOR == tree->right->typ && var->name == tree->right->name)
+				if (ATOM == tree->right->typ && var->name == tree->right->name)
 				{
 					/* [x] N x -> N                x not appearing in N */
 					r = arena_copy_graph(tree->left);
@@ -447,7 +447,7 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 			}
 		}
 		break;
-	case COMBINATOR:
+	case ATOM:
 		if (var->cn == tree->cn && var->name == tree->name)
 			/* [x] x -> B M K */
 			r = new_application(
@@ -492,7 +492,7 @@ equivalent_graphs(struct node *g1, struct node *g2)
 			r = equivalent_graphs(g1->left, g2->left)
 				&& equivalent_graphs(g1->right, g2->right);
 			break;
-		case COMBINATOR:
+		case ATOM:
 			if (g1->cn == g2->cn && g1->name == g2->name)
 				r = 1;
 			break;
@@ -551,14 +551,14 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 			arena_copy_graph(tree));
 	}
 
-	if (COMBINATOR == tree->typ && var->name == tree->name)
+	if (ATOM == tree->typ && var->name == tree->name)
 	{
 		/* [x] x -> I */
 		return new_combinator(COMB_I);
 	}
 
 	if (APPLICATION == tree->typ
-		&& COMBINATOR == tree->right->typ
+		&& ATOM == tree->right->typ
 		&& var->name == tree->right->name
 		&& !var_appears_in_graph(var, tree->left)
 	)
@@ -569,9 +569,9 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 
 	if (APPLICATION == tree->typ
 		&& APPLICATION == tree->left->typ
-		&& COMBINATOR == tree->right->typ
+		&& ATOM == tree->right->typ
 		&& var->name == tree->right->name
-		&& COMBINATOR == tree->left->left->typ
+		&& ATOM == tree->left->left->typ
 		&& var->name == tree->left->left->name
 	)
 	{
