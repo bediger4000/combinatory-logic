@@ -60,16 +60,15 @@ lex.yy.o: lex.yy.c y.tab.h atom.h hashtable.h node.h
 y.tab.o: y.tab.c y.tab.h node.h atom.h hashtable.h graph.h \
 	abbreviations.h bracket_abstraction.h
 
-node.o: node.c node.h arena.h
-atom.o: atom.c atom.h hashtable.h
-hashtable.o: hashtable.c hashtable.h
-graph.o: graph.c graph.h node.h spine_stack.h
 arena.o: arena.c arena.h
-abbreviations.o: abbreviations.c abbreviations.h node.h hashtable.h
-spine_stack.o: spine_stack.c spine_stack.h
-bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h
+atom.o: atom.c atom.h hashtable.h
+bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h graph.h buffer.h
 buffer.o: buffer.c buffer.h
 cycle_detector.o: cycle_detector.c node.h graph.h buffer.h cycle_detector.h
+graph.o: graph.c graph.h node.h buffer.h spine_stack.h cycle_detector.h
+hashtable.o: hashtable.c hashtable.h node.h abbreviations.h
+node.o: node.c node.h arena.h
+spine_stack.o: spine_stack.c spine_stack.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
 	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)
