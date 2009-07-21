@@ -1,0 +1,46 @@
+# Test the "redexes" command.
+redexes I
+redexes a I
+redexes I a
+redexes a (I a)
+redexes a I a
+redexes I a b
+redexes x M
+redexes M x
+redexes M x y
+redexes x M y
+redexes x (M y)
+redexes K
+redexes K a
+redexes K a b c
+redexes T
+redexes T a
+redexes a T b
+redexes a (T b)
+redexes a (T b c)
+redexes T a b
+redexes T a b c
+redexes C
+redexes C a
+redexes C a b
+redexes y C a b
+redexes y (C a b x)
+redexes C a b c
+redexes C a b c d
+redexes B
+redexes B a
+redexes B a b
+redexes B a b c
+redexes B a b c d
+redexes W
+redexes W a
+redexes W a b
+redexes W a b c
+redexes W a b c d
+redexes J a
+redexes J a b
+redexes J a b c
+redexes J a b c d
+redexes J a b c d e f
+redexes a J b c d e f
+redexes x (J a b c d e f)
