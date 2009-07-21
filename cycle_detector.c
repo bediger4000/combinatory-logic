@@ -38,6 +38,8 @@ static char **cycle_stack = NULL;
 static int    cycle_stack_depth = 0;
 static int    cycle_stack_size = 0;
 
+int find_trivial_cycle(struct node *node, struct node *parent, struct node *gparent, int stack_depth);
+
 void
 free_detection(void)
 {
@@ -66,8 +68,12 @@ cycle_detector(struct node *root, int max_redex_count)
 	{
 		if (!strcmp(graph, cycle_stack[i-1]))
 		{
-			printf("Found a %scycle of length %d, %d terms evaluated, ends with \"%s\"\n",
-				(max_redex_count == 1)? "pure ": "", (cycle_stack_depth - i + 1),
+			int trivial_cycle = (find_trivial_cycle(root->left, NULL, NULL, 0) == 1);
+
+			printf("Found a %s%scycle of length %d, %d terms evaluated, ends with \"%s\"\n",
+				(max_redex_count == 1)? "pure ": "", 
+				trivial_cycle? "trivial ": "", 
+				(cycle_stack_depth - i + 1),
 				cycle_stack_depth,
 				graph
 			);
@@ -99,4 +105,67 @@ cycle_detector(struct node *root, int max_redex_count)
 	}
 
 	return detected_cycle;
+}
+
+int
+find_trivial_cycle(struct node *node, struct node *parent, struct node *gparent, int stack_depth)
+{
+	if (node)
+	{
+		switch (node->typ)
+		{
+		case APPLICATION:
+			if (!node->left && !node->right) return 0;
+
+			if (find_trivial_cycle(node->left, node, parent, stack_depth + 1) > 0)
+				return 1;
+
+			if (find_trivial_cycle(node->right, NULL, NULL, 0) > 0)
+				return 1;
+
+			break;
+
+		case ATOM:
+			switch (node->cn)
+			{
+			case COMB_M:
+				if (stack_depth > 0)
+					if (parent->right->typ == ATOM && parent->right->cn == COMB_M)
+						return 1;
+				break;
+			case COMB_W:
+				if (stack_depth > 1)
+				{
+					if (parent->right->typ == ATOM && parent->right->cn == COMB_W
+						&& gparent->right->typ == ATOM && gparent->right->cn == COMB_W)
+							return 1;
+				}
+				break;
+			case COMB_I:
+				if (stack_depth > 0)
+					return 0;
+				break;
+			case COMB_K:
+			case COMB_T:
+				if (stack_depth > 0)
+					return 0;
+			case COMB_B:
+			case COMB_C:
+			case COMB_S:
+				if (stack_depth > 2)
+					return 0;
+			case COMB_J:
+				if (stack_depth > 3)
+					return 0;
+				break;
+			case COMB_NONE:
+				break;
+			}
+			break;
+		case UNTYPED:
+			break;
+		}
+	}
+
+	return -1;
 }
