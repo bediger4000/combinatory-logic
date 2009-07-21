@@ -1,0 +1,15 @@
+C (B (C (W (B (C B K)))) K) (C (B (C (W (B (C B K)))) K)) y
+Reduction limit
+C (B (C (W (B (C B K)))) K) (C (B (C (W (B (C B K)))) K)) (K (K (K (K (K (K y))))))
+C (W (B B)) K (C (W (B B)) K) y
+Reduction limit
+W (B B) (C (W (B B)) K) K (K (K (K (K (K y)))))
+W W (B (B C) W)
+Reduction limit
+C (C (C (C (C (C (B C (W (B (B C) W)) (B (B C) W)))))))
+W W (W W)
+Reduction limit
+W (W W) (W W) (W W) (W W) (W W) (W W) (W W) (W W) (W W) (W W) (W W) (W W)
+B W W (B W W) (B W W)
+Reduction limit
+B W W (B W W) (B W W) (B W W) (B W W) (B W W) (B W W) (B W W) (B W W) (B W W)

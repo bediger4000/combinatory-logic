@@ -1,0 +1,360 @@
+Equivalent
+Equivalent
+B (B (W (W (B B))) K) (K (B (W (W (B B))) K)) x y z
+B (B (W (W (B B))) K) (K (B (W (W (B B))) K))
+Equivalent
+Equivalent
+B (W (B (C B K) B)) (K (W (B (C B K) B))) x y z
+B (W (B (C B K) B)) (K (W (B (C B K) B)))
+Equivalent
+Equivalent
+B (W (B (C B) K)) (K (W (B (C B) K))) x y z
+B (W (B (C B) K)) (K (W (B (C B) K)))
+Equivalent
+Equivalent
+B (W (B I)) (K (B (B (W (B I))) K)) x y z
+B (W (B I)) (K (B (B (W (B I))) K))
+Equivalent
+Equivalent
+B (W (C (B (C B) K))) (K (W (C (B (C B) K)))) x y z
+B (W (C (B (C B) K))) (K (W (C (B (C B) K))))
+Equivalent
+Equivalent
+B (W (C (B B B) K)) (K (W (C (B B B) K))) x y z
+B (W (C (B B B) K)) (K (W (C (B B B) K)))
+Equivalent
+Equivalent
+B (W (C I)) (K (B (B (W (C I))) K)) x y z
+B (W (C I)) (K (B (B (W (C I))) K))
+Equivalent
+Equivalent
+B (W (K (B (W (B B W)) K))) (K (B (W (B B W)) K)) x y z
+B (W (K (B (W (B B W)) K))) (K (B (W (B B W)) K))
+Equivalent
+Equivalent
+B (W (W K)) (K (B (B (W (W K))) K)) x y z
+B (W (W K)) (K (B (B (W (W K))) K))
+Equivalent
+Equivalent
+B (W I) (K (B (B (W I)) K)) x y z
+B (W I) (K (B (B (W I)) K))
+Equivalent
+Equivalent
+B I (C (K (W (B (B I)))) (C (K (W (B (B I)))))) x y z
+B I (C (K (W (B (B I)))) (C (K (W (B (B I))))))
+Equivalent
+Equivalent
+C (B (K (W I)) (K (W I))) (C (B (K (W I)) (K (W I)))) x y z
+C (B (K (W I)) (K (W I))) (C (B (K (W I)) (K (W I))))
+Equivalent
+Equivalent
+C (B (K (W I)) B) (C (B (K (W I)) B)) x y z
+C (B (K (W I)) B) (C (B (K (W I)) B))
+Equivalent
+Equivalent
+C (B (K (W I)) C) (C (B (K (W I)) C)) x y z
+C (B (K (W I)) C) (C (B (K (W I)) C))
+Equivalent
+Equivalent
+C (B (K (W I)) I) (C (B (K (W I)) I)) x y z
+C (B (K (W I)) I) (C (B (K (W I)) I))
+Equivalent
+Equivalent
+C (B (K (W I)) K) (C (B (K (W I)) K)) x y z
+C (B (K (W I)) K) (C (B (K (W I)) K))
+Equivalent
+Equivalent
+C (B (K (W I)) W) (C (B (K (W I)) W)) x y z
+C (B (K (W I)) W) (C (B (K (W I)) W))
+Equivalent
+Equivalent
+C (B I (K (W I))) (C (B I (K (W I)))) x y z
+C (B I (K (W I))) (C (B I (K (W I))))
+Equivalent
+Equivalent
+C (B W (C K)) (C (B W (C K))) x y z
+C (B W (C K)) (C (B W (C K)))
+Equivalent
+Equivalent
+C (B W (K (B I))) (C (B W (K (B I)))) x y z
+C (B W (K (B I))) (C (B W (K (B I))))
+Equivalent
+Equivalent
+C (B W (K (C I))) (C (B W (K (C I)))) x y z
+C (B W (K (C I))) (C (B W (K (C I))))
+Equivalent
+Equivalent
+C (B W (K (W K))) (C (B W (K (W K)))) x y z
+C (B W (K (W K))) (C (B W (K (W K))))
+Equivalent
+Equivalent
+C (B W (K I)) (C (B W (K I))) x y z
+C (B W (K I)) (C (B W (K I)))
+Equivalent
+Equivalent
+C (C (B K (W (B C C)))) (B K (W (B C C))) x y z
+C (C (B K (W (B C C)))) (B K (W (B C C)))
+Equivalent
+Equivalent
+C (C (B K (W I))) (C (C (B K (W I)))) x y z
+C (C (B K (W I))) (C (C (B K (W I))))
+Equivalent
+Equivalent
+C (C (C (K (W (B C C))))) (C (K (W (B C C)))) x y z
+C (C (C (K (W (B C C))))) (C (K (W (B C C))))
+Equivalent
+Equivalent
+C (C (C (K (W I)))) (C (C (C (K (W I))))) x y z
+C (C (C (K (W I)))) (C (C (C (K (W I)))))
+Equivalent
+Equivalent
+C (C (C K) (W (B C (C (C K))))) (W (B C (C (C K)))) x y z
+C (C (C K) (W (B C (C (C K))))) (W (B C (C (C K))))
+Equivalent
+Equivalent
+C (C (C K) (W I)) (C (C (C K) (W I))) x y z
+C (C (C K) (W I)) (C (C (C K) (W I)))
+Equivalent
+Equivalent
+C (C (K (W I)) (K (W I))) (C (C (K (W I)) (K (W I)))) x y z
+C (C (K (W I)) (K (W I))) (C (C (K (W I)) (K (W I))))
+Equivalent
+Equivalent
+C (C (K I) (W (B C (C (K I))))) (W (B C (C (K I)))) x y z
+C (C (K I) (W (B C (C (K I))))) (W (B C (C (K I))))
+Equivalent
+Equivalent
+C (C (K I) (W I)) (C (C (K I) (W I))) x y z
+C (C (K I) (W I)) (C (C (K I) (W I)))
+Equivalent
+Equivalent
+C (C (K W) (B I)) (C (C (K W) (B I))) x y z
+C (C (K W) (B I)) (C (C (K W) (B I)))
+Equivalent
+Equivalent
+C (C (K W) (C I)) (C (C (K W) (C I))) x y z
+C (C (K W) (C I)) (C (C (K W) (C I)))
+Equivalent
+Equivalent
+C (C (K W) (W K)) (C (C (K W) (W K))) x y z
+C (C (K W) (W K)) (C (C (K W) (W K)))
+Equivalent
+Equivalent
+C (C (K W) I) (C (C (K W) I)) x y z
+C (C (K W) I) (C (C (K W) I))
+Equivalent
+Equivalent
+C (C (W (B C K))) (C (C (W (B C K)))) x y z
+C (C (W (B C K))) (C (C (W (B C K))))
+Equivalent
+Equivalent
+C (C (W (B K))) (C (C (W (B K)))) x y z
+C (C (W (B K))) (C (C (W (B K))))
+Equivalent
+Equivalent
+C (C (W (C (B K)))) (C (C (W (C (B K))))) x y z
+C (C (W (C (B K)))) (C (C (W (C (B K)))))
+Equivalent
+Equivalent
+C (C (W I)) (B K (C (C (W I)))) x y z
+C (C (W I)) (B K (C (C (W I))))
+Equivalent
+Equivalent
+C (C (W I)) (C (K (C (C (W I))))) x y z
+C (C (W I)) (C (K (C (C (W I)))))
+Equivalent
+Equivalent
+C (K (B (W (B C K)) I)) (B (W (B C K)) I) x y z
+C (K (B (W (B C K)) I)) (B (W (B C K)) I)
+Equivalent
+Equivalent
+C (K (B (W I) I)) (C (K (B (W I) I))) x y z
+C (K (B (W I) I)) (C (K (B (W I) I)))
+Equivalent
+Equivalent
+C (K (B I (W (B C K)))) (B I (W (B C K))) x y z
+C (K (B I (W (B C K)))) (B I (W (B C K)))
+Equivalent
+Equivalent
+C (K (B I (W I))) (C (K (B I (W I)))) x y z
+C (K (B I (W I))) (C (K (B I (W I))))
+Equivalent
+Equivalent
+C (K (C (C W) (B C K))) (C (C W) (B C K)) x y z
+C (K (C (C W) (B C K))) (C (C W) (B C K))
+Equivalent
+Equivalent
+C (K (C (C W) I)) (C (K (C (C W) I))) x y z
+C (K (C (C W) I)) (C (K (C (C W) I)))
+Equivalent
+Equivalent
+C (K (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K))))) (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K)))) x y z
+C (K (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K))))) (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K))))
+Equivalent
+Equivalent
+C (K (W (B (B C I) K))) (W (B (B C I) K)) x y z
+C (K (W (B (B C I) K))) (W (B (B C I) K))
+Equivalent
+Equivalent
+C (K (W (B (B C K) I))) (W (B (B C K) I)) x y z
+C (K (W (B (B C K) I))) (W (B (B C K) I))
+Equivalent
+Equivalent
+C (K (W (B (B I C) K))) (W (B (B I C) K)) x y z
+C (K (W (B (B I C) K))) (W (B (B I C) K))
+Equivalent
+Equivalent
+C (K (W (B (C (C C)) K))) (W (B (C (C C)) K)) x y z
+C (K (W (B (C (C C)) K))) (W (B (C (C C)) K))
+Equivalent
+Equivalent
+C (K (W (B (W (K C)) K))) (W (B (W (K C)) K)) x y z
+C (K (W (B (W (K C)) K))) (W (B (W (K C)) K))
+Equivalent
+Equivalent
+C (K (W (B (W K)))) (C (K (W (B (W K))))) x y z
+C (K (W (B (W K)))) (C (K (W (B (W K)))))
+Equivalent
+Equivalent
+C (K (W (B C (B I K)))) (W (B C (B I K))) x y z
+C (K (W (B C (B I K)))) (W (B C (B I K)))
+Equivalent
+Equivalent
+C (K (W (B C (B K I)))) (W (B C (B K I))) x y z
+C (K (W (B C (B K I)))) (W (B C (B K I)))
+Equivalent
+Equivalent
+C (K (W (B C (W (K K))))) (W (B C (W (K K)))) x y z
+C (K (W (B C (W (K K))))) (W (B C (W (K K))))
+Equivalent
+Equivalent
+C (K (W (B C K))) (W (B C K)) x y z
+C (K (W (B C K))) (W (B C K))
+Equivalent
+Equivalent
+C (K (W (B I (B C K)))) (W (B I (B C K))) x y z
+C (K (W (B I (B C K)))) (W (B I (B C K)))
+Equivalent
+Equivalent
+C (K (W (B I I))) (C (K (W (B I I)))) x y z
+C (K (W (B I I))) (C (K (W (B I I))))
+Equivalent
+Equivalent
+C (K (W (B I))) (C (K (W (B I)))) x y z
+C (K (W (B I))) (C (K (W (B I))))
+Equivalent
+Equivalent
+C (K (W (B W K))) (C (K (W (B W K)))) x y z
+C (K (W (B W K))) (C (K (W (B W K))))
+Equivalent
+Equivalent
+C (K (W (C (B C K)))) (W (C (B C K))) x y z
+C (K (W (C (B C K)))) (W (C (B C K)))
+Equivalent
+Equivalent
+C (K (W (C (B I)))) (C (K (W (C (B I))))) x y z
+C (K (W (C (B I)))) (C (K (W (C (B I)))))
+Equivalent
+Equivalent
+C (K (W (C (C (B C K))))) (W (C (C (B C K)))) x y z
+C (K (W (C (C (B C K))))) (W (C (C (B C K))))
+Equivalent
+Equivalent
+C (K (W (C (C (B C)) K))) (W (C (C (B C)) K)) x y z
+C (K (W (C (C (B C)) K))) (W (C (C (B C)) K))
+Equivalent
+Equivalent
+C (K (W (C (C I)))) (C (K (W (C (C I))))) x y z
+C (K (W (C (C I)))) (C (K (W (C (C I)))))
+Equivalent
+Equivalent
+C (K (W (C (W K)))) (C (K (W (C (W K))))) x y z
+C (K (W (C (W K)))) (C (K (W (C (W K)))))
+Equivalent
+Equivalent
+C (K (W (C B I))) (C (K (W (C B I)))) x y z
+C (K (W (C B I))) (C (K (W (C B I))))
+Equivalent
+Equivalent
+C (K (W (C I))) (C (K (W (C I)))) x y z
+C (K (W (C I))) (C (K (W (C I))))
+Equivalent
+Equivalent
+C (K (W (C K B))) (C (K (W (C K B)))) x y z
+C (K (W (C K B))) (C (K (W (C K B))))
+Equivalent
+Equivalent
+C (K (W (C K C))) (C (K (W (C K C)))) x y z
+C (K (W (C K C))) (C (K (W (C K C))))
+Equivalent
+Equivalent
+C (K (W (C K I))) (C (K (W (C K I)))) x y z
+C (K (W (C K I))) (C (K (W (C K I))))
+Equivalent
+Equivalent
+C (K (W (C K K))) (C (K (W (C K K)))) x y z
+C (K (W (C K K))) (C (K (W (C K K))))
+Equivalent
+Equivalent
+C (K (W (C K W))) (C (K (W (C K W)))) x y z
+C (K (W (C K W))) (C (K (W (C K W))))
+Equivalent
+Equivalent
+C (K (W (K (W (B C K))))) (W (K (W (B C K)))) x y z
+C (K (W (K (W (B C K))))) (W (K (W (B C K))))
+Equivalent
+Equivalent
+C (K (W (K (W I)))) (C (K (W (K (W I))))) x y z
+C (K (W (K (W I)))) (C (K (W (K (W I)))))
+Equivalent
+Equivalent
+C (K (W (W (B K)))) (C (K (W (W (B K))))) x y z
+C (K (W (W (B K)))) (C (K (W (W (B K)))))
+Equivalent
+Equivalent
+C (K (W (W (C K)))) (C (K (W (W (C K))))) x y z
+C (K (W (W (C K)))) (C (K (W (W (C K)))))
+Equivalent
+Equivalent
+C (K (W (W (K (B C K))))) (W (W (K (B C K)))) x y z
+C (K (W (W (K (B C K))))) (W (W (K (B C K))))
+Equivalent
+Equivalent
+C (K (W (W (K I)))) (C (K (W (W (K I))))) x y z
+C (K (W (W (K I)))) (C (K (W (W (K I)))))
+Equivalent
+Equivalent
+C (K (W (W K))) (C (K (W (W K)))) x y z
+C (K (W (W K))) (C (K (W (W K))))
+Equivalent
+Equivalent
+C (K (W I)) (B (C (K (W I))) I) x y z
+C (K (W I)) (B (C (K (W I))) I)
+Equivalent
+Equivalent
+C (K (W I)) (B I (C (K (W I)))) x y z
+C (K (W I)) (B I (C (K (W I))))
+Equivalent
+Equivalent
+C (K (W I)) (C (C C) (K (W I))) x y z
+C (K (W I)) (C (C C) (K (W I)))
+Equivalent
+Equivalent
+C (K (W I)) (C (K (W I)) (B (C (K (W I))) (C (K (W I))))) x y z
+C (K (W I)) (C (K (W I)) (B (C (K (W I))) (C (K (W I)))))
+Equivalent
+Equivalent
+C (K (W I)) (C (K (W I))) x y z
+C (K (W I)) (C (K (W I)))
+Equivalent
+Equivalent
+C (K (W I)) (W (K (C (K (W I))))) x y z
+C (K (W I)) (W (K (C (K (W I)))))
+Equivalent
+Equivalent
+C (W (B (K (W I)))) (C (W (B (K (W I))))) x y z
+C (W (B (K (W I)))) (C (W (B (K (W I)))))
+Equivalent
+Equivalent
+C (W (K (K (W I)))) (C (W (K (K (W I))))) x y z
+C (W (K (K (W I)))) (C (W (K (K (W I)))))
