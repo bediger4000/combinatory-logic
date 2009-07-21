@@ -1,0 +1,58 @@
+cycles on
+M M         # period 1   100% M - M
+W W W       # period 1   100% W - W
+W I (W I)   # period 2   50% W, 50% I - WI
+W T (W T)   # period 2   50% W, 50% T - WT
+W C (W C) (W C) # period 2, pure - WC
+C W (C W) (C W) # period 2, pure - CW
+B I M (B I M) # period 3 33.3% B, 33.3% I, 33.3% M - BIM
+W (W K) (W (W K)) # period 3  67% W, 33% K - WWK
+W (C K K) (W (C K K)) # period 3, pure - 33% W, 33% C, 33% K - WCK
+S T T (S T T)  # period 3  - STT
+S T I (S T I)  # period 3  - STI
+M (M (K M))    # period 3 - MMK
+M (M (B T M))  # period 3 - MMBT
+M (T T (K M))  # period 3 - MTK
+M (T K (K M))  # period 3 - MTK
+W C (C (W C)) (W C) # period 3, pure - WCC, form of "X Y X"
+C (W C) x (C (W C)) # period 3, pure, CWC, form of "X Y X", where Y does nothing.
+B M T (B M T) (B M T) # period 4, pure, BMTK basis - BMTT
+S T (I I) (S T (I I))  # period 4  - STII
+W (B (T M) K) (W (B (T M) K)) # period 4, WBTK
+B (W K) W (B (W K) W) (B (W K) W) # period 4, pure - BWKW
+W (C (C C)) (W (C (C C))) (W (C (C C))) (W (C (C C)))  # period 4, pure. WCCC
+M (T (B M T)) # period 4, pure, MTTB
+B W (C W) (C W) (B W)  # period 4, pure, BWCWBW.  Doesn't fit an X X, X X X, X X X X subterm scheme.
+T T (B M) (T T (B M)) # period 5, TBMTT
+B (T M) K (M (B (B (T M) K) M)) # period 5, BBTKM
+M (B (B M K) M)  # period 5 - MBBMK
+M (B M (B K M))  # period 5 - MBMBK
+M (M (T (K M)))  # period 5 - MMTTK
+B W W (K (B (B W W) K)) (B (B W W) K) # period 5, pure, BWWKB
+W (W (W (K (K W)))) (W (W (K (K W))))  # period 5, pure - WWWKK
+B I (C (W C)) I (B I (C (W C))) # period 5, pure, BICWC
+C (W I) (W I) (C (W C)) # period 5, pure, CWICW, no "X X" or "X X X" pattern
+W I (C (W C)) (W I) # period 5, pure, from same cycle as immediately preceding, X Y X pattern
+W (W (K (W K))) (W (W (K (W K)))) (W (W (K (W K))))  # period 5 - WWKWK
+W (W (W (K K))) (W (W (W (K K)))) (W (W (W (K K))))  # period 5 - WWWKK
+I (B W (C W)) (B W (C W)) I # period 5, pure - IBWCW, x y y x pattern
+W K (B W (C W)) (B W (C W)) (W K) # period 6, pure, x y y x pattern
+W C (W I) (W C) # period 6, pure - WCWIWC  "X Y X" pattern
+B (K (S K K) y) (K M z) (B (K (S K K) y) (K M z)) # period 6 - BKSKKM
+W (B ((C (W K)) M) K) (W (B ((C (W K)) M) K))  # period 6, pure - WBCWKK
+C (S (C C) (C C)) (C (S (C C) (C C))) (C (S (C C) (C C)))  # period 6 - CSCCCC
+B (K (S K K) y) (K (I M) z) (B (K (S K K) y) (K (I M) z))  # period 7 - BKSKKIM
+B M (B T T) (B M (B T T)) # period 7 - BMBTTTT
+M (B (B M T) T)  # period 7 - BBMTTTT
+T (K M) T (T (K M) T) (M (T (K M) T)) # period 7 - TTTKMMT
+W I (B C (W I)) a b # period 8 - WIBCWIBC, continually transpose "a" and "b" terms every 4 reductions
+C C (S (C C) (C C)) (C C) (C C (S (C C) (C C)) (C C)) (C C (S (C C) (C C)) (C C))  # period 9 - CCCCSCCCC
+B W (W C) (B W (W C)) K # period 9, BWWCBWWCK, the K actually plays a part
+B W (W (B (B (C (W K))))) (B W (W (B (B (C (W K)))))) (C K K)  # period 10 - U U I - BWWBBCWKCK
+C C (C C (W (B (C C) (C C)))) (W (B (C C) (C C))) (W (B (C C) (C C))) # period 14 - CCWBCCWBCCCCCC
+B B C (C C) (C C) (C C (B (B W) (B B C) (C C) (C C)) (C C)) (C C (B (B W) (B B C) (C C) (C C)) (C C)) (C C (B (B W) (B B C) (C C) (C C)) (C C))  # period 14 - BBCCCCCCCCCBBW
+W (C B (C C)) (C C (W (C B (C C)))) (W (C B (C C))) # pure cycle, period 19 - WCBCCCCWCBWCBCCCCCC
+W (B W (B C)) (B W (B C)) W  # period 19 - WBWBCBWBCBWBCWBWBCW
+W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C))))))  # period 30 - WBCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+def myT J (J I I) (J I I) (J (J I I) (J I I) (J I J))
+myT myT myT myT #  period 34 - JJIIIJIIIJJIIIJIIIJIJIJIIIJIIIJIII

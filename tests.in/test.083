@@ -1,0 +1,33 @@
+# "Line" reduction graphs, as per JW Klop's "Cycles in 
+# Combinatory Logic Reduction", section 3(?)
+# BCWK basis, perhaps the easiest to get a "line"
+# reduction graph out of.
+
+# Two terms with "line" reduction graphs.
+# F F y -> F F (K y)
+
+count 20
+
+def F (C (B (C (W (B (C B K)))) K))
+F F y
+
+def F C(W(B B)) K
+F F y
+
+# Makes an infinite series of C-combinator prefix
+W W (B (B C) W)
+
+# all-W line, in BWCK:
+W W (W W)
+# Can't do an all-M line, but an all-S line works.
+# What about an all-A line in OAME or AMEN?
+
+# Another line, executes alternating Bs, Ws
+# B W W a b  -> a b b b
+# a = B W W, b = B W W
+# after B W W reduces, you have:
+# B W W (B W W) (B W W) (B W W)
+# Every 3 head reductions leaves  (B W W) suffix
+# that does not include a redex.
+
+B W W (B W W) (B W W)

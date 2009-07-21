@@ -1,0 +1,368 @@
+# All the unique "ogre" combinators I found that arise
+# from 7 or fewer BWICK combinators.  Actually, these
+# all derive from terms F x y -> x x.  Some such terms
+# F, like "K (C (C (W I)) (B K (C (C (W I)))))" exist
+# in normal form, but don't qualify as an ogre.
+# K (C (C (W I)) (B K (C (C (W I))))) -> C (C (W I)) (B K (C (C (W I))))
+# which does qualify as an ogre.  Weird.
+def F B (B (W (W (B B))) K) (K (B (W (W (B B))) K))
+F = (reduce F)  # Proof of normal form
+F = (reduce F x y z)  # Proof it returns to normal form
+F x y z
+def F B (W (B (C B K) B)) (K (W (B (C B K) B)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (B (C B) K)) (K (W (B (C B) K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (B I)) (K (B (B (W (B I))) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (C (B (C B) K))) (K (W (C (B (C B) K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (C (B B B) K)) (K (W (C (B B B) K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (C I)) (K (B (B (W (C I))) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (K (B (W (B B W)) K))) (K (B (W (B B W)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W (W K)) (K (B (B (W (W K))) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B (W I) (K (B (B (W I)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F B I (C (K (W (B (B I)))) (C (K (W (B (B I))))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) (K (W I))) (C (B (K (W I)) (K (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) B) (C (B (K (W I)) B))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) C) (C (B (K (W I)) C))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) I) (C (B (K (W I)) I))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) K) (C (B (K (W I)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B (K (W I)) W) (C (B (K (W I)) W))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B I (K (W I))) (C (B I (K (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B W (C K)) (C (B W (C K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B W (K (B I))) (C (B W (K (B I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B W (K (C I))) (C (B W (K (C I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B W (K (W K))) (C (B W (K (W K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (B W (K I)) (C (B W (K I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (B K (W (B C C)))) (B K (W (B C C)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (B K (W I))) (C (C (B K (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (C (K (W (B C C))))) (C (K (W (B C C))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (C (K (W I)))) (C (C (C (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (C K) (W (B C (C (C K))))) (W (B C (C (C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (C K) (W I)) (C (C (C K) (W I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K (W I)) (K (W I))) (C (C (K (W I)) (K (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K I) (W (B C (C (K I))))) (W (B C (C (K I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K I) (W I)) (C (C (K I) (W I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K W) (B I)) (C (C (K W) (B I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K W) (C I)) (C (C (K W) (C I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K W) (W K)) (C (C (K W) (W K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (K W) I) (C (C (K W) I))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (W (B C K))) (C (C (W (B C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (W (B K))) (C (C (W (B K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (W (C (B K)))) (C (C (W (C (B K)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (W I)) (B K (C (C (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (C (W I)) (C (K (C (C (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (B (W (B C K)) I)) (B (W (B C K)) I)
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (B (W I) I)) (C (K (B (W I) I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (B I (W (B C K)))) (B I (W (B C K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (B I (W I))) (C (K (B I (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (C (C W) (B C K))) (C (C W) (B C K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (C (C W) I)) (C (K (C (C W) I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+# wow, really long, 42 atoms.
+def F C (K (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K))))) (C (K (B (W (B C K)) (W (B C K)))) (B (W (B C K)) (W (B C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (B C I) K))) (W (B (B C I) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (B C K) I))) (W (B (B C K) I))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (B I C) K))) (W (B (B I C) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (C (C C)) K))) (W (B (C (C C)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (W (K C)) K))) (W (B (W (K C)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B (W K)))) (C (K (W (B (W K)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B C (B I K)))) (W (B C (B I K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B C (B K I)))) (W (B C (B K I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B C (W (K K))))) (W (B C (W (K K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B C K))) (W (B C K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B I (B C K)))) (W (B I (B C K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B I I))) (C (K (W (B I I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B I))) (C (K (W (B I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (B W K))) (C (K (W (B W K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (B C K)))) (W (C (B C K)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (B I)))) (C (K (W (C (B I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (C (B C K))))) (W (C (C (B C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (C (B C)) K))) (W (C (C (B C)) K))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (C I)))) (C (K (W (C (C I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C (W K)))) (C (K (W (C (W K)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C B I))) (C (K (W (C B I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C I))) (C (K (W (C I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C K B))) (C (K (W (C K B))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C K C))) (C (K (W (C K C))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C K I))) (C (K (W (C K I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C K K))) (C (K (W (C K K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (C K W))) (C (K (W (C K W))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (K (W (B C K))))) (W (K (W (B C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (K (W I)))) (C (K (W (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (W (B K)))) (C (K (W (W (B K)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (W (C K)))) (C (K (W (W (C K)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (W (K (B C K))))) (W (W (K (B C K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (W (K I)))) (C (K (W (W (K I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W (W K))) (C (K (W (W K))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (B (C (K (W I))) I)
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (B I (C (K (W I))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (C (C C) (K (W I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (C (K (W I)) (B (C (K (W I))) (C (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (C (K (W I)))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (K (W I)) (W (K (C (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (W (B (K (W I)))) (C (W (B (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
+def F C (W (K (K (W I)))) (C (W (K (K (W I)))))
+F = (reduce F)
+F = (reduce F x y z)
+F x y z
