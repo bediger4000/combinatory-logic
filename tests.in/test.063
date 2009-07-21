@@ -6,6 +6,9 @@
 # U U K x
 # = K (U U K) x
 # = U U K
+# However, no term Y K has a normal form: the Quasi-leftmost
+# reduction theorem applies. Y K reduces to K (Y K)
+# Y K x -> K (Y K) x -> Y K -> K (Y K) -> K (K (Y K)) -> ...
 #
 # A simple way to think about it:
 # F x y -> x x    Which seems like an easy term F: B K M works.
