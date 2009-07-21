@@ -483,57 +483,6 @@ read_line(struct node *root)
 	return single_step;
 }
 
-#ifdef KRUNK
-int
-reduction_count(struct node *node, int stack_depth)
-{
-	int reductions = 0;
-
-	if (node)
-	{
-		switch (node->typ)
-		{
-		case APPLICATION:
-			reductions += reduction_count(node->left, stack_depth + 1);
-			reductions += reduction_count(node->right, 0);
-			break;
-		case ATOM:
-			switch (node->cn)
-			{
-			case COMB_I:
-			case COMB_M:
-				if (stack_depth > 0)
-					reductions = 1;
-				break;
-			case COMB_K:
-			case COMB_W:
-			case COMB_T:
-				if (stack_depth > 1)
-					reductions = 1;
-				break;
-			case COMB_B:
-			case COMB_C:
-			case COMB_S:
-				if (stack_depth > 2)
-					reductions = 1;
-				break;
-			case COMB_J:
-				if (stack_depth > 3)
-					reductions = 1;
-				break;
-			case COMB_NONE:
-				break;
-			}
-			break;
-		case UNTYPED:
-			break;
-		}
-	}
-
-	return reductions;
-}
-#endif
-
 int
 reduction_count(struct node *node, int stack_depth, int *child_redex, struct buffer *b)
 {
