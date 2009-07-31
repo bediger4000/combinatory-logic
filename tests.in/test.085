@@ -1,0 +1,62 @@
+# Section 24, "Birds that can do arithmetic" from "To Mock a Mockingbird"
+abstraction grz
+def V [x][y][z] z x y 
+def t K
+def f K I
+def succ ([x]  V f x)
+def pred ([x] C I f x)
+def zerotest ([x] C I t x)
+def b0 I
+def b1 (reduce succ b0)
+def b2 (reduce succ b1)
+
+# Does a successor on the way "back up"
+# This is Smullyan's solution for "add" bird.
+def F [w][m][n] zerotest m n (succ (w w n (pred m)))
+def add F F
+b2 = (reduce add b1 b1)
+reduce add b1 b2 = reduce add b2 b1
+reduce add b1 b2 = reduce succ b2
+
+# Calls successor on the way down.
+# This is my solution for "add" bird.
+def F2 [w][m][n] zerotest m n (  w w (pred m) (succ n))
+def add2 F2 F2
+reduce add b1 b2 = reduce add b2 b1
+
+# Subtract-as-much-as-you-can.
+# Not one of the problems.
+def f1 [w][x][y] zerotest x b0 (zerotest y x (w w (pred x) (pred y)))
+def monus f1 f1
+reduce monus b2 b0 = b2
+reduce monus b2 b1 = b1
+reduce monus b2 b2 = b0
+reduce monus b1 b2 = b0
+reduce monus b1 b1 = b0
+reduce monus b0 b1 = b0
+reduce monus (succ b2) b1 = b2
+
+# Multiplication bird.
+def F [w][x][y][z] zerotest z x (w w (add x y) y (pred z))
+def mult F F b0
+reduce mult b0 b0 = b0
+reduce mult b0 b1 = b0
+reduce mult b0 b2 = b0
+reduce mult b1 b1 = b1
+reduce mult b2 b1 = b2
+reduce mult b1 b2 = b2
+reduce mult b2 b2 = reduce succ (succ (succ (succ b0)))
+reduce mult b2 b2 = reduce add b2 b2
+
+# Exponentiation bird.
+def F [w][x][y][z] zerotest z x (w w (mult x y) y (pred z))
+def exp F F b1
+reduce exp b1 b0 = b1
+reduce exp b2 b0 = b1
+reduce exp b1 b1 = b1
+reduce exp b2 b1 = b2
+reduce exp b2 b2 = reduce mult b2 b2
+
+# Takes forever
+#def b3 (reduce succ b2)
+#size (reduce exp (exp b3 b3) b3)
