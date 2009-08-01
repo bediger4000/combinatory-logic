@@ -228,6 +228,8 @@ reduce_graph(struct node *root)
 						*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 						++PARENTNODE(stack, 1)->right->refcnt;
 						PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
+						PARENTNODE(stack, 2)->examined = 0;
+						PARENTNODE(stack, 1)->examined = 0;
 						free_node(PARENTNODE(stack, 2));
 						performed_reduction = 1;
 						pop_stack_cnt = 3;
@@ -261,6 +263,7 @@ reduce_graph(struct node *root)
 						struct node *n2 = PARENTNODE(stack, 2);
 						struct node *tmp = *(n2->updateable);
 						NT SS;
+						PARENTNODE(stack, 1)->examined = 0;
 						n2->examined ^= n2->branch_marker;
 						n = new_application(n1, n1);
 						*(n2->updateable) = n;

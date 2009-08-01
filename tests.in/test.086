@@ -1,0 +1,20 @@
+# Bug: M (M (K I)) -> M (K I) and stops, but M (K I) not in normal form.
+# M-combinator reduction left stray "reduced left branch" marks
+# on application nodes.
+# Prevent regressions. M (M (K I)) -> I
+M (M (K I))
+# Similar bug in K reduction, manifests in similar term.
+# K reduction also left behind stray "reduced left branch" marks
+# on application nodes.
+# W I (W I (K I)) -> K I (K I), also not in normal form
+W I (W I (K I))
+# S I I doesn't exhibit the bug, but check to make sure it stays out.
+S I I (S I I (K I))
+# J doesn't seem to exhibit, but does this really constitute a test?
+def myT (J I I)
+def R (J myT)
+def myC  (R R R)
+def Q1 (J I)
+def myB (myC (Q1 myC) Q1)
+def myM (myC(myC(myC(myB J myT) myT) myT) myT)
+myM (myM (K I))
