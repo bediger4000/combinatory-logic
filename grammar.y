@@ -170,16 +170,21 @@ stmnt
 			$$ = reduce_tree($1);
 			if (!reduction_interrupted)
 			{
+				int ignore;
+				struct buffer *b = new_buffer(256);
+				int redex_count = reduction_count($$->left, 0, &ignore, b);
+
+				b->buffer[b->offset] = '\0';
+
 				if (multiple_reduction_detection)
-				{
-					int ignore;
-					struct buffer *b = new_buffer(256);
-					int redex_count = reduction_count($$->left, 0, &ignore, b);
-					b->buffer[b->offset] = '\0';
-					printf("[%d] %s\n", redex_count, b->buffer);
-					delete_buffer(b);
-				} else
-					print_graph($$->left, 0, 0);
+					printf("[%d] ", redex_count);
+				printf("%s\n", b->buffer);
+
+				delete_buffer(b);
+
+				/* more built-in testing: if a redex occurs in the
+				 * term, it didn't get to normal form. */
+				if (redex_count > 0) printf("Problem: %d reductions remaining, normal form not reached.\n", redex_count);
 			}
 			free_node($$);
 		}
@@ -553,7 +558,8 @@ reduce_tree(struct node *real_root)
 			reduction_interrupted = 0;
 			break;
 		case 5:
-			phrase = "";
+			phrase = "";  /* cycle detected */
+			reduction_interrupted = 0;
 			break;
 		default:
 			phrase = "Unknown";
