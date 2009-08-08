@@ -18,3 +18,7 @@ def Q1 (J I)
 def myB (myC (Q1 myC) Q1)
 def myM (myC(myC(myC(myB J myT) myT) myT) myT)
 myM (myM (K I))
+
+def m J (J (J I I (J I I)) (J I I)) I (J (J I I) (J I J))
+m (m (K I))
+
