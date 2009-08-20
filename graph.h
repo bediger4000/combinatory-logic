@@ -22,7 +22,9 @@
 #ident "$Id$"
 #endif
 
-void reduce_graph(struct node *graph_root);
+enum graphReductionResult { UNKNOWN, NORMAL_FORM, CYCLE_DETECTED, INTERRUPT, REDUCTION_LIMIT, TIMEOUT };
+
+enum graphReductionResult reduce_graph(struct node *graph_root);
 int  reduction_count(struct node *node, int stack_depth, int *child_reduces, struct buffer *b);
 int  node_count(struct node *node, int count_interior_nodes);
 
