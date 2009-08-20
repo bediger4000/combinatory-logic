@@ -179,6 +179,7 @@ J { return possible_combinator_decision(COMB_J); }
 	yylval.string_constant = Atom_string(yytext);
 	return FILE_NAME;
 }
+\*		    { /* Ignore asterisks in input: output uses them to mark reducible atoms. */ }
 .		    { /* Just eat it. */ }
 
 %%
