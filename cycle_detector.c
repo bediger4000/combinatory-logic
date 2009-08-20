@@ -70,6 +70,11 @@ cycle_detector(struct node *root, int max_redex_count)
 		{
 			int trivial_cycle = (find_trivial_cycle(root->left, NULL, NULL, 0) == 1);
 
+			/* Gotta say that this is a *very* low level routine in which
+			 * to perform output.  Unfortunately, unless I pass a whole
+			 * bunch of flags back up the call-chain, I can't communicate
+			 * all the information I'd like to.  So despite the ugliness,
+			 * the output stays here. */
 			printf("Found a %s%scycle of length %d, %d terms evaluated, ends with \"%s\"\n",
 				(max_redex_count == 1)? "pure ": "", 
 				trivial_cycle? "trivial ": "", 
