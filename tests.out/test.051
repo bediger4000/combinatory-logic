@@ -22,9 +22,9 @@ S (S (S (S I (K S)) I) I) (S I I)
 elapsed time 0.000 seconds
 S (S (S (S I (K S)) I) I) (S I I)
 W W W
-Reduction limit
 elapsed time 0.000 seconds
-W W W
+Reduction limit
+W* W W
 on on off off
 elapsed time 0.000 seconds
 on on off off

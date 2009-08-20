@@ -1,8 +1,8 @@
 reduction cycle detection on
 W W W
 Found a trivial cycle of length 1, 1 terms evaluated, ends with "..W W W"
-
+W* W W
 reduction cycle detection off
 I I M M
 Found a trivial cycle of length 1, 2 terms evaluated, ends with ".M M"
-
+M* M

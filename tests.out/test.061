@@ -10,4 +10,4 @@ I I (S T (I I)) (S T (I I))
 I (S T (I I)) (S T (I I))
 S T (I I) (S T (I I))
 Reduction limit
-S T (I I) (S T (I I))
+S* T (I* I) (S T (I* I))

@@ -1,168 +1,168 @@
 M M
 Found a trivial cycle of length 1, 1 terms evaluated, ends with ".M M"
-
+M* M
 W W W
 Found a trivial cycle of length 1, 1 terms evaluated, ends with "..W W W"
-
+W* W W
 W I (W I)
 Found a cycle of length 2, 2 terms evaluated, ends with "..I.W I.W I"
-
+I* (W I) (W I)
 W T (W T)
 Found a cycle of length 2, 2 terms evaluated, ends with "..T.W T.W T"
-
+T* (W T) (W T)
 W C (W C) (W C)
 Found a cycle of length 2, 2 terms evaluated, ends with "...C.W C.W C.W C"
-
+C* (W C) (W C) (W C)
 C W (C W) (C W)
 Found a cycle of length 2, 2 terms evaluated, ends with "..W.C W.C W"
-
+W* (C W) (C W)
 B I M (B I M)
 Found a cycle of length 3, 3 terms evaluated, ends with ".I.M..B I M"
-
+I* (M* (B I M))
 W (W K) (W (W K))
 Found a cycle of length 3, 3 terms evaluated, ends with "...W K.W.W K.W.W K"
-
+W* K (W (W K)) (W (W K))
 W (C K K) (W (C K K))
 Found a cycle of length 3, 3 terms evaluated, ends with "....C K K.W..C K K.W..C K K"
-
+C* K K (W (C K K)) (W (C K K))
 S T T (S T T)
 Found a cycle of length 3, 3 terms evaluated, ends with "..T..S T T.T..S T T"
-
+T* (S T T) (T (S T T))
 S T I (S T I)
 Found a cycle of length 3, 3 terms evaluated, ends with "..T..S T I.I..S T I"
-
+T* (S T I) (I* (S T I))
 M (M (K M))
 Found a cycle of length 3, 3 terms evaluated, ends with "..M.K M.M.K M"
-
+M* (K M) (M* (K M))
 M (M (B T M))
 Found a cycle of length 3, 3 terms evaluated, ends with "..M..B T M.M..B T M"
-
+M* (B T M) (M* (B T M))
 M (T T (K M))
 Found a cycle of length 3, 3 terms evaluated, ends with "...T T.K M..T T.K M"
-
+T* T (K M) (T* T (K M))
 M (T K (K M))
 Found a cycle of length 3, 3 terms evaluated, ends with "...T K.K M..T K.K M"
-
+T* K (K M) (T* K (K M))
 W C (C (W C)) (W C)
 Found a cycle of length 3, 3 terms evaluated, ends with "...C.C.W C.C.W C.W C"
-
+C* (C (W C)) (C (W C)) (W C)
 C (W C) x (C (W C))
 Found a cycle of length 3, 3 terms evaluated, ends with "...W C.C.W C x"
-
+W* C (C (W C)) x
 B M T (B M T) (B M T)
 Found a cycle of length 4, 4 terms evaluated, ends with "..M.T..B M T..B M T"
-
+M* (T (B M T)) (B M T)
 S T (I I) (S T (I I))
 Found a cycle of length 4, 4 terms evaluated, ends with "..T..S T.I I..I I..S T.I I"
-
+T* (S T (I* I)) (I* I (S T (I* I)))
 W (B (T M) K) (W (B (T M) K))
 Found a cycle of length 4, 4 terms evaluated, ends with "....B.T M K.W..B.T M K.W..B.T M K"
-
+B* (T M) K (W (B (T M) K)) (W (B (T M) K))
 B (W K) W (B (W K) W) (B (W K) W)
 Found a cycle of length 4, 4 terms evaluated, ends with "...W K.W..B.W K W..B.W K W"
-
+W* K (W (B (W K) W)) (B (W K) W)
 W (C (C C)) (W (C (C C))) (W (C (C C))) (W (C (C C)))
 Found a cycle of length 4, 4 terms evaluated, ends with ".....C.C C.W.C.C C.W.C.C C.W.C.C C.W.C.C C"
-
+C* (C C) (W (C (C C))) (W (C (C C))) (W (C (C C))) (W (C (C C)))
 M (T (B M T))
 Found a cycle of length 4, 4 terms evaluated, ends with "..T..B M T.T..B M T"
-
+T* (B M T) (T (B M T))
 B W (C W) (C W) (B W)
 Found a cycle of length 4, 4 terms evaluated, ends with "..W..C W.C W.B W"
-
+W* (C W (C W)) (B W)
 T T (B M) (T T (B M))
 Found a cycle of length 5, 5 terms evaluated, ends with "...B M T..T T.B M"
-
+B* M T (T* T (B M))
 B (T M) K (M (B (B (T M) K) M))
 Found a cycle of length 5, 5 terms evaluated, ends with "..T M.K.M..B..B.T M K M"
-
+T* M (K (M* (B (B (T M) K) M)))
 M (B (B M K) M)
 Found a cycle of length 5, 5 terms evaluated, ends with "...B..B M K M..B..B M K M"
-
+B* (B M K) M (B (B M K) M)
 M (B M (B K M))
 Found a cycle of length 5, 5 terms evaluated, ends with "...B M..B K M..B M..B K M"
-
+B* M (B K M) (B M (B K M))
 M (M (T (K M)))
 Found a cycle of length 5, 5 terms evaluated, ends with "..M.T.K M.M.T.K M"
-
+M* (T (K M)) (M* (T (K M)))
 B W W (K (B (B W W) K)) (B (B W W) K)
 Found a cycle of length 5, 5 terms evaluated, ends with "..W.W.K..B..B W W K..B..B W W K"
-
+W* (W (K (B (B W W) K))) (B (B W W) K)
 W (W (W (K (K W)))) (W (W (K (K W))))
 Found a cycle of length 5, 5 terms evaluated, ends with "...W.W.K.K W.W.W.K.K W.W.W.K.K W"
-
+W* (W (K (K W))) (W (W (K (K W)))) (W (W (K (K W))))
 B I (C (W C)) I (B I (C (W C)))
 Found a cycle of length 5, 5 terms evaluated, ends with "..I..C.W C I..B I.C.W C"
-
+I* (C (W C) I) (B I (C (W C)))
 C (W I) (W I) (C (W C))
 Found a cycle of length 5, 5 terms evaluated, ends with "...W I.C.W C.W I"
-
+W* I (C (W C)) (W I)
 W I (C (W C)) (W I)
 Found a cycle of length 5, 5 terms evaluated, ends with "...I.C.W C.C.W C.W I"
-
+I* (C (W C)) (C (W C)) (W I)
 W (W (K (W K))) (W (W (K (W K)))) (W (W (K (W K))))
 Found a cycle of length 5, 5 terms evaluated, ends with "....W.K.W K.W.W.K.W K.W.W.K.W K.W.W.K.W K"
-
+W* (K (W K)) (W (W (K (W K)))) (W (W (K (W K)))) (W (W (K (W K))))
 W (W (W (K K))) (W (W (W (K K)))) (W (W (W (K K))))
 Found a cycle of length 5, 5 terms evaluated, ends with "....W.W.K K.W.W.W.K K.W.W.W.K K.W.W.W.K K"
-
+W* (W (K K)) (W (W (W (K K)))) (W (W (W (K K)))) (W (W (W (K K))))
 I (B W (C W)) (B W (C W)) I
 Found a cycle of length 5, 5 terms evaluated, ends with "....B W.C W..B W.C W I"
-
+B* W (C W) (B W (C W)) I
 W K (B W (C W)) (B W (C W)) (W K)
 Found a cycle of length 6, 6 terms evaluated, ends with "....K..B W.C W..B W.C W..B W.C W.W K"
-
+K* (B W (C W)) (B W (C W)) (B W (C W)) (W K)
 W C (W I) (W C)
 Found a cycle of length 6, 6 terms evaluated, ends with "...C.W I.W I.W C"
-
+C* (W I) (W I) (W C)
 B (K (S K K) y) (K M z) (B (K (S K K) y) (K M z))
 Found a cycle of length 6, 6 terms evaluated, ends with "...K..S K K y...K M z..B..K..S K K y..K M z"
-
+K* (S K K) y (K* M z (B (K* (S K K) y) (K* M z)))
 W (B (C (W K) M) K) (W (B (C (W K) M) K))
 Found a cycle of length 6, 6 terms evaluated, ends with "....B..C.W K M K.W..B..C.W K M K.W..B..C.W K M K"
-
+B* (C (W K) M) K (W (B (C (W K) M) K)) (W (B (C (W K) M) K))
 C (S (C C) (C C)) (C (S (C C) (C C))) (C (S (C C) (C C)))
 Found a cycle of length 6, 6 terms evaluated, ends with "....S.C C.C C.C..S.C C.C C.C..S.C C.C C"
-
+S* (C C) (C C) (C (S (C C) (C C))) (C (S (C C) (C C)))
 B (K (S K K) y) (K (I M) z) (B (K (S K K) y) (K (I M) z))
 Found a cycle of length 7, 7 terms evaluated, ends with "...K..S K K y...K.I M z..B..K..S K K y..K.I M z"
-
+K* (S K K) y (K* (I* M) z (B (K* (S K K) y) (K* (I* M) z)))
 B M (B T T) (B M (B T T))
 Found a cycle of length 7, 7 terms evaluated, ends with ".M...B T T..B M..B T T"
-
+M* (B* T T (B M (B T T)))
 M (B (B M T) T)
 Found a cycle of length 7, 7 terms evaluated, ends with "...B..B M T T..B..B M T T"
-
+B* (B M T) T (B (B M T) T)
 T (K M) T (T (K M) T) (M (T (K M) T))
 Found a cycle of length 7, 7 terms evaluated, ends with "...T.K M..T.K M T.M..T.K M T"
-
+T* (K M) (T* (K M) T) (M* (T* (K M) T))
 W I (B C (W I)) a b
 Found a cycle of length 8, 8 terms evaluated, ends with "....I..B C.W I..B C.W I a b"
-
+I* (B C (W I)) (B C (W I)) a b
 C C (S (C C) (C C)) (C C) (C C (S (C C) (C C)) (C C)) (C C (S (C C) (C C)) (C C))
 Found a cycle of length 9, 9 terms evaluated, ends with "....C.C C..S.C C.C C...C C..S.C C.C C.C C...C C..S.C C.C C.C C"
-
+C* (C C) (S (C C) (C C)) (C* C (S (C C) (C C)) (C C)) (C* C (S (C C) (C C)) (C C))
 B W (W C) (B W (W C)) K
 Found a cycle of length 9, 9 terms evaluated, ends with "..W..W C..B W.W C K"
-
+W* (W* C (B W (W C))) K
 B W (W (B (B (C (W K))))) (B W (W (B (B (C (W K)))))) (C K K)
 Found a cycle of length 10, 10 terms evaluated, ends with "..W..W.B.B.C.W K..B W.W.B.B.C.W K..C K K"
-
+W* (W* (B (B (C (W K)))) (B W (W (B (B (C (W K))))))) (C K K)
 C C (C C (W (B (C C) (C C)))) (W (B (C C) (C C))) (W (B (C C) (C C)))
 Found a cycle of length 14, 14 terms evaluated, ends with "...C.W..B.C C.C C..C C.W..B.C C.C C.W..B.C C.C C"
-
+C* (W (B (C C) (C C))) (C C (W (B (C C) (C C)))) (W (B (C C) (C C)))
 B B C (C C) (C C) (C C (B (B W) (B B C) (C C) (C C)) (C C)) (C C (B (B W) (B B C) (C C) (C C)) (C C)) (C C (B (B W) (B B C) (C C) (C C)) (C C))
 Found a cycle of length 14, 14 terms evaluated, ends with ".....B.C.C C.C C...C C....B.B W..B B C.C C.C C.C C...C C....B.B W..B B C.C C.C C.C C...C C....B.B W..B B C.C C.C C.C C"
-
+B* (C (C C)) (C C) (C* C (B* (B W) (B B C) (C C) (C C)) (C C)) (C* C (B* (B W) (B B C) (C C) (C C)) (C C)) (C* C (B* (B W) (B B C) (C C) (C C)) (C C))
 W (C B (C C)) (C C (W (C B (C C)))) (W (C B (C C)))
 Found a cycle of length 19, 19 terms evaluated, ends with ".....C B.C C..C C.W..C B.C C..C C.W..C B.C C.W..C B.C C"
-
+C* B (C C) (C C (W (C B (C C)))) (C C (W (C B (C C)))) (W (C B (C C)))
 W (B W (B C)) (B W (B C)) W
 Found a cycle of length 19, 19 terms evaluated, ends with ".....B W.B C..B W.B C..B W.B C W"
-
+B* W (B C) (B W (B C)) (B W (B C)) W
 W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C))))))
 Found a cycle of length 30, 30 terms evaluated, ends with ".....B..C.C C..C.C C..C.C C.C C..C.C C..C.C C.C C..C..C.C C..C.C C.C C.W..B..C.C C..C.C C..C.C C.C C..C.C C..C.C C.C C..C..C.C C..C.C C.C C.W..B..C.C C..C.C C..C.C C.C C..C.C C..C.C C.C C..C..C.C C..C.C C.C C.W..B..C.C C..C.C C..C.C C.C C..C.C C..C.C C.C C"
-
+B* (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C)))))) (C (C (C C) (C (C C) (C C))) (W (B (C (C C) (C (C C) (C (C C) (C C)))) (C (C C) (C (C C) (C C))))))
 J (J I I) (J I I) (J (J I I) (J I I) (J I J)) (J (J I I) (J I I) (J (J I I) (J I I) (J I J))) (J (J I I) (J I I) (J (J I I) (J I I) (J I J))) (J (J I I) (J I I) (J (J I I) (J I I) (J I J)))
 Found a cycle of length 34, 34 terms evaluated, ends with "......J I I..J I I....J I I...J..J I I..J I I...J..J I I..J I I..J I J...J..J I I..J I I..J I J...J..J I I..J I I...J..J I I..J I I..J I J...J..J I I..J I I...J..J I I..J I I..J I J"
-
+J* I I (J I I) (J* I I (J (J I I) (J I I) (J (J I I) (J I I) (J I J))) (J (J I I) (J I I) (J I J))) (J (J I I) (J I I) (J (J I I) (J I I) (J I J))) (J (J I I) (J I I) (J (J I I) (J I I) (J I J)))
