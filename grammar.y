@@ -77,7 +77,7 @@ int prompting = 1;
 void sigint_handler(int signo);
 sigjmp_buf in_reduce_graph;
 int interpreter_interrupted = 0;  /* communicates with spine_stack.c code */
-int reduction_interrupted = 0;
+int reduction_interrupted = 0;    /* communicates with reset_node_allocation() */
 
 void top_level_cleanup(int syntax_error_processing);
 
@@ -89,7 +89,7 @@ int *find_cmd_variable(enum OutputModifierCommands cmd);
 
 void print_commands(void);
 
-struct node *reduce_tree(struct node *root);
+struct node *reduce_tree(struct node *root, enum graphReductionResult *r);
 struct node *execute_bracket_abstraction(
 	struct node *(*bafunc)(struct node *, struct node *),
 	struct node *abstracted_var,
@@ -166,9 +166,10 @@ program
 stmnt
 	: expression TK_EOL
 		{
+			enum graphReductionResult grr;
 			print_graph($1, 0, 0); 
-			$$ = reduce_tree($1);
-			if (!reduction_interrupted)
+			$$ = reduce_tree($1, &grr);
+			if (INTERRUPT != grr)
 			{
 				int ignore;
 				struct buffer *b = new_buffer(256);
@@ -176,15 +177,21 @@ stmnt
 
 				b->buffer[b->offset] = '\0';
 
+				if (REDUCTION_LIMIT == grr)
+					printf("Reduction limit\n");
+
 				if (multiple_reduction_detection)
 					printf("[%d] ", redex_count);
 				printf("%s\n", b->buffer);
 
 				delete_buffer(b);
 
-				/* more built-in testing: if a redex occurs in the
-				 * term, it didn't get to normal form. */
-				if (redex_count > 0) printf("Problem: %d reductions remaining, normal form not reached.\n", redex_count);
+				if (CYCLE_DETECTED != grr && REDUCTION_LIMIT != grr)
+				{
+					/* more built-in testing: if a redex occurs in the
+				 	* term, it didn't get to normal form. */
+					if (redex_count > 0) printf("Problem: %d reductions remaining, normal form not reached.\n", redex_count);
+				}
 			}
 			free_node($$);
 		}
@@ -283,7 +290,8 @@ expression
 	| TK_REDUCE expression
 		{
 			struct node *tmp;
-			tmp = reduce_tree($2);
+			enum graphReductionResult r;
+			tmp = reduce_tree($2, &r);  /* XXX - need to check r */
 			--tmp->left->refcnt;
 			$$ = tmp->left;
 			tmp->left = NULL;
@@ -508,7 +516,7 @@ sigint_handler(int signo)
  * taking before & after timestamps, setting jmp_buf structs, etc.
  */
 struct node *
-reduce_tree(struct node *real_root)
+reduce_tree(struct node *real_root, enum graphReductionResult *grr)
 {
 	void (*old_sigint_handler)(int);
 	void (*old_sigalm_handler)(int);
@@ -531,14 +539,14 @@ reduce_tree(struct node *real_root)
 	{
 		alarm(reduction_timeout);
 		gettimeofday(&before, NULL);
-		reduce_graph(new_root);
+		*grr = reduce_graph(new_root);
 		alarm(0);
 		gettimeofday(&after, NULL);
 	} else {
 		const char *phrase = "Unset";
 		alarm(0);
 		gettimeofday(&after, NULL);
-		reduction_interrupted = 1;
+		*grr = INTERRUPT;
 		switch (cc)
 		{
 		case 1:
@@ -553,20 +561,13 @@ reduce_tree(struct node *real_root)
 			phrase = "Terminated";
 			if (cycle_detection) reset_detection();
 			break;
-		case 4:
-			phrase = "Reduction limit";
-			reduction_interrupted = 0;
-			break;
-		case 5:
-			phrase = "";  /* cycle detected */
-			reduction_interrupted = 0;
-			break;
 		default:
 			phrase = "Unknown";
 			break;
 		}
 		printf("%s\n", phrase);
 		++interpreter_interrupted;
+		reduction_interrupted = 1;
 	}
 
 	signal(SIGINT, old_sigint_handler);
