@@ -108,12 +108,13 @@ canonicalize(struct node *node, struct buffer *b)
 
 /* Graph reduction function. Destructively modifies the graph passed in.
  */
-void
+enum graphReductionResult
 reduce_graph(struct node *root)
 {
 	struct spine_stack *stack = NULL;
 	unsigned long reduction_counter = 0;
 	int max_redex_count = 0;
+	enum graphReductionResult r = UNKNOWN;
 
 	push_spine_stack(&stack);
 
@@ -415,16 +416,17 @@ reduce_graph(struct node *root)
 				if (cycle_detection && cycle_detector(root, max_redex_count))
 				{
 					while (stack) pop_spine_stack(&stack);
-					siglongjmp(in_reduce_graph, 5);
+					r = CYCLE_DETECTED;
+					goto exceptional_exit;
 				}
 
 				if (max_reduction_count > 0
 					&& reduction_counter > max_reduction_count)
 				{
-					/* The 4 means "too many reductions" */
 					while (stack) pop_spine_stack(&stack);
 					C reset_detection();
-					siglongjmp(in_reduce_graph, 4);
+					r = REDUCTION_LIMIT;
+					goto exceptional_exit;
 				}
 			}
 		}
@@ -434,7 +436,14 @@ reduce_graph(struct node *root)
 
 	} while (stack);
 
+	r = NORMAL_FORM;
+
+	/* reaching reduction limit or finding a cycle */
+	exceptional_exit:
+
 	C reset_detection();
+
+	return r;
 }
 
 /* Control can longjmp() back to reduce_tree()
