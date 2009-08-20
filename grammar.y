@@ -136,7 +136,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 }
 
 
-%token TK_EOL TK_COUNT_REDUCTIONS TK_SIZE
+%token TK_EOL TK_COUNT_REDUCTIONS TK_SIZE TK_LENGTH
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
@@ -266,6 +266,12 @@ interpreter_command
 			int ignore;
 			int cnt = reduction_count($2, 0, &ignore, NULL);
 			printf("Found %d possible reductions\n", cnt);
+			++$2->refcnt;
+			free_node($2);
+		}
+	| TK_LENGTH expression TK_EOL {
+			int cnt = node_count($2, 0);  /* only count atoms. */
+			printf("%d atoms\n", cnt);
 			++$2->refcnt;
 			free_node($2);
 		}

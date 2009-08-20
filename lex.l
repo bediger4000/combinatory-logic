@@ -107,6 +107,7 @@ int old_prompting = -1;
 "print" { return TK_PRINT; }
 "printc" { return TK_CANONICALIZE; }
 "size" { return TK_SIZE; }
+"length" { return TK_LENGTH; }
 "graph" { return TK_GRAPH; }
 "on" {
 	const char *p = Atom_string("on");
