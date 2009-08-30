@@ -88,6 +88,7 @@ int old_prompting = -1;
 \)		    { return TK_RPAREN; }
 \[		    { return TK_LBRACK; }
 ]		    { return TK_RBRACK; }
+\,          { return TK_COMMA; }
 "def"       { return TK_DEF; }
 "define"    { return TK_DEF; }
 "reduce"    { return TK_REDUCE; }

@@ -98,6 +98,16 @@ struct node *execute_bracket_abstraction(
 float elapsed_time(struct timeval before, struct timeval after);
 void usage(char *progname);
 
+struct id_list {
+	struct identifier_element *head;
+	struct identifier_element *tail;
+};
+
+struct identifier_element {
+	const char *identifier;
+	struct identifier_element *next; 
+};
+
 struct filename_node {
 	const char *filename;
 	struct filename_node *next;
@@ -133,11 +143,12 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 	struct node *node;
 	enum primitiveName cn;
 	struct node *(*bafunc)(struct node *, struct node *);
+	struct id_list *idlist;
 }
 
 
 %token TK_EOL TK_COUNT_REDUCTIONS TK_SIZE TK_LENGTH
-%token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK
+%token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK TK_COMMA
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
 %token <string_constant> FILE_NAME
@@ -150,7 +161,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 %token <string_constant> BINARY_MODIFIER
 
 %type <node> expression stmnt application term constant interpreter_command
-%type <node> bracket_abstraction 
+%type <idlist> bracket_abstraction identifier_list
 %type <bafunc> abstraction_algorithm
 %type <command> output_command
 
@@ -305,12 +316,42 @@ expression
 		}
 	| bracket_abstraction abstraction_algorithm expression
 		{
+			struct node *abstracted_expression = NULL, *tmp;
+			struct identifier_element *curr, *head;
+
 			look_for_algorithm = 0;
-			$$ = execute_bracket_abstraction($2, $1, $3);
-			++$1->refcnt;
-			free_node($1);
-			++$3->refcnt;
-			free_node($3);
+
+			curr = $1->tail;
+			head = $1->head;
+
+			tmp = $3;
+
+			do {
+				struct identifier_element *e = NULL;
+				struct node *n = new_term(curr->identifier);
+
+				abstracted_expression = execute_bracket_abstraction($2, n, tmp);
+
+				++n->refcnt;
+				free_node(n);
+
+				++tmp->refcnt;
+				free_node(tmp);
+
+				tmp = abstracted_expression;
+
+				for (e = head; e && e->next != curr; e = e->next)
+					;
+
+				free(curr);
+				curr = e;
+				if (curr) curr->next = NULL;
+
+			} while (curr);
+
+			free($1);
+
+			$$ = abstracted_expression;
 		}
 	;
 
@@ -325,8 +366,31 @@ application
 	;
 
 bracket_abstraction
-	: TK_LBRACK TK_IDENTIFIER TK_RBRACK
-		{ $$ = new_term($2); look_for_algorithm = 1; }
+	: TK_LBRACK identifier_list TK_RBRACK
+		{ $$ = $2; look_for_algorithm = 1; }
+	;
+
+identifier_list
+	: TK_IDENTIFIER
+		{
+			struct identifier_element *ide;
+			$$ = malloc(sizeof(struct id_list));
+			ide = malloc(sizeof(struct identifier_element));
+			ide->identifier = $1;
+			ide->next = NULL;
+			$$->head = ide;
+			$$->tail = ide;
+		}
+	| identifier_list TK_COMMA TK_IDENTIFIER
+		{
+			struct identifier_element *ide;
+			ide = malloc(sizeof(struct identifier_element));
+			ide->identifier = $3;
+			ide->next = NULL;
+			$1->tail->next = ide;
+			$1->tail = ide;
+			$$ = $1;
+		}
 	;
 
 term
