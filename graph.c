@@ -469,20 +469,8 @@ read_line(struct node *root)
 		case 'c':
 			single_step = 0;
 			break;
-		case 'g':
-			/* print "dot" graph in a file: assume buffer holds something like:
-			 * "g filename\n" */
-			{
-				char *filename = buf + 2;
-				size_t l = strlen(filename);
-				filename[l - 1] = '\0';
-				*buf = '?';
-				graph_to_file(filename, root);
-			}
-			break;
 		case '?':
 			fprintf(stderr,
-				"g filename -> write graph in filename\n"
 				"e, x -> exit now\n"
 				"n, q -> terminate current reduction, return to top level\n"
 				"c -> continue current reduction without further stops\n"

@@ -1,8 +1,8 @@
 /*
 Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
+*/
 %a 10000
 %o 10000
-*/
 %{
 /*
 	Copyright (C) 2007, Bruce Ediger
@@ -109,7 +109,6 @@ int old_prompting = -1;
 "printc" { return TK_CANONICALIZE; }
 "size" { return TK_SIZE; }
 "length" { return TK_LENGTH; }
-"graph" { return TK_GRAPH; }
 "on" {
 	const char *p = Atom_string("on");
 	if (found_binary_command)

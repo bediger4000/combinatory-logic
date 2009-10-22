@@ -221,12 +221,6 @@ interpreter_command
 	| output_command TK_EOL { found_binary_command = 0; show_output_command($1); }
 	| TK_HELP TK_EOL { print_commands(); }
 	| TK_LOAD {looking_for_filename = 1; } FILE_NAME TK_EOL { looking_for_filename = 0; push_and_open($3); }
-	| TK_GRAPH {looking_for_filename = 1; } FILE_NAME { looking_for_filename = 0; } expression TK_EOL 
-		{
-			graph_to_file($3, $5);
-			++$5->refcnt;
-			free_node($5);
-		}
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
 	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
