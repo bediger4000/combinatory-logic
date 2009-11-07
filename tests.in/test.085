@@ -1,17 +1,24 @@
 # Section 24, "Birds that can do arithmetic" from "To Mock a Mockingbird"
 abstraction grz
+# should work with all bases and abstraction algorithms
 def V [x][y][z] z x y 
+def myT [a][b] b a
+def myI ([x] x)
 def t K
-def f K I
+def f K myI
 def succ ([x]  V f x)
-def pred ([x] C I f x)
-def zerotest ([x] C I t x)
-def b0 I
+# Problem 2, The Predecessor Bird P
+def pred ([x] myT f x)
+# Problem 3, Zero-tester
+def zerotest ([x] myT t x)
+
+def b0 ([x]x)
 def b1 (reduce succ b0)
 def b2 (reduce succ b1)
 
 # Does a successor on the way "back up"
-# This is Smullyan's solution for "add" bird.
+# This is Smullyan's solution for "add" bird,
+# Problem 5
 def F [w][m][n] zerotest m n (succ (w w n (pred m)))
 def add F F
 b2 = (reduce add b1 b1)
@@ -36,7 +43,17 @@ reduce monus b1 b1 = b0
 reduce monus b0 b1 = b0
 reduce monus (succ b2) b1 = b2
 
-# Multiplication bird.
+def equals [x][y] (zerotest (add (monus x y) (monus y x)))
+
+# Not quite a "bluff" combinator.  The following expression
+# comes up equal to every numeral, but it also equals itself,
+# which a true bluff combinator would not.
+def bluff (K (K (K I)))
+equals bluff b0 true false
+equals bluff (succ b2) true false
+equals b2 bluff true false
+
+# Multiplication bird, problem 6
 def F [w][x][y][z] zerotest z x (w w (add x y) y (pred z))
 def mult F F b0
 reduce mult b0 b0 = b0
@@ -48,7 +65,7 @@ reduce mult b1 b2 = b2
 reduce mult b2 b2 = reduce succ (succ (succ (succ b0)))
 reduce mult b2 b2 = reduce add b2 b2
 
-# Exponentiation bird.
+# Exponentiation bird, problem 7
 def F [w][x][y][z] zerotest z x (w w (mult x y) y (pred z))
 def exp F F b1
 reduce exp b1 b0 = b1
@@ -57,6 +74,54 @@ reduce exp b1 b1 = b1
 reduce exp b2 b1 = b2
 reduce exp b2 b2 = reduce mult b2 b2
 
+def b3 (reduce succ b2)
 # Takes forever
-#def b3 (reduce succ b2)
 #size (reduce exp (exp b3 b3) b3)
+
+# The even-number-tester "property bird", problem 8
+def not V f t
+
+def F [w][x] zerotest x t (not (w w (pred x)))
+def property F F
+(reduce property b0) = t
+(reduce property b1) = f
+(reduce property b2) = t
+(reduce property b3) = f
+(reduce property (mult b2 b2)) = t
+(reduce property (add b3 b2)) = f
+(reduce property (mult b3 b2)) = t
+(reduce property (add (mult b2 b2) b3)) = f
+
+# Problem 9, greater-than
+def g2 [w] [a] [b] zerotest a f (zerotest b t (w w (pred a) (pred b)))
+def g g2 g2
+(reduce g b0 b0) = f
+(reduce g b0 b1) = f
+(reduce g b1 b0) = t
+(reduce g b1 b1) = f
+(reduce g b2 b1) = t
+(reduce g b2 b2) = f
+(reduce g b2 b3) = f
+(reduce g b3 b0) = t
+(reduce g b3 b1) = t
+(reduce g b3 b2) = t
+(reduce g b3 b3) = f
+(reduce g b3 (succ b3)) = f
+(reduce g (mult b3 b2) b0) = t
+(reduce g b0 (exp b3 b2)) = f
+(reduce g (exp b3 b3) (add b3 b3)) = t
+
+# Problem 11, Length measurer
+# by minimization, even.
+def b10 (reduce add (mult b3 b3) b1)
+def r [k][n] g (exp b10 k) n
+def F [w][x][y] r x y x (w w (succ x) y)
+def l F F b0
+(reduce l b1) = b1
+(reduce l b2) = b1
+(reduce l b3) = b1
+(reduce l (mult b3 b3)) = b1
+(reduce l b10) = b2
+(reduce l (add (mult b3 b10) b1)) = b2
+(reduce l (mult b10 b10)) = b3
+(reduce l (add (mult b3 (mult b10 b10)) b10)) = b3
