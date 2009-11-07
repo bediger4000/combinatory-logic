@@ -1,11 +1,11 @@
 /*
 Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
-*/
 %a 10000
 %o 10000
+*/
 %{
 /*
-	Copyright (C) 2007, Bruce Ediger
+	Copyright (C) 2007-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -24,9 +24,9 @@ Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-#ifndef _TCC_
-#ident "$Id$"
-#endif
+
+/* $Id$ */
+
 
 #include <stdio.h>
 #include <stdlib.h>

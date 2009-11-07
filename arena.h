@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008, Bruce Ediger
+	Copyright (C) 2008-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -18,9 +18,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-#ifndef _TCC_
-#ident "$Id$"
-#endif
+
+/* $Id$ */
+
 struct memory_arena *new_arena(int memory_info_flag);
 void free_arena_contents(struct memory_arena *ma);
 void deallocate_arena(struct memory_arena *ma, int memory_info_flag);

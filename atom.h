@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007, Bruce Ediger
+	Copyright (C) 2007-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -18,9 +18,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-#ifndef _TCC_
-#ident "$Id$"
-#endif
+
+/* $Id$ */
 
 void        setup_atom_table(struct hashtable *h);
 const char *Atom_string(const char *str);

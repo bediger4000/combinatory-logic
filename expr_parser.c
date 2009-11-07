@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008, Bruce Ediger
+    Copyright (C) 2008-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -27,13 +27,12 @@
  * form.  ".K I" on stdin ends up as "K I" on stdout.
  */
 
+/* $Id$ */
+
 #include <stdio.h>
 #include <string.h>  /* strlen() */
 #include <stdlib.h>  /* malloc(), free() */
 
-#ifndef _TCC_
-#ident "$Id$"
-#endif
 
 enum node_type {LEAF, APPLICATION};
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2006, Bruce Ediger
+    Copyright (C) 2006-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -19,9 +19,9 @@
 
 */
 
-#ifndef _TCC_
-#ident "$Id$"
-#endif
+
+/* $Id$ */
+
 
 #include <stdio.h>
 #include <stdlib.h>  /* malloc(), free() */

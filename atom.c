@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007, Bruce Ediger
+	Copyright (C) 2007-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -18,13 +18,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
+/* $Id$ */
 #include <string.h>
 #include <hashtable.h>
 #include <atom.h>
 
-#ifndef _TCC_
-#ident "$Id$"
-#endif
 
 static struct hashtable *atom_table = NULL;
 

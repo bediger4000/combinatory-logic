@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007, Bruce Ediger
+	Copyright (C) 2007-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -18,9 +18,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-#ifndef _TCC_
-#ident "$Id$"
-#endif
+
+/* $Id$ */
 
 #include <stdio.h>
 #include <stdlib.h>  /* malloc() and free() */
@@ -34,7 +33,7 @@
 #include <spine_stack.h>
 #include <cycle_detector.h>
 
-int read_line(struct node *printing_root);
+int read_line(void);
 
 extern int multiple_reduction_detection;
 extern int cycle_detection;
@@ -53,7 +52,7 @@ extern sigjmp_buf in_reduce_graph;
 #define NT if(debug_reduction && !trace_reduction)
 
 /* can't do single_step && read_line() - compilers optimize it away */
-#define SS if (single_step) read_line(root->left)
+#define SS if (single_step) read_line()
 
 
 void canonicalize(struct node *node, struct buffer *b);
@@ -449,7 +448,7 @@ reduce_graph(struct node *root)
 /* Control can longjmp() back to reduce_tree()
  * in grammar.y for certain input(s). */
 int
-read_line(struct node *root)
+read_line(void)
 {
 	char buf[64];
 	*buf = 'A';
