@@ -37,7 +37,7 @@ lcc:
 tcc:
 	make CC='tcc -Wall' YACC='yacc -d -v' CFLAGS='-I. -D_TCC_' build
 pcc:
-	make CC=pcc YACC='yacc -d -v' LEX=lex CFLAGS='-g' build
+	make CC=pcc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 special:
 	make CC=gcc YACC='yacc -d -v' LEX=flex sbuild
 
