@@ -1,4 +1,4 @@
-#Copyright (C) 2007, Bruce Ediger
+#Copyright (C) 2007-2009, Bruce Ediger
 #
 #   This file is part of cl.
 #
@@ -35,7 +35,7 @@ coverage:
 lcc:
 	make CC=lcc YACC='yacc -d -v' CFLAGS='-I.' build
 tcc:
-	make CC='tcc -Wall' YACC='yacc -d -v' CFLAGS='-I. -D_TCC_' build
+	make CC='tcc -Wall' YACC='yacc -d -v' CFLAGS='-I.' build
 pcc:
 	make CC=pcc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 special:
