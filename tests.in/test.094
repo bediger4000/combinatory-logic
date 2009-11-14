@@ -52,7 +52,11 @@ def m [aa,bb,cc,dd,ee] dd
 def p [aa,bb,cc] cc
 def ftest [xx] xx m
 def f [w,a,b] ftest b (w w (S B a)) a
-def to_church [x] x (f f (K I)) p
+def g [x] (x x (K I))
+def to_church1 (reduce [cn,x,y] cn (x y) p)
+def to_church (reduce [x] to_church1 x g f)
+# Check that to_church has a normal form
+to_church = reduce to_church
 
 reduce to_church d0 = c0
 reduce to_church d1 = c1
@@ -70,6 +74,7 @@ def to_dn ([cn] cn ([a,b] a (S b I)) I I)
 
 # Inordinately expensive predecessor
 def dn_pred ([xx] (to_dn (church_pred (to_church xx))))
+dn_pred = reduce dn_pred
 reduce dn_pred d4 = d3
 reduce dn_pred d3 = d2
 reduce dn_pred d2 = d1
