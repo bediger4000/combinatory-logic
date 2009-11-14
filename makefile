@@ -23,6 +23,7 @@ all:
 	@echo "make coverage"  "- all GNU, with gcov options on"
 	@echo "make lcc"  "- lcc C compiler and yacc"
 	@echo "make tcc"  "- tcc C compiler and yacc"
+	@echo "make pcc"  "- pcc C compiler and yacc"
 
 cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
