@@ -32,15 +32,9 @@ new_buffer(int desired_size)
 {
 	struct buffer *r = malloc(sizeof *r);
 
-	if (r)
-	{
-		r->buffer = malloc(desired_size);
-		if (r->buffer)
-			r->size = desired_size;
-		else
-			r->size = 0;
-		r->offset = 0;
-	}
+	r->buffer = malloc(desired_size);
+	r->size = r->buffer? desired_size: 0;
+	r->offset = 0;
 
 	return r;
 }
@@ -48,50 +42,41 @@ new_buffer(int desired_size)
 void
 delete_buffer(struct buffer *b)
 {
-	if (b)
+	if (b->buffer)
 	{
-		if (b->buffer)
-		{
-			free(b->buffer);
-			b->buffer = NULL;
-		}
-		b->offset = b->size = 0;
-		free(b);
-		b = NULL;
+		free(b->buffer);
+		b->buffer = NULL;
 	}
+	b->offset = b->size = 0;
+	free(b);
+	b = NULL;
 }
 
 void
 resize_buffer(struct buffer *b, int increment)
 {
-	if (b)
+	char *reallocated_buffer;
+	int new_size = b->size + increment;
+
+	reallocated_buffer = realloc(b->buffer, new_size);
+
+	if (reallocated_buffer)
 	{
-		char *reallocated_buffer;
-		int new_size = b->size + increment;
-
-		reallocated_buffer = realloc(b->buffer, new_size);
-
-		if (reallocated_buffer)
-		{
-			b->buffer = reallocated_buffer;
-			b->size   = new_size;
-		}
+		b->buffer = reallocated_buffer;
+		b->size   = new_size;
 	}
 }
 
 void
 buffer_append(struct buffer *b, const char *bytes, int length)
 {
-	if (NULL != b && NULL != bytes && 0 < length)
-	{
-		if (length >= (b->size - b->offset))
-			resize_buffer(b, length);
+	if (length >= (b->size - b->offset))
+		resize_buffer(b, length);
 
-		if (length < b->size - b->offset)
-		{
-			/* resize_buffer() might fail */
-			memcpy(&b->buffer[b->offset], bytes, length);
-			b->offset += length;
-		}
+	if (length < b->size - b->offset)
+	{
+		/* resize_buffer() might fail */
+		memcpy(&b->buffer[b->offset], bytes, length);
+		b->offset += length;
 	}
 }
