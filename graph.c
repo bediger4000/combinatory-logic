@@ -98,7 +98,6 @@ canonicalize(struct node *node, struct buffer *b)
 	case ATOM:
 		buffer_append(b, node->name, strlen(node->name));
 		break;
-	case UNTYPED:
 	default:
 		break;
 	}
@@ -374,8 +373,6 @@ reduce_graph(struct node *root)
 				}
 				if (performed_reduction) SS;
 				break;  /* end of case ATOM, switch on node->cn */
-			case UNTYPED:
-				break;
 			}
 
 			POP(stack, pop_stack_cnt);
@@ -553,8 +550,6 @@ reduction_count(struct node *node, int stack_depth, int *child_redex, struct buf
 				break;
 			}
 			break;
-		case UNTYPED:
-			break;
 		}
 	}
 
@@ -581,8 +576,6 @@ node_count(struct node *node, int count_interior_nodes)
 			break;
 		case ATOM:
 			count = 1;
-			break;
-		case UNTYPED:
 			break;
 		}
 	}

@@ -172,9 +172,6 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 		if (node->sn == current_node_sn)
 			putc('+', stdout);
 		break;
-	case UNTYPED:
-		printf("UNTYPED {%d}", node->sn);
-		break;
 	default:
 		printf("Unknown %d {%d}", node->typ, node->sn);
 		break;
@@ -204,7 +201,6 @@ new_node(void)
 
 	/* r->sn stays unchanged throughout */
 	r->right = r->left = NULL;
-	r->typ = UNTYPED;
 	r->cn  = COMB_NONE;
 	r->name = NULL;
 	r->examined = 0;
@@ -290,9 +286,6 @@ arena_copy_graph(struct node *p)
 	case ATOM:
 		r->name = p->name;
 		r->cn = p->cn;
-		break;
-	case UNTYPED:
-		printf("Copying an UNTYPED node\n");
 		break;
 	default:
 		printf("Copying n node of unknown (%d) type\n", p->typ);

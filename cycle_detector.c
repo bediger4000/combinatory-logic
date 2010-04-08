@@ -166,8 +166,6 @@ find_trivial_cycle(struct node *node, struct node *parent, struct node *gparent,
 				break;
 			}
 			break;
-		case UNTYPED:
-			break;
 		}
 	}
 

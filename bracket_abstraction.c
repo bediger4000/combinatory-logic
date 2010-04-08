@@ -34,6 +34,9 @@ bracket_abstraction_function default_bracket_abstraction = curry_bracket_abstrac
 int var_appears_in_graph(struct node *var, struct node *tree);
 int free_var_appears_in_graph(struct node *tree);
 
+/* returns 1 if a given variable (argument "var") appears in an
+   expression, returns 0 if the given variable does not appear.
+ */
 int
 var_appears_in_graph(struct node *var, struct node *tree)
 {
@@ -56,13 +59,15 @@ var_appears_in_graph(struct node *var, struct node *tree)
 		} else if (var->name == tree->name)
 			r = 1;
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
 	return r;
 }
 
+/* returns 1 if any free variable appears in an expression,
+   returns 0 if no free variable appears in an expression.
+ */
 int
 free_var_appears_in_graph(struct node *tree)
 {
@@ -79,7 +84,6 @@ free_var_appears_in_graph(struct node *tree)
 		if (COMB_NONE == tree->cn)
 			r = 1;
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -122,7 +126,6 @@ curry_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -174,7 +177,6 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -253,7 +255,6 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -342,7 +343,6 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -464,7 +464,6 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
 		break;
-	case UNTYPED: /* XXX */
 	default:
 		break;
 	}
@@ -495,9 +494,6 @@ equivalent_graphs(struct node *g1, struct node *g2)
 		case ATOM:
 			if (g1->cn == g2->cn && g1->name == g2->name)
 				r = 1;
-			break;
-		case UNTYPED:
-			r = 1; /* XXX - this can't consitute correct behavior, can it? */
 			break;
 		}
 

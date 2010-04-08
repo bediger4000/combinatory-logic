@@ -101,11 +101,6 @@ copy_graph(struct node *p)
 		r->cn = p->cn;
 		r->left = r->right = NULL;
 		break;
-	case UNTYPED:
-		printf("Copying an UNTYPED node\n");
-		r->name = NULL;
-		r->left = r->right = NULL;
-		break;
 	default:
 		printf("Copying n node of unknown (%d) type\n", p->typ);
 		r->name = NULL;
