@@ -680,6 +680,112 @@ tromp_bracket_abstraction(struct node *var, struct node *tree)
 	);
 }
 
+/*
+ * Abstraction for I,J basis from A. Church, "A Proof of Freedom From Contraction",
+ * Proceedings of National Academy of Sciences, Vol 21, 1935, pg 275
+ * [x] x  -> I
+ * [x] U V  -> J (J I I) ([x]V) (U I L)  where x appears only in V
+ * [x] U V  -> J (J I I) V [x]U  where x appears only in U
+ * [x] R L  -> J (J I I) (J I I) (J I (J (J I I) (J I I) (J (J I I) [x]R (J (J I I) [x]L J))))
+ *  where x appears in R and L.
+ */
+struct node *
+ij_bracket_abstraction(struct node *var, struct node *tree)
+{
+	struct node *r = NULL;
+	switch (tree->typ)
+	{
+	case APPLICATION:
+		if (!var_appears_in_graph(var, tree))
+		{
+			/* Lambda-I basis: not valid expression gets here */
+		} else {
+			/* variable getting abstracted out appears somewhere */
+			int appears_right = 0;
+			int appears_left = var_appears_in_graph(var, tree->left);
+			if (!appears_left)
+				appears_right = 1;
+			else
+				appears_right = var_appears_in_graph(var, tree->right);
+
+			if (appears_left)
+			{
+				if (appears_right)
+				{
+					/* abstraction var appears in both function and arg
+					 * parts of an application
+	`				 * [x] R L  -> J (J I I) (J I I) (J I (J (J I I) (J I I) (J (J I I) [x]R (J (J I I) [x]L J)))) */
+					struct node *tmp, *T = new_application(
+						new_application(
+							new_combinator(COMB_J),
+							new_combinator(COMB_I)
+						),
+						new_combinator(COMB_I)
+					);
+					r = new_application(new_combinator(COMB_J), T);
+					r = new_application(r, ij_bracket_abstraction(var, tree->left));
+					r = new_application(r, new_combinator(COMB_J));
+					tmp = new_application(new_combinator(COMB_J), T);
+					tmp = new_application(tmp, ij_bracket_abstraction(var, tree->right));
+					r = new_application(tmp, r);
+					tmp = new_application(new_combinator(COMB_J), T);
+					tmp = new_application(tmp, T);
+					r = new_application(tmp, r);
+					tmp = new_application(new_combinator(COMB_J), new_combinator(COMB_I));
+					r = new_application(tmp, r);
+					tmp = new_application(new_combinator(COMB_J), T);
+					tmp = new_application(tmp, T);
+					r = new_application(tmp, r);
+				} else {
+					/* abstraction var appears only in function
+					 * part of an application 
+				 	 *  [x] U V  -> J (J I I) V [x]U  where x appears only in U */
+					r = new_application(
+						new_application(
+							new_application(
+								new_combinator(COMB_J),
+								new_application(
+									new_application(
+										new_combinator(COMB_J),
+										new_combinator(COMB_I)
+									),
+									new_combinator(COMB_I)
+								)
+							),
+							arena_copy_graph(tree->right)
+						),
+						ij_bracket_abstraction(var, tree->left)
+					);
+				}
+			} else if (appears_right) {
+				struct node *t;
+				/* abstraction var appears only in arg
+				 * part of an application 
+ 				 * [x] U V  -> J (J I I) ([x]V) (J I U)  where x appears only in V */
+				t = new_application(new_combinator(COMB_J), new_combinator(COMB_I));
+				t = new_application(t, arena_copy_graph(tree->left));
+				r = new_application(new_combinator(COMB_J), new_combinator(COMB_I));
+				r = new_application(r, new_combinator(COMB_I));
+				r = new_application(new_combinator(COMB_J), r);
+				r = new_application(r, ij_bracket_abstraction(var, tree->right));
+				r = new_application(r, t);
+			}
+		}
+		break;
+	case ATOM:
+		if (var->cn == tree->cn && var->name == tree->name)
+			/* [x] x -> I */
+			r = new_combinator(COMB_I);
+		else {
+			/* another invalid expression for Lambda-I calculus. */
+		}
+		break;
+	default:
+		break;
+	}
+	return r;
+}
+
 bracket_abstraction_function
 determine_bracket_abstraction(const char *algorithm_name)
 {
@@ -687,12 +793,13 @@ determine_bracket_abstraction(const char *algorithm_name)
 		const char *algorithm_name;  /* values match TK_ALGORITHM_NAME in lex.l */
 		bracket_abstraction_function f;
 	} afmap[] = {
-		{"curry", curry_bracket_abstraction},
+		{"curry",  curry_bracket_abstraction},
 		{"curry2", curry2_bracket_abstraction},
-		{"grz", grzegorczyk_bracket_abstraction},
-		{"tromp", tromp_bracket_abstraction},
+		{"church", ij_bracket_abstraction},
+		{"grz",    grzegorczyk_bracket_abstraction},
+		{"tromp",  tromp_bracket_abstraction},
 		{"turner", turner_bracket_abstraction},
-		{"btmk", btmk_bracket_abstraction}
+		{"btmk",   btmk_bracket_abstraction}
 	};
 	int i;
 	bracket_abstraction_function func = (bracket_abstraction_function)NULL;

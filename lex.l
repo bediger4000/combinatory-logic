@@ -158,7 +158,7 @@ M { return possible_combinator_decision(COMB_M); }
 J { return possible_combinator_decision(COMB_J); }
 
 = { return TK_EQUALS; }
-"curry"|"curry2"|"turner"|"grz"|"tromp"|"btmk" {
+"curry"|"curry2"|"turner"|"grz"|"tromp"|"btmk"|"church" {
 	yylval.identifier = Atom_string(yytext);
 	if (look_for_algorithm)
 		return TK_ALGORITHM_NAME;

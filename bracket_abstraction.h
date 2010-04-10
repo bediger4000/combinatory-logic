@@ -27,6 +27,7 @@ struct node *turner_bracket_abstraction(struct node *var, struct node *tree);
 struct node *tromp_bracket_abstraction(struct node *var, struct node *tree);
 struct node *grzegorczyk_bracket_abstraction(struct node *var, struct node *tree);
 struct node *btmk_bracket_abstraction(struct node *var, struct node *tree);
+struct node *ij_bracket_abstraction(struct node *var, struct node *tree);
 
 typedef struct node *(*bracket_abstraction_function)(struct node *, struct node *);
 bracket_abstraction_function determine_bracket_abstraction(const char *algorithm_name);
