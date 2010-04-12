@@ -1,0 +1,25 @@
+# Test Church's {I,J} basis bracket abstraction
+abstraction church
+([x] x) a
+([x] x (x x)) a
+([x] x (x x) x) a
+([x] (x x x) x) a
+def myB ([a,b,c] a (b c))
+myB a b c
+def myC ([a,b,c] a c b)
+myC a b c
+def myW ([p,q] p q q)
+myW a b
+def myS ([p,q,r] p r (q r))
+myS a b c
+
+# Exercize this basis a bit with some simple Church Numeral work.
+def c1 ([f,n] f n)
+def succ ([a,b,c] b (a b c))
+def c2 (reduce succ c1)
+def c3 (reduce succ c2)
+def c4 (reduce succ c3)
+(reduce c4 f n) = f (f (f (f n)))
+def plus ([d,e,f,g] d f (e f g))
+(reduce plus c2 c2 f n) = f (f (f (f n)))
+(reduce plus c3 c4 f n) = f (f (f (f (f (f (f n))))))
