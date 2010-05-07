@@ -24,6 +24,8 @@ minus two one f n
 
 
 # This next expression tests spine-stack allocation and free list use.
+# It uses a ton of stack and heap, especially for 64-bit executables.
+# ulimit -s unlimited; ulimit -d unlimited
 (exp (exp two two) (exp two (succ two))) f n
 # 4^(2^3) = 4^8 = 65536
 # Verify this: tail -1 tests.out/test.058 | sed 's/[ ()n]//g' | wc -c
