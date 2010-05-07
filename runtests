@@ -1,5 +1,8 @@
 #!/bin/sh
 
+ulimit -d `ulimit -a -H | grep data | sed 's/^..*  *\([^ ][^ ]*\)$/\1/'`
+ulimit -s `ulimit -a -H | grep stack | sed 's/^..*  *\([^ ][^ ]*\)$/\1/'`
+
 if [ ! -x ./cl ]
 then
 	echo Compile ./cl first
