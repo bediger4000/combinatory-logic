@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "file:///home/bediger/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
-<title>Combinatory Logic Interpreter v1.4</title>
+<title>Combinatory Logic Interpreter v1.5</title>
 </head>
 <body>
 <h1>cl: Combinatory Logic Interpreter</h1>
-<h2>version 1.4</h2>
+<h2>version 1.5</h2>
 <em>last revision: 2009-11-14</em>
-<p><a href="mailto:bediger@inlumineconsulting.com">Bruce Ediger</a></p>
+<p><a href="mailto:bediger@stratigery.com">Bruce Ediger</a></p>
 <h1>Table of contents</h1>
 <ol>
 	<li><a href="#INTRO">Introduction</a></li>
 	<li><a href="#STARTING">Starting</a></li>
 	<li><a href="#RUNNING">Using</a></li>
+	<li><a href="#BRACKETS">Brackeet Abstraction</a></li>
 	<li><a href="#INSTALL">Building and installing</a></li>
 </ol>
 <h1><a name="INTRO">Introduction</a></h1>
 <p>
-This document describes how to build and use <kbd>cl</kbd> v1.4. <kbd>cl</kbd> interprets
+This document describes how to build and use <kbd>cl</kbd> v1.5. <kbd>cl</kbd> interprets
 a programming language with a lot of similarities to various "Combinatory Logic" (CL)
 formal systems. It doesn't exactly interpret any "Combinatory Logic" in that
 it runs on computers with finite CPU speed and a finite memory.
 Most or all formal systems fail to take these limits into account.
 </p>
 <p>
-Release 1.4 fixes some weird bugs relating to un-reducible subexpressions that
-get copied twice, once still un-reducible, but the second (normal order of
-evaluation) made reducible.
+Release 1.5 fixes a few minor bugs, and adds a <a href="BRACKETS">bracket abstraction algorithm</a>
+for the <kbd>{<strong>I</strong>, <strong>J</strong>}</kbd> &lambda;I basis.
 </p>
 <p>
 I started writing this interpreter as a way to test the "graph reduction"
@@ -85,7 +85,7 @@ and "applicative order".
 <tr><td>-T <em>number</em></td><td>evaluate an expression for up to <em>number</em> seconds</td></tr>
 <tr><td>-t</td><td>trace reductions</td></tr>
 <tr><td>-C <em>combinator</em></td><td>treat <em>combinator</em> as a non-primitive. <em>Combinator</em> one of S, K, I, B, C, W, M, T, J</td></tr>
-<tr><td>-B <em>algorithm</em></td><td>Use <em>algorithm</em> as default for bracket abstraction.  One of <em>curry</em>, <em>tromp</em>, <em>grz</em>, <em>btmk</em>, <em>turner</em></td></tr>
+<tr><td>-B <em>algorithm</em></td><td>Use <em>algorithm</em> as default for bracket abstraction.  One of <em>curry</em>, <em>curry2</em>, <em>church</em>, <em>tromp</em>, <em>grz</em>, <em>btmk</em>, <em>turner</em></td></tr>
 </table>
 <p>
 The <kbd>-e</kbd> or <kbd>-s</kbd> options have no use without the <kbd>-t</kbd> option, but <kbd>-t</kbd> alone can perform
@@ -249,20 +249,21 @@ as <kbd>[x,y] (x(y y x))</kbd>.  The same nested abstraction occurs.
 </p>
 <h3>Algorithms</h3>
 <p>
-<kbd>cl</kbd> offers six bracket abstraction algorithms:
+<kbd>cl</kbd> offers seven bracket abstraction algorithms:
 </p>
 	<ul>
-		<li><kbd>curry</kbd> - classic, minimalistic three-rule system for S,K,I basis.</li>
-		<li><kbd>curry2</kbd> - four-rule system for S,K,I basis. Hindley and Seldin's Definition 2.18</li>
-		<li><kbd>tromp</kbd> - John Tromp's nine-rule system for compact expressions in the S,K,I basis.</li>
+		<li><kbd>curry</kbd> - classic, minimalistic three-rule system for {S,K,I} basis.</li>
+		<li><kbd>curry2</kbd> - four-rule system for {S,K,I} basis. Hindley and Seldin's Definition 2.18</li>
+		<li><kbd>tromp</kbd> - John Tromp's nine-rule system for compact results in the {S,K,I} basis.</li>
 		<li><kbd>turner</kbd> - Simplified Turner algorithm, using S,B,C,K,I combinators.</li>
 		<li><kbd>grz</kbd> - the Grzegorczyk algorithm for {B,W,C,K} basis.</li>
 		<li><kbd>btmk</kbd> - algorithm for {B,T,M,K} basis.</li>
+		<li><kbd>church</kbd> - algorithm for {I,J} basis.</li>
 	</ul>
 <p>
 You can set a "default" algorithm with the this command:
 <kbd>abstraction <em>name</em></kbd>. For <kbd><em>name</em></kbd>, substitute
-one of the six algorithm names above.
+one of the seven algorithm names above.
 <kbd>cl</kbd> starts with <kbd>curry</kbd> as the default bracket abstraction
 algorithm.
 </p>
@@ -274,6 +275,118 @@ You can specify the abstraction algorithm next to the abstracted variable:
 <kbd>cl's</kbd> grammar allows mixing algorithms, one for each
 pair of square brackets. The resulting expression may not make any sense.
 </p>
+<h3>Bracket Abstraction Algorithms</h3>
+<h4><kbd>curry</kbd></h4>
+<ol>
+	<li>[x] x &rarr; <strong>I</strong></li>
+	<li>[x] N &rarr; <strong>K</strong> N&nbsp;&nbsp;&nbsp;&nbsp;<em>x does not appear in N</em></li>
+	<li>[x] M N &rarr; <strong>S</strong> ([x] M) ([x] N)</li>
+</ol>
+<h4><kbd>curry2</kbd></h4>
+<ol>
+	<li>[x] x &rarr; <strong>I</strong></li>
+	<li>[x] N &rarr; <strong>K</strong> N&nbsp;&nbsp;&nbsp;&nbsp;<em>x does not appear in N</em></li>
+	<li>[x] M x &rarr; M&nbsp;&nbsp;&nbsp;&nbsp;<em>x does not appear in M</em></li>
+	<li>[x] M N &rarr; <strong>S</strong> ([x] M) ([x] N)</li>
+</ol>
+<p>
+Hindley &amp; Seldin call this "Definition 2.18" in the 2008 edition of
+<em>Lambda Calculus and Combinators: An Introduction</em>..
+This algorithm has the distinct advantage of giving back a single combinator
+when you ask for that combinator's definition as a bracket abstraction.
+<kbd>[p,q,r] p r (q r)</kbd> works out to <strong>S</strong>, and so forth.
+</p>
+<h4><kbd>btmk</kbd></h4>
+<p>
+I put in an algorithm that only uses <strong>B</strong>, <strong>T</strong>,
+<strong>M</strong> and <strong>K</strong> combinators. I devised it,
+but presumably someone
+else has come up with this same algorithm in the past.
+The {B, T, M, K} basis is not unknown.
+</p>
+<ol>
+	<li>[x] x   &rarr; <strong>B (T M) K</strong></li>
+	<li>[x] Z   &rarr; <strong> K</strong> Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in Z</em></li>
+	<li>[x] Q x &rarr; Q                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in Q</em></li>
+	<li>[x] Q P &rarr; <strong>B</strong> Q ([x] P)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in P, not in Q</em></li>
+	<li>[x] Q P &rarr; <strong>B</strong> (<strong>T</strong> P) ([x] Q)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in Q, not in P</em></li>
+	<li>[x] Q P &rarr; <strong>B</strong> (<strong>T</strong> (<strong>B</strong> (<strong>T</strong> [x]P) (<strong>B</strong> <strong>B</strong> [x]Q))) (<strong>B</strong> <strong>M</strong> (<strong>B</strong> <strong>B</strong> <strong>T</strong>)) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears in both Q and P</em></li>
+</ol>
+<h4><kbd>grz</kbd></h4>
+<p>
+<kbd>cl</kbd> includes an implementation of
+M. Price and H. Simmon's reconstruction of Grzegorcyzk's "g" algorithm, using
+only <strong>B</strong>, <strong>C</strong>, <strong>K</strong>, <strong>W</strong>, <strong>I</strong> combinators.
+</p>
+<ol>
+	<li>[x] x   &rarr; <strong>I</strong></li>
+	<li>[x] Z   &rarr; <strong>K</strong> Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in Z</em></li>
+	<li>[x] Q x &rarr; Q                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in Q</em></li>
+	<li>[x] Q P &rarr; <strong>B</strong> Q ([x] P)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in P, not in Q</em></li>
+	<li>[x] Q P &rarr; <strong>C</strong> ([x]Q) P&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in Q, not in P</em></li>
+	<li><a name="GRZ6">[x] Q P &rarr; <strong>W</strong>((<strong>B</strong>(<strong>C</strong>([x]Q)))([x]P))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a><em>x appears in both P and Q</em></li>
+</ol>
+<p>
+If you consider <strong>W K</strong> as a replacement for <strong>I</strong>,
+you can get away with only using <strong>B</strong>, <strong>C</strong>, <strong>K</strong>
+and <strong>W</strong>.
+</p>
+<h4><kbd>church</kbd></h4>
+<p>
+Abstraction for I,J basis from A. Church, <em>A Proof of Freedom From Contraction</em>,
+Proceedings of National Academy of Sciences, Vol 21, 1935, page 275.
+</p>
+<ol>
+ <li>[x] x    &rarr; <strong>I</strong></li>
+ <li>[x] U V  &rarr; <strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) ([x]V) (U <strong>I</strong> <strong>J</strong>)  <em>where x appears only in V</em></li>
+ <li>[x] U V  &rarr; <strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) V [x]U  <em>where x appears only in U</em></li>
+ <li>[x] U V  &rarr; <strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) (<strong>J</strong> <strong>I</strong> <strong>I</strong>) (<strong>J</strong> <strong>I</strong> (<strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) (<strong>J</strong> <strong>I</strong> <strong>I</strong>) (<strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) [x]U (<strong>J</strong> (<strong>J</strong> <strong>I</strong> <strong>I</strong>) [x]V <strong>J</strong>))))
+  <em>where x appears in U and V.</em></li>
+</ol>
+<p>
+The {I,J} basis constitutes a "&lambda;I" basis.  All well-formed abstractions
+contain the abstracted variable.  The above algorithm will not work correctly given input like <kbd>[x,y]x</kbd>.
+In fact, that input crashes the interpreter.
+</p>
+<h4><kbd>tromp</kbd></h4>
+<p>
+John Tromp created a nine rule algorithm which optimizes for the minimum number of
+<strong>S</strong> and <strong>K</strong> combinators in the abstracted
+expression.  Tromp wants to get a small self-interpreter, and he confines
+himself to just <strong>S</strong> and <strong>K</strong> combinators.
+For example, the "S K M &rarr; S K" rule could change to "S K M &rarr; I",
+if you have an <strong>I</strong> primitive.
+Also, the "(M L)(N L) &rarr; S M N L" rule undoes a reduction that
+will get re-done at reduction-time anyway.
+This seems like a classic time versus space tradeoff in the small, to me.
+</p>
+<ol>
+	<li>[x](<strong>S</strong> <strong>K</strong> M)        &rarr; <strong>S</strong> <strong>K</strong>                  <em>(For all M)</em></li>
+	<li>[x] M             &rarr; <strong>K</strong> M                  <em>(x not appearing in M)</em></li>
+	<li>[x] x             &rarr; <strong>I</strong></li>
+	<li>[x] M x           &rarr; M                    <em>(x not appearing in M)</em></li>
+	<li>[x] x M x         &rarr; [x] (<strong>S</strong> <strong>S</strong> <strong>K</strong> x M)</li>
+	<li>[x] (M (N L))     &rarr; [x] (<strong>S</strong> ([x] M) N L)  <em>(M, N combinators)</em></li>
+	<li>[x] ((M N) L)     &rarr; [x] (<strong>S</strong> M ([x] L) N)  <em>(M, L combinators)</em></li>
+	<li>[x] ((M L) (N L)) &rarr; [x](<strong>S</strong> M N L)         <em>(M, N combinators)</em></li>
+	<li>[x] M N           &rarr; <strong>S</strong> ([x] M) ([x] N)</li>
+</ol>
+<p>
+I don't entirely understand what phrases like <em>M, N combinators</em> means in rules 6, 7 and 8.
+I chose to interpret those phrases as "M, N represent single, built-in primitives".
+I also implemented rule 8 by doing a depth-first traversal of parts of parse trees to
+determine if the potential "L" portions of the rule really do equate.
+A faster method of doing that may exist.
+</p>
+<h4><kbd>turner</kbd></h4>
+<ol>
+	<li>[x] x   &rarr; <strong>I</strong></li>
+	<li>[x] N x &rarr; N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in N</em></li>
+	<li>[x] N   &rarr; <strong>K</strong> N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in N</em></li>
+	<li>[x] M N &rarr; <strong>C</strong> ([x]M) N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in M, not in N</em></li>
+	<li>[x] M N &rarr; <strong>B</strong> M ([x] N)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x appears only in N, not in M</em></li>
+	<li>[x] M N &rarr; <strong>S</strong> ([x]M) ([x]N)&nbsp;&nbsp;&nbsp;<em>x appears in both M and N</em></li>
+</ol>
 <h2><a name="ABBREVS">Defining abbreviations</a></h2>
 	<ul>
 		<li><kbd>define <em>name</em> <em>expression</em></kbd></li>
@@ -332,7 +445,7 @@ If you issue the <kbd>cycles on</kbd> command, the interpreter keeps track of
 every expression in the current reduction, and stops when it detects a cyclical
 reduction.
 </p>
-<p><kbd>detect on</kbd> causes the interpreter to also count and print possible reductions,
+<p><kbd>detect on</kbd> causes the interpreter to count and mark possible reductions (with an asterisk),
 regardless of reduction order.  It does "normal order" reduction, but ignores that
 for the reduction count. This probably only has use with <kbd>cycles on</kbd>
 or <kbd>trace on</kbd>.
@@ -415,7 +528,8 @@ variant, semantically-equivalent parentheses don't appear.
 <p>
 I developed this program on Slackware Linuxes, v9, 10.1 and 12.0.
 I used the C compilers GCC, <a href="http://www.cs.princeton.edu/software/lcc/">LCC</a>,
-<a href="http://pcc.ludd.ltu.se/">PCC</a> and <a href="http://bellard.org/tcc/">TCC</a>.
+<a href="http://pcc.ludd.ltu.se/">PCC</a>, <a href="http://bellard.org/tcc/">TCC</a>
+and <a href="http://clang.llvm.org/">Clang</a>.
 I tried to make it as ANSI-C
 as possible by using various compilers, not allowing any compiler warnings
 when building, and using as many warning flags for GCC compiles as possible.
@@ -434,13 +548,13 @@ actually tried that.
 <ol>
 	<li>Get the source code. You can:
 		<ul>
-			<li><a href="cl-1.4.tar.gz">Download</a> via your browser.</li>
-			<li>Download using wget: <kbd>wget http://www.inlumineconsulting.com:8080/website/cl-1.4.tar.gz</kbd></li>
+			<li><a href="cl-1.5.tar.gz">Download</a> via your browser.</li>
+			<li>Download using wget: <kbd>wget http://www.stratigery.com/cl-1.5.tar.gz</kbd></li>
 		</ul>
 	</li>
-	<li>Unpack source code.  From the command line: <kbd>tar xzf cl-1.4.tar.gz</kbd>
+	<li>Unpack source code.  From the command line: <kbd>tar xzf cl-1.5.tar.gz</kbd>
 	</li>
-	<li>Change directory.  From the command line: <kbd>cd cl-1.4</kbd>
+	<li>Change directory.  From the command line: <kbd>cd cl-1.5</kbd>
 	</li>
 	<li>Compile source code. From the command line: <kbd>make gnu</kbd>.<br/>
 	That target ("gnu") should work for almost every linux or BSD computer.
