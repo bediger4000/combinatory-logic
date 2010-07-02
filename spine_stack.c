@@ -27,6 +27,7 @@
 #include <spine_stack.h>
 #include <node.h>
 
+struct spine_stack *old_spine_stack = NULL;
 static int spine_stack_resizes = 0;
 
 extern int interpreter_interrupted;
@@ -36,12 +37,20 @@ new_spine_stack(int sz)
 {
 	struct spine_stack *r;
 
-	r = malloc(sizeof(*r));
-	r->stack = malloc(sz * sizeof(r->stack[0]));
-	r->depth = malloc(sz * sizeof(int));
-	r->size = sz;
-	r->maxdepth = 0;
-	r->top   = 0;
+	if (old_spine_stack)
+	{
+		r = old_spine_stack;
+		r->top   = 0;
+		/* Don't NULL out old_spine_stack: if someone control-c's
+		 * the interpreter during a reduction, it might miss putting
+		 * the spine stack back in place. */
+	} else {
+		r = malloc(sizeof(*r));
+		r->stack = malloc(sz * sizeof(struct spine_stack_element));
+		r->size = sz;
+		r->maxdepth = 0;
+		r->top   = 0;
+	}
 
 	return r;
 }
@@ -49,22 +58,16 @@ new_spine_stack(int sz)
 void
 delete_spine_stack(struct spine_stack *ss)
 {
-	free(ss->depth);
-	free(ss->stack);
-	ss->depth = NULL;
-	ss->stack = NULL;
-	ss->top = 0;
-	ss->size = 0;
-	free(ss);
+	old_spine_stack = ss;
 }
 
 
 void
 pushnode(struct spine_stack *ss, struct node *n, int mark)
 {
-	ss->stack[ss->top] = n;
+	ss->stack[ss->top].node = n;
 
-	ss->depth[ss->top] = (mark? mark: ss->depth[ss->top-1] + 1);
+	ss->stack[ss->top].depth = (mark? mark: ss->stack[ss->top-1].depth + 1);
 
 	++ss->top;
 
@@ -79,18 +82,37 @@ pushnode(struct spine_stack *ss, struct node *n, int mark)
 	if (ss->top >= ss->size)
 	{
 		/* resize the allocation pointed to by stack */
-		struct node **old_stack = ss->stack;
-		int  *old_depth = ss->depth;
+		struct spine_stack_element *old_stack = ss->stack;
 		size_t new_size = ss->size * 2;  /* XXX !!! */
 		++spine_stack_resizes;
-		ss->stack = realloc(old_stack, sizeof(struct node *)*new_size);
+		ss->stack = realloc(old_stack, sizeof(struct spine_stack_element)*new_size);
 		if (!ss->stack)
 			ss->stack = old_stack;  /* realloc failed */
-		else {
+		else
 			ss->size = new_size;
-			ss->depth = realloc(old_depth, sizeof(int)*new_size);
-			if (!ss->depth)
-				ss->depth = old_depth;  /* realloc failed */
+	}
+}
+
+void
+free_all_spine_stacks(int memory_info_flag)
+{
+	if (memory_info_flag)
+	{
+		fprintf(stderr, "Resized spine stack %d times\n", spine_stack_resizes);
+		if (old_spine_stack)
+		{
+			fprintf(stderr, "Spine stack size %d elements\n", old_spine_stack->size);
+			fprintf(stderr, "Spine stack reached max depth of %d\n", old_spine_stack->maxdepth);
 		}
+	}
+
+	if (old_spine_stack)
+	{
+		free(old_spine_stack->stack);
+		old_spine_stack->stack = NULL;
+		old_spine_stack->top = 0;
+		old_spine_stack->size = 0;
+		free(old_spine_stack);
+		old_spine_stack = NULL;
 	}
 }

@@ -154,7 +154,6 @@ reduce_graph(struct node *root)
 		case ATOM:
 			/* node->typ indicates a combinator, which can comprise a built-in,
 			 * or it can comprise a mere variable. Let node->cn decide. */
-			if (stack->top > stack->maxdepth) stack->maxdepth = stack->top;
 			D {
 				printf("%s reduction, stack depth %d, before: ",
 					(cn == COMB_I? "I":

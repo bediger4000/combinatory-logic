@@ -21,9 +21,13 @@
 
 /* $Id$ */
 
+struct spine_stack_element {
+	struct node *node;
+	int depth;
+};
+
 struct spine_stack {
-	struct node **stack;
-	int          *depth;
+	struct spine_stack_element *stack;
 	int top;
 	int size;
 	int maxdepth;
@@ -32,10 +36,11 @@ struct spine_stack {
 struct spine_stack *new_spine_stack(int sz);
 void pushnode(struct spine_stack *ss, struct node *n, int mark);
 void delete_spine_stack(struct spine_stack *ss);
+void free_all_spine_stacks(int memory_info_flag);
 
-#define TOPNODE(ss) ((ss)->stack[(ss)->top - 1])
-#define DEPTH(ss) ((ss)->depth[(ss)->top - 1])
-#define PARENTNODE(ss, N) ((ss)->stack[((ss)->top)-1-N])
+#define TOPNODE(ss) ((ss)->stack[(ss)->top - 1].node)
+#define DEPTH(ss) ((ss)->stack[(ss)->top - 1].depth)
+#define PARENTNODE(ss, N) ((ss)->stack[((ss)->top)-1-N].node)
 #define POP(ss, N)  (((ss)->top)-=N)
 #define STACK_SIZE(ss)  ((ss)->top)
 #define STACK_NOT_EMPTY(ss) ((ss)->top > 0)

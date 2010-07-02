@@ -542,6 +542,7 @@ main(int ac, char **av)
 	if (memory_info) fprintf(stderr, "Memory usage indicators:\n");
 	free_all_nodes(memory_info);
 	free_hashtable(h);
+	free_all_spine_stacks(memory_info);
 	if (cycle_detection) free_detection();
 	reset_yyin();
 
