@@ -27,11 +27,6 @@
 #include <spine_stack.h>
 #include <node.h>
 
-static struct spine_stack *spine_stack_free_list = NULL;
-
-static int stack_malloc_cnt = 0;
-static int stack_reused_cnt = 0;
-static int new_stack_cnt   = 0;
 static int spine_stack_resizes = 0;
 
 extern int interpreter_interrupted;
@@ -41,26 +36,12 @@ new_spine_stack(int sz)
 {
 	struct spine_stack *r;
 
-	++new_stack_cnt;
-
-	if (spine_stack_free_list)
-	{
-		/* dual use of prev field: linked list of "free" spine stacks,
-		 * and FIFO stack of actually in-use spine stacks. */
-		r = spine_stack_free_list;
-		spine_stack_free_list = r->prev;
-		r->prev = NULL;
-		r->top = 0;
-		++stack_reused_cnt;
-	} else {
-		r = malloc(sizeof(*r));
-		r->stack = malloc(sz * sizeof(r->stack[0]));
-		r->top   = 0;
-		r->maxdepth = 0;
-		r->size = sz;
-		r->prev = NULL;
-		r->sn = ++stack_malloc_cnt;
-	}
+	r = malloc(sizeof(*r));
+	r->stack = malloc(sz * sizeof(r->stack[0]));
+	r->depth = malloc(sz * sizeof(int));
+	r->size = sz;
+	r->maxdepth = 0;
+	r->top   = 0;
 
 	return r;
 }
@@ -68,77 +49,22 @@ new_spine_stack(int sz)
 void
 delete_spine_stack(struct spine_stack *ss)
 {
-	/* dual use of prev field: linked list of "free" spine stacks,
-	 * and FIFO stack of actually in-use spine stacks. */
-	ss->prev = spine_stack_free_list;
-	spine_stack_free_list = ss;
+	free(ss->depth);
+	free(ss->stack);
+	ss->depth = NULL;
+	ss->stack = NULL;
+	ss->top = 0;
+	ss->size = 0;
+	free(ss);
 }
 
-void
-push_spine_stack(struct spine_stack **ss)
-{
-	/* dual use of prev field: linked list of "free" spine stacks,
-	 * and FIFO stack of actually in-use spine stacks.
- 	 * This constitutes the FIFO stack of in-use spine stacks usage.
-	 * The 64-depth comes from experience, totally empirical.
-	 */
-	struct spine_stack *p = new_spine_stack(64);
-	p->prev = *ss;
-	*ss = p;
-}
 
 void
-pop_spine_stack(struct spine_stack **ss)
-{
-	/* FIFO-stack-of-in-use-stacks use of prev field */
-	struct spine_stack *tmp = (*ss)->prev;
-	delete_spine_stack(*ss);
-	*ss = tmp;
-}
-
-void
-free_all_spine_stacks(int memory_info_flag)
-{
-	int maxdepth = 0;
-	int maxsize  = 0;
-	int depth_sum = 0;
-	int stack_freed_cnt = 0;
-	while (spine_stack_free_list)
-	{
-		struct spine_stack *tmp = spine_stack_free_list->prev;
-		if (spine_stack_free_list->maxdepth > maxdepth)
-			maxdepth = spine_stack_free_list->maxdepth;
-		if (spine_stack_free_list->size > maxsize)
-			maxsize = spine_stack_free_list->size; 
-		depth_sum += spine_stack_free_list->maxdepth;
-		free(spine_stack_free_list->stack);
-		spine_stack_free_list->stack = NULL;
-		free(spine_stack_free_list);
-		spine_stack_free_list = tmp;
-		++stack_freed_cnt;
-	}
-
-	if (!interpreter_interrupted && stack_freed_cnt != stack_malloc_cnt)
-		fprintf(stderr, "Allocated %d spine stacks, freed %d\n",
-			stack_malloc_cnt, stack_freed_cnt);
-
-	if (memory_info_flag)
-	{
-		float mean_depth = stack_freed_cnt? (float)depth_sum/(float)stack_freed_cnt: 0.0;
-		fprintf(stderr, "Gave out %d spine stacks\n", new_stack_cnt);
-		fprintf(stderr, "Allocated %d spine stacks\n", stack_malloc_cnt);
-		fprintf(stderr, "Reused %d spine stacks\n", stack_reused_cnt);
-		fprintf(stderr, "Maximum spine stack depth: %d\n", maxdepth);
-		fprintf(stderr, "Maximum spine stack size:  %d\n", maxsize);
-		fprintf(stderr, "Mean spine stack depth:    %.02f\n", mean_depth);
-		fprintf(stderr, "Reallocated spine stacks:  %d\n", spine_stack_resizes);
-	}
-}
-
-void
-pushnode(struct spine_stack *ss, struct node *n)
+pushnode(struct spine_stack *ss, struct node *n, int mark)
 {
 	ss->stack[ss->top] = n;
+
+	ss->depth[ss->top] = (mark? mark: ss->depth[ss->top-1] + 1);
 
 	++ss->top;
 
@@ -154,12 +80,17 @@ pushnode(struct spine_stack *ss, struct node *n)
 	{
 		/* resize the allocation pointed to by stack */
 		struct node **old_stack = ss->stack;
+		int  *old_depth = ss->depth;
 		size_t new_size = ss->size * 2;  /* XXX !!! */
 		++spine_stack_resizes;
 		ss->stack = realloc(old_stack, sizeof(struct node *)*new_size);
 		if (!ss->stack)
 			ss->stack = old_stack;  /* realloc failed */
-		else
+		else {
 			ss->size = new_size;
+			ss->depth = realloc(old_depth, sizeof(int)*new_size);
+			if (!ss->depth)
+				ss->depth = old_depth;  /* realloc failed */
+		}
 	}
 }

@@ -23,21 +23,18 @@
 
 struct spine_stack {
 	struct node **stack;
+	int          *depth;
 	int top;
-	int maxdepth;
 	int size;
-	int sn;
-	struct spine_stack *prev;
+	int maxdepth;
 };
 
 struct spine_stack *new_spine_stack(int sz);
-void pushnode(struct spine_stack *ss, struct node *n);
+void pushnode(struct spine_stack *ss, struct node *n, int mark);
 void delete_spine_stack(struct spine_stack *ss);
-void push_spine_stack(struct spine_stack **ss);
-void pop_spine_stack(struct spine_stack **ss);
-void free_all_spine_stacks(int memory_info_flag);
 
 #define TOPNODE(ss) ((ss)->stack[(ss)->top - 1])
+#define DEPTH(ss) ((ss)->depth[(ss)->top - 1])
 #define PARENTNODE(ss, N) ((ss)->stack[((ss)->top)-1-N])
 #define POP(ss, N)  (((ss)->top)-=N)
 #define STACK_SIZE(ss)  ((ss)->top)
