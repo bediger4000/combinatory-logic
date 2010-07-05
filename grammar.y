@@ -594,7 +594,6 @@ reduce_tree(struct node *real_root, enum graphReductionResult *grr)
 	 * testing for a missing right-hand-child node.
 	 */
 	++new_root->refcnt;
-	MARK_RIGHT_BRANCH_TRAVERSED(new_root);
 
 	old_sigint_handler = signal(SIGINT, sigint_handler);
 	old_sigalm_handler = signal(SIGALRM, sigint_handler);

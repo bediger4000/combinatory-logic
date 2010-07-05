@@ -94,7 +94,6 @@ copy_graph(struct node *p)
 		r->name = NULL;
 		r->left = copy_graph(p->left);
 		r->right = copy_graph(p->right);
-		r->examined = 0;
 		break;
 	case ATOM:
 		r->name = p->name;

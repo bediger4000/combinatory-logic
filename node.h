@@ -34,8 +34,6 @@ struct node {
 	struct node **updateable;
 	struct node **left_addr;
 	struct node **right_addr;
-	int branch_marker;
-	int examined;
 	int refcnt;
 };
 

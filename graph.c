@@ -113,11 +113,15 @@ reduce_graph(struct node *root)
 	unsigned long reduction_counter = 0;
 	int max_redex_count = 0;
 	enum graphReductionResult r = UNKNOWN;
+	enum Direction { DIR_LEFT, DIR_RIGHT, DIR_UP };
+	enum Direction dir = DIR_LEFT;
 
 	stack = new_spine_stack(1024);
 
 	root->updateable = root->left_addr;
 	pushnode(stack, root, 1);
+
+	D print_graph(root, 0, TOPNODE(stack)->sn);
 
 	while (STACK_NOT_EMPTY(stack))
 	{
@@ -131,24 +135,24 @@ reduce_graph(struct node *root)
 		{
 		case APPLICATION:
 			topnode = TOPNODE(stack);
-			if (!LEFT_BRANCH_TRAVERSED(topnode))
+			switch (dir)
 			{
-				topnode->branch_marker = LEFT;
-				MARK_LEFT_BRANCH_TRAVERSED(topnode);
+			case DIR_LEFT:
 				topnode->updateable = topnode->left_addr;
 				pushnode(stack, topnode->left, 0);
 				D printf("push left branch on stack, depth now %d\n", DEPTH(stack));
 				pop_stack_cnt = 0;
-			} else if (!RIGHT_BRANCH_TRAVERSED(topnode)) {
-				MARK_RIGHT_BRANCH_TRAVERSED(topnode);
-				if (topnode->right->typ == APPLICATION)
-				{
-					topnode->branch_marker = RIGHT;
-					topnode->updateable = topnode->right_addr;
-					pushnode(stack, topnode->right, 2);
-					D printf("push right branch on stack, depth now %d\n", DEPTH(stack));
-					pop_stack_cnt = 0;
-				}
+				break;
+
+			case DIR_RIGHT:
+				topnode->updateable = topnode->right_addr;
+				pushnode(stack, topnode->right, 2);
+				D printf("push right branch on stack, depth now %d\n", DEPTH(stack));
+				pop_stack_cnt = 0;
+				break;
+
+			case DIR_UP:
+				break;
 			}
 			break;
 		case ATOM:
@@ -177,8 +181,6 @@ reduce_graph(struct node *root)
 					*(PARENTNODE(stack, 2)->updateable)
 						= PARENTNODE(stack, 1)->right;
 					++PARENTNODE(stack, 1)->right->refcnt;
-					PARENTNODE(stack, 1)->examined = 0;
-					PARENTNODE(stack, 2)->examined ^= PARENTNODE(stack, 2)->branch_marker;
 					free_node(PARENTNODE(stack, 1));
 					performed_reduction = 1;
 					pop_stack_cnt = 2;
@@ -208,7 +210,7 @@ reduce_graph(struct node *root)
 						);
 					++n4->right->refcnt;
 
-					n4->examined = 0;
+					/* n4->examined = 0; */
 
 					free_node(ltmp);
 					free_node(rtmp);
@@ -222,9 +224,6 @@ reduce_graph(struct node *root)
 					NT SS;
 					*(PARENTNODE(stack, 3)->updateable) = PARENTNODE(stack, 1)->right;
 					++PARENTNODE(stack, 1)->right->refcnt;
-					PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
-					PARENTNODE(stack, 2)->examined = 0;
-					PARENTNODE(stack, 1)->examined = 0;
 					free_node(PARENTNODE(stack, 2));
 					performed_reduction = 1;
 					pop_stack_cnt = 3;
@@ -241,7 +240,6 @@ reduce_graph(struct node *root)
 							PARENTNODE(stack, 2)->right,
 							PARENTNODE(stack, 1)->right
 						);
-					PARENTNODE(stack, 3)->examined ^= PARENTNODE(stack, 3)->branch_marker;
 					*(PARENTNODE(stack, 3)->updateable) = n;
 					++n->refcnt;
 					free_node(tmp);
@@ -258,8 +256,6 @@ reduce_graph(struct node *root)
 					struct node *n2 = PARENTNODE(stack, 2);
 					struct node *tmp = *(n2->updateable);
 					NT SS;
-					PARENTNODE(stack, 1)->examined = 0;
-					n2->examined ^= n2->branch_marker;
 					n = new_application(n1, n1);
 					*(n2->updateable) = n;
 					++n->refcnt;
@@ -288,8 +284,6 @@ reduce_graph(struct node *root)
 					*(n4->updateable) = tmp;
 					++tmp->refcnt;
 
-					n4->examined ^= n4->branch_marker;
-
 					free_node(f);
 					performed_reduction = 1;
 					pop_stack_cnt = 4;
@@ -311,7 +305,6 @@ reduce_graph(struct node *root)
 							n3->right
 						);
 					++n3->right->refcnt;
-					n3->examined = 0;
 
 					free_node(ltmp);
 					free_node(rtmp);
@@ -336,7 +329,6 @@ reduce_graph(struct node *root)
 					n3->right
 						= PARENTNODE(stack, 2)->right;
 					++n3->right->refcnt;
-					n3->examined = 0;
 
 					free_node(ltmp);
 					free_node(rtmp);
@@ -357,7 +349,6 @@ reduce_graph(struct node *root)
 							n2->right
 						);
 					++n2->left->refcnt;
-					n2->examined = 0;
 					free_node(ltmp);
 					performed_reduction = 1;
 					pop_stack_cnt = 2;
@@ -372,6 +363,46 @@ reduce_graph(struct node *root)
 		}
 
 		POP(stack, pop_stack_cnt);
+		D {
+			printf("%sperformed reduction, popped %d, stack depth now %d: ",
+				performed_reduction? "": "didn't ", pop_stack_cnt, DEPTH(stack)
+			);
+			print_graph(root, 0, TOPNODE(stack)->sn);
+			printf("direction %s\n", dir == DIR_LEFT? "left": dir == DIR_RIGHT? "right": "up");
+		}
+
+		/* Decide what to do next. Note that top-of-stack is the
+		 * node we just popped to get to.
+		 */
+		topnode = TOPNODE(stack);
+
+		if (performed_reduction)
+		{
+			if (topnode->updateable == topnode->left_addr)
+				dir = DIR_LEFT;
+			else
+				dir = DIR_RIGHT;
+
+		} else {
+			if (pop_stack_cnt)
+			{
+				dir = DIR_UP;
+				/* Ugly special case: popped up to root of tree */
+				if (topnode == root)
+					POP(stack, 1);
+				else {
+					if (topnode->updateable == topnode->left_addr)
+						dir = DIR_RIGHT;
+					else if (topnode->updateable == topnode->right_addr)
+						dir = DIR_UP;
+					else
+						dir = DIR_LEFT;
+				}
+			} else
+				dir = DIR_LEFT;
+		}
+
+		D printf("direction now %s\n", dir == DIR_LEFT? "left": dir == DIR_RIGHT? "right": "up");
 
 		if (performed_reduction)
 		{

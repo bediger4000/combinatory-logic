@@ -71,12 +71,6 @@ pushnode(struct spine_stack *ss, struct node *n, int mark)
 
 	++ss->top;
 
-	if (APPLICATION == n->typ)
-	{
-		n->left->examined = 0;
-		n->right->examined = 0;
-	}
-
 	if (ss->top > ss->maxdepth) ++ss->maxdepth;
 
 	if (ss->top >= ss->size)

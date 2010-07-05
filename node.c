@@ -203,9 +203,7 @@ new_node(void)
 	r->right = r->left = NULL;
 	r->cn  = COMB_NONE;
 	r->name = NULL;
-	r->examined = 0;
 	r->updateable = NULL;
-	r->branch_marker = 0;
 	r->refcnt = 0;
 
 	return r;
