@@ -37,13 +37,6 @@ struct node {
 	int refcnt;
 };
 
-#define LEFT  0x01
-#define RIGHT 0x02
-#define LEFT_BRANCH_TRAVERSED(n) ((n)->examined & LEFT)
-#define MARK_LEFT_BRANCH_TRAVERSED(n) ((n)->examined |= LEFT)
-#define RIGHT_BRANCH_TRAVERSED(n) ((n)->examined & RIGHT)
-#define MARK_RIGHT_BRANCH_TRAVERSED(n) ((n)->examined |= RIGHT)
-
 struct node *new_application(struct node *left_child, struct node *right_child);
 struct node *new_combinator(enum primitiveName cn);
 struct node *new_term(const char *name);
