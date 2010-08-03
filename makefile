@@ -17,7 +17,16 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 all:
-	make CC=gcc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g -Wall ' build
+	@echo "Try one of these:"
+	@echo "make cc"   "- very generic"
+	@echo "make gnu"  "- all GNU"
+	@echo "make coverage"  "- all GNU, with gcov options on"
+	@echo "make lcc"  "- lcc C compiler and yacc"
+	@echo "make tcc"  "- tcc C compiler and yacc"
+	@echo "make pcc"  "- pcc C compiler and yacc"
+ 
+cc:
+	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall -O2  ' build
 mudflap:
