@@ -251,15 +251,14 @@ reduce_graph(struct node *root)
 				/* M x  -> x x */
 				if (DEPTH(stack) > 2)
 				{
-					struct node *n;
-					struct node *n1 = PARENTNODE(stack, 1)->right;
-					struct node *n2 = PARENTNODE(stack, 2);
-					struct node *tmp = *(n2->updateable);
+					struct node *n1 = PARENTNODE(stack, 1);
 					NT SS;
-					n = new_application(n1, n1);
-					*(n2->updateable) = n;
-					++n->refcnt;
-					free_node(tmp);
+
+					free_node(n1->left);
+
+					n1->left = n1->right;
+					++n1->left->refcnt;
+
 					performed_reduction = 1;
 					pop_stack_cnt = 2;
 				}
