@@ -109,22 +109,8 @@ int old_prompting = -1;
 "printc" { return TK_CANONICALIZE; }
 "size" { return TK_SIZE; }
 "length" { return TK_LENGTH; }
-"on" {
-	const char *p = Atom_string("on");
-	if (found_binary_command)
-	{
-		yylval.string_constant = p;
-		return BINARY_MODIFIER;
-	} else if (looking_for_filename) {
-		yylval.string_constant = p;
-		return FILE_NAME;
-	} else {
-		yylval.identifier = p;
-		return TK_IDENTIFIER;
-	}
-}
-"off" {
-	const char *p = Atom_string("off");
+"on"|"off" {
+	const char *p = Atom_string(yytext);
 	if (found_binary_command)
 	{
 		yylval.string_constant = p;
