@@ -516,6 +516,11 @@ equivalent_graphs(struct node *g1, struct node *g2)
  * [x] ((M L) (N L)) -> [x](S M N L)         (M, N combinators)
  * [x] M N           -> S ([x] M) ([x] N)
  *
+ * Phrases like "M, N combinators" mean that no variables, abstracted out
+ * or not, appear in terms M and N.  This restriction helps in cases
+ * like [x][y] M.  Abstraction y out of a term M that contains x will
+ * cause the [x] to create a far larger final term.
+ *
  * tromp_bracket_abstraction() examines the parse tree argument,
  * and returns a parse tree with the combinator named by var argument
  * abstracted out of the original parse tree.  The returned parse tree
