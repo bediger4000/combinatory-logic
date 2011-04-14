@@ -104,7 +104,6 @@ void
 queuedestroy(struct queue *q)
 {
 	assert(NULL != q);
-printf("max queue size %d\n", q->max_size);
 
 	if (NULL != q->cbuf) free(q->cbuf);
 

@@ -196,6 +196,9 @@ stmnt
 				if (REDUCTION_LIMIT == grr)
 					printf("Reduction limit\n");
 
+				if (MATCHED_PATTERN == grr)
+					printf("Matched pattern\n");
+
 				if (multiple_reduction_detection)
 					printf("[%d] ", redex_count);
 				printf("%s\n", b->buffer);
@@ -245,6 +248,11 @@ interpreter_command
 	| TK_MATCH expression TK_EOL
 		{
 			char **paths;
+
+			free_paths();
+			if (match_expr)
+				destroy_got(match_expr);
+			match_expr = NULL;
 
 			stop_on_match = 1;
 
@@ -578,6 +586,12 @@ main(int ac, char **av)
 	free_hashtable(h);
 	free_all_spine_stacks(memory_info);
 	if (cycle_detection) free_detection();
+	if (match_expr )
+	{
+		destroy_goto(match_expr);
+		match_expr = NULL;
+		free_paths();
+	}
 	reset_yyin();
 
 	return r;

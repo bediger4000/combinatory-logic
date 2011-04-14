@@ -110,9 +110,6 @@ set_output(struct gto *p, int state, char *keyword)
 		}
 	}
 
-fprintf(stderr, "Adding path \"%s\", length %d nodes as match on state %d\n",
-	keyword, node_count, state);
-
 	set_output_length(p, state, node_count);
 }
 
@@ -120,7 +117,6 @@ void
 set_output_length(struct gto *p, int state, int node_count)
 {
 	struct output_extent *oxt;
-fprintf(stderr, "Adding match length %d to state %d\n", node_count, state);
 
 	/* value of node_count stored against the match */
 

@@ -17,6 +17,18 @@ get_pat_paths(void)
 	return paths;
 }
 
+void
+free_paths(void)
+{
+	if (paths)
+	{
+		while (path_cnt >=  0)
+			free(paths[--path_cnt]);
+		free(paths);
+		paths = NULL;
+	}
+}
+
 int
 set_pattern_paths(struct node *pattern)
 {

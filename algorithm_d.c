@@ -69,6 +69,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	struct stack_elem *stack
 		= malloc(subject_node_count * sizeof(struct stack_elem));
 	const char *p;
+	int matched = 0;
 
 	for (i = 0; i < subject_node_count; ++i)
 		count[i] = 0;
@@ -86,7 +87,10 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	stack[top].visited = 0;
 
 	if (tabulate(g, stack, top, next_state, pat_path_cnt, count))
-		return 1;
+	{
+		matched = 1;
+		goto matched_pattern;
+	}
 
 	while (top > 0)
 	{
@@ -102,7 +106,10 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			intstate = g->delta[this_state][visited == 1?'1':'2'];
 
 			if (tabulate(g, stack, top, intstate, pat_path_cnt, count))
-				return 1;
+			{
+				matched = 1;
+				goto matched_pattern;
+			}
 
 			next_node = (visited == 1)? this_node->left: this_node->right;
 			/* nxt_st = g->delta[intstate][(int)next_node->name]; */
@@ -117,12 +124,17 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			stack[top].visited = 0;
 
 			if (tabulate(g, stack, top, nxt_st, pat_path_cnt, count))
-				return 1;
+			{
+				matched = 1;
+				goto matched_pattern;
+			}
 		}
 	}
+
+	matched_pattern:
 
 	free(stack);
 	free(count);
 
-	return 0;
+	return matched;
 }
