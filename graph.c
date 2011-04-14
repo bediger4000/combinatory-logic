@@ -32,6 +32,8 @@
 #include <graph.h>
 #include <spine_stack.h>
 #include <cycle_detector.h>
+#include <aho_corasick.h>
+#include <algorithm_d.h>
 
 int read_line(void);
 
@@ -41,10 +43,14 @@ extern int trace_reduction;
 extern int debug_reduction;
 extern int elaborate_output;
 extern int single_step;
+extern int stop_on_match;
+extern int pat_path_cnt;
 
 extern int max_reduction_count;
 
 extern sigjmp_buf in_reduce_graph;
+
+extern struct gto *match_expr;
 
 #define C if(cycle_detection)
 #define D if(debug_reduction)
@@ -447,6 +453,15 @@ reduce_graph(struct node *root)
 				C reset_detection();
 				r = REDUCTION_LIMIT;
 				goto exceptional_exit;
+			}
+
+			if (stop_on_match)
+			{
+				if (algorithm_d(match_expr, root->left, pat_path_cnt))
+				{
+					r = MATCHED_PATTERN;
+					goto exceptional_exit;
+				}
 			}
 		}
 	}

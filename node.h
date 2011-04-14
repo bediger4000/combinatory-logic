@@ -35,6 +35,7 @@ struct node {
 	struct node **left_addr;
 	struct node **right_addr;
 	int refcnt;
+	int tree_size;
 };
 
 struct node *new_application(struct node *left_child, struct node *right_child);

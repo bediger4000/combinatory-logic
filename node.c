@@ -29,6 +29,8 @@
 
 #include <node.h>
 #include <arena.h>
+#include <hashtable.h>
+#include <atom.h>
 
 extern int elaborate_output;
 extern int debug_reduction;
@@ -57,7 +59,7 @@ new_application(struct node *left_child, struct node *right_child)
 	struct node *r = new_node();
 
 	r->typ = APPLICATION;
-	r->name = NULL;
+	r->name = Atom_string("@");  /* algorithm_d() uses this */
 	r->cn = COMB_NONE;
 	r->right = right_child;
 	r->left  = left_child;
@@ -205,6 +207,7 @@ new_node(void)
 	r->name = NULL;
 	r->updateable = NULL;
 	r->refcnt = 0;
+	r->tree_size = 0;
 
 	return r;
 }
@@ -257,7 +260,7 @@ reset_node_allocation(void)
 				free_list_cnt);
 	}
 
-	node_free_list = 0;
+	node_free_list = NULL;
 	allocated_node_count = 0;
 
 	free_arena_contents(arena);

@@ -44,6 +44,8 @@ extern char *optarg;
 #include <bracket_abstraction.h>
 #include <cycle_detector.h>
 #include <parser.h>
+#include <pattern_paths.h>
+#include <aho_corasick.h>
 
 #ifdef YYBISON
 #define YYERROR_VERBOSE
@@ -59,6 +61,8 @@ int reduction_timer  = 0;
 int single_step      = 0;
 int memory_info      = 0;
 int count_reductions = 0;    /* produce a count of reductions */
+int stop_on_match    = 0;
+int pat_path_cnt;
 
 int found_binary_command = 0;  /* lex and yacc coordinate on this */
 int look_for_algorithm = 0;
@@ -86,6 +90,7 @@ void set_output_command(enum OutputModifierCommands cmd, const char *setting);
 void show_output_command(enum OutputModifierCommands cmd);
 int *find_cmd_variable(enum OutputModifierCommands cmd);
 
+struct gto *match_expr = NULL;
 
 void print_commands(void);
 
@@ -155,7 +160,7 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
-%token TK_DEF TK_LOAD TK_HELP TK_GRAPH
+%token TK_DEF TK_LOAD TK_HELP TK_GRAPH TK_MATCH TK_UNMATCH TK_MEMORY
 %token <command> TK_COMMAND
 %token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 %token <string_constant> BINARY_MODIFIER
@@ -197,7 +202,8 @@ stmnt
 
 				delete_buffer(b);
 
-				if (CYCLE_DETECTED != grr && REDUCTION_LIMIT != grr)
+				if (CYCLE_DETECTED != grr && REDUCTION_LIMIT != grr
+					&& MATCHED_PATTERN != grr)
 				{
 					/* more built-in testing: if a redex occurs in the
 				 	* term, it didn't get to normal form. */
@@ -225,6 +231,34 @@ interpreter_command
 	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
 	| TK_MAX_COUNT NUMERICAL_CONSTANT TK_EOL { max_reduction_count = $2; }
 	| TK_MAX_COUNT TK_EOL { printf("perform %d reductions at maximum\n", max_reduction_count); }
+	| TK_UNMATCH TK_EOL
+		{
+			if (match_expr )
+			{
+				destroy_goto(match_expr);
+				match_expr = NULL;
+			}
+
+			stop_on_match = 0;
+			pat_path_cnt = 0;
+		}
+	| TK_MATCH expression TK_EOL
+		{
+			char **paths;
+
+			stop_on_match = 1;
+
+			pat_path_cnt = set_pattern_paths($2);
+			paths = get_pat_paths();
+
+			++$2->refcnt;
+			free_node($2);
+
+			match_expr = init_goto();
+			construct_goto(paths, pat_path_cnt, match_expr);
+			construct_failure(match_expr);
+			construct_delta(match_expr);
+		}
 	| TK_SET_BRACKET_ABSTRACTION { look_for_algorithm = 1;} TK_ALGORITHM_NAME TK_EOL
 		{
 			default_bracket_abstraction = determine_bracket_abstraction($3);

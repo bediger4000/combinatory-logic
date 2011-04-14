@@ -70,12 +70,9 @@ new_arena(int memory_info_flag)
 {
 	struct memory_arena *ra = NULL;
 
-	if (!pagesize)
-	{
-		combosize = sizeof(union combo);
-		pagesize = getpagesize();
-		headersize = roundup(sizeof(struct memory_arena), combosize);
-	}
+	combosize = sizeof(union combo);
+	pagesize = getpagesize();
+	headersize = roundup(sizeof(struct memory_arena), combosize);
 
 	ra = malloc(sizeof(*ra));
 

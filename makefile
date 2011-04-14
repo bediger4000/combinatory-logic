@@ -28,7 +28,7 @@ all:
 cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
-	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall -O2  ' build
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall  ' build
 mudflap:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -fmudflap -Wall' LIBS=-lmudflap build
 coverage:
@@ -50,8 +50,9 @@ sbuild:
 
 build: cl
 
-OBJS = node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
-	spine_stack.o bracket_abstraction.o buffer.o cycle_detector.o
+OBJS = pattern_paths.o node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
+	spine_stack.o bracket_abstraction.o buffer.o cycle_detector.o \
+	aho_corasick.o cb.o algorithm_d.o
 
 y.tab.c y.tab.h: grammar.y
 	$(YACC) grammar.y
@@ -69,10 +70,16 @@ atom.o: atom.c atom.h hashtable.h
 bracket_abstraction.o: bracket_abstraction.c bracket_abstraction.h node.h graph.h buffer.h
 buffer.o: buffer.c buffer.h
 cycle_detector.o: cycle_detector.c node.h graph.h buffer.h cycle_detector.h
-graph.o: graph.c graph.h node.h buffer.h spine_stack.h cycle_detector.h
+graph.o: graph.c graph.h node.h buffer.h spine_stack.h cycle_detector.h \
+	aho_corasick.h algorithm_d.h
 hashtable.o: hashtable.c hashtable.h node.h abbreviations.h
 node.o: node.c node.h arena.h
 spine_stack.o: spine_stack.c spine_stack.h
+pattern_paths.o: pattern_paths.c pattern_paths.h buffer.h node.h
+cb.o: cb.c cb.h
+aho_corasick.o: aho_corasick.c  aho_corasick.h cb.h pattern_paths.h
+algorithm_d.o: algorithm_d.c algorithm_d.h node.h buffer.h aho_corasick.h \
+		pattern_paths.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
 	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)

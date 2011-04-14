@@ -109,6 +109,8 @@ int old_prompting = -1;
 "printc" { return TK_CANONICALIZE; }
 "size" { return TK_SIZE; }
 "length" { return TK_LENGTH; }
+"match"    { return TK_MATCH; }
+"unmatch"    { return TK_UNMATCH; }
 "on"|"off" {
 	const char *p = Atom_string(yytext);
 	if (found_binary_command)
@@ -142,6 +144,8 @@ W { return possible_combinator_decision(COMB_W); }
 T { return possible_combinator_decision(COMB_T); }
 M { return possible_combinator_decision(COMB_M); }
 J { return possible_combinator_decision(COMB_J); }
+\* { yylval.identifier = Atom_string(yytext);
+	return TK_IDENTIFIER; }
 
 = { return TK_EQUALS; }
 "curry"|"curry2"|"turner"|"grz"|"tromp"|"btmk"|"church" {
