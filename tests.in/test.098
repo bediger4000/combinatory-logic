@@ -1,0 +1,6 @@
+match S x (I y z)
+S S (K (I y z)) x
+unmatch
+S S (K (I y z)) x
+match S x (I y z)
+S S (K (I y z)) x
