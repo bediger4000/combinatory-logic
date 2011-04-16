@@ -22,11 +22,17 @@ free_paths(void)
 {
 	if (paths)
 	{
-		while (path_cnt >=  0)
-			free(paths[--path_cnt]);
+		int i;
+		for (i = 0; i < paths_used; ++i)
+		{
+			free(paths[i]);
+			paths[i] = NULL;
+		}
 		free(paths);
 		paths = NULL;
 	}
+	path_cnt = 0;
+	paths_used = 0;
 }
 
 int

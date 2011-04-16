@@ -250,8 +250,10 @@ interpreter_command
 			char **paths;
 
 			free_paths();
+
 			if (match_expr)
-				destroy_got(match_expr);
+				destroy_goto(match_expr);
+
 			match_expr = NULL;
 
 			stop_on_match = 1;
