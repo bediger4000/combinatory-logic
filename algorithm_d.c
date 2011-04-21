@@ -71,22 +71,16 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	int top = 1;
 	int next_state;
 	int i, node_cnt = 0;
-	int subject_node_count = node_count(t, 1);
-	int *count = malloc(subject_node_count * sizeof(int));
-	struct stack_elem *stack
-		= malloc(subject_node_count * sizeof(struct stack_elem));
+	int *count;
+	struct stack_elem *stack;
 	const char *p;
 	int matched = 0;
 
-	/* XXX - counting the nodes, then renumbering the nodes,
-	 * then walking the whole parse tree looking for matches
-	 * seems very costly. */
-	for (i = 0; i < subject_node_count; ++i)
-		count[i] = 0;
-
 	renumber(t, &node_cnt);
 
-	/* next_state = g->delta[0][(int)t->name]; */
+	stack = malloc(node_cnt * sizeof(struct stack_elem));
+	count = calloc(node_cnt, sizeof(int));
+
 	next_state = 0;
 	p = t->name;
 	while ('\0' != *p)
