@@ -1,0 +1,6 @@
+M (B x M)
+Matched pattern
+x (x (x (x (x (x (x (M* (B x M))))))))
+W W (W W)
+Matched pattern
+W* W (W W) (W W) (W W) (W W) (W W) (W W)

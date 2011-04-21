@@ -1,0 +1,8 @@
+S S (K (I y z)) x
+Matched pattern
+S x (I* y z)
+S S (K (I y z)) x
+S x (y z)
+S S (K (I y z)) x
+Matched pattern
+S x (I* y z)

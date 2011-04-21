@@ -1,0 +1,3 @@
+M (B x M)
+Matched pattern
+x (x (x (x (x (M* (B x M))))))
