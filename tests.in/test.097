@@ -1,4 +1,4 @@
-match x(x(x(x(x *))))
+match x(x(x(x(x(x(x *))))))
 M (B x M)
-match (W W (W W) (W W) (W W) (W W))
+match (W W (W W) (W W) (W W) (W W) (W W) (W W))
 W W (W W)
