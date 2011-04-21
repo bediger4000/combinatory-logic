@@ -145,7 +145,9 @@ T { return possible_combinator_decision(COMB_T); }
 M { return possible_combinator_decision(COMB_M); }
 J { return possible_combinator_decision(COMB_J); }
 \* { yylval.identifier = Atom_string(yytext);
-	return TK_IDENTIFIER; }
+	return TK_IDENTIFIER;
+	/* Previously: Ignore asterisks in input: output uses them to mark reducible atoms .*/
+}
 
 = { return TK_EQUALS; }
 "curry"|"curry2"|"turner"|"grz"|"tromp"|"btmk"|"church" {
@@ -170,7 +172,6 @@ J { return possible_combinator_decision(COMB_J); }
 	yylval.string_constant = Atom_string(yytext);
 	return FILE_NAME;
 }
-\*		    { /* Ignore asterisks in input: output uses them to mark reducible atoms. */ }
 .		    { /* Just eat it. */ }
 
 %%

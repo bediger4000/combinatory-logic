@@ -44,8 +44,8 @@ extern char *optarg;
 #include <bracket_abstraction.h>
 #include <cycle_detector.h>
 #include <parser.h>
-#include <pattern_paths.h>
 #include <aho_corasick.h>
+#include <algorithm_d.h>
 
 #ifdef YYBISON
 #define YYERROR_VERBOSE

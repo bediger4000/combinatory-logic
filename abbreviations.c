@@ -100,12 +100,6 @@ copy_graph(struct node *p)
 		r->cn = p->cn;
 		r->left = r->right = NULL;
 		break;
-	default:
-		printf("Copying n node of unknown (%d) type\n", p->typ);
-		r->name = NULL;
-		r->left = copy_graph(p->left);
-		r->right = copy_graph(p->right);
-		break;
 	}
 	return r;
 }

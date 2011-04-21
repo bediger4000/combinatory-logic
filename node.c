@@ -174,9 +174,6 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 		if (node->sn == current_node_sn)
 			putc('+', stdout);
 		break;
-	default:
-		printf("Unknown %d {%d}", node->typ, node->sn);
-		break;
 	}
 }
 
@@ -244,11 +241,6 @@ reset_node_allocation(void)
 		while (p)
 		{
 			++free_list_cnt;
-/*
-			if (debug_reduction)
-				fprintf(stderr, "Node %d, ref cnt %d on free list\n",
-					p->sn, p->refcnt);
-*/
 			p = p->right;
 			if (free_list_cnt > allocated_node_count) break;
 		}
@@ -305,12 +297,6 @@ void
 free_node(struct node *node)
 {
 	if (NULL == node) return;  /* dummy root nodes have NULL right field */
-
-/*
-	if (debug_reduction)
-		fprintf(stderr, "Freeing node %d, ref cnt %d\n",
-			node->sn, node->refcnt);
-*/
 
 	--node->refcnt;
 

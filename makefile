@@ -50,7 +50,7 @@ sbuild:
 
 build: cl
 
-OBJS = pattern_paths.o node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
+OBJS = node.o atom.o hashtable.o graph.o arena.o abbreviations.o \
 	spine_stack.o bracket_abstraction.o buffer.o cycle_detector.o \
 	aho_corasick.o cb.o algorithm_d.o
 
@@ -75,11 +75,9 @@ graph.o: graph.c graph.h node.h buffer.h spine_stack.h cycle_detector.h \
 hashtable.o: hashtable.c hashtable.h node.h abbreviations.h
 node.o: node.c node.h arena.h
 spine_stack.o: spine_stack.c spine_stack.h
-pattern_paths.o: pattern_paths.c pattern_paths.h buffer.h node.h
 cb.o: cb.c cb.h
-aho_corasick.o: aho_corasick.c  aho_corasick.h cb.h pattern_paths.h
-algorithm_d.o: algorithm_d.c algorithm_d.h node.h buffer.h aho_corasick.h \
-		pattern_paths.h
+aho_corasick.o: aho_corasick.c  aho_corasick.h cb.h
+algorithm_d.o: algorithm_d.c algorithm_d.h node.h buffer.h aho_corasick.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
 	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)
