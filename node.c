@@ -204,7 +204,6 @@ new_node(void)
 	r->name = NULL;
 	r->updateable = NULL;
 	r->refcnt = 0;
-	r->tree_size = 0;
 
 	return r;
 }

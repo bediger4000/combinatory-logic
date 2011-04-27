@@ -16,25 +16,11 @@ struct stack_elem {
 	struct node *n; /* 1 */
 	int state_at_n; /* 2 */
 	int visited;    /* 3 */
+	int node_number;
 };
 
-void renumber(struct node *node, int *n);
 void calculate_strings(struct node *node, struct buffer *buf);
 int tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_leaf_count, int *count);
-
-/* Give each node in a parse tree/reduction graph a unique number,
- * from a contiguous range. */
-void
-renumber(struct node *node, int *n)
-{
-	node->tree_size = *n;
-	++*n;
-	if (APPLICATION == node->typ)
-	{
-		renumber(node->left, n);
-		renumber(node->right, n);
-	}
-}
 
 int
 tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_leaf_count, int *count)
@@ -51,11 +37,15 @@ tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_le
 	for (i = 0; i < oxt->len; ++i)
 	{
 		int s = oxt->out[i];
-		struct node *n = stack[top - s + 1].n;
-		count[n->tree_size] += 1;
+		int x = top - s + 1;
+		count[stack[x].node_number] += 1;
 
-		if (count[n->tree_size] == pat_leaf_count)
+		if (count[stack[x].node_number] == pat_leaf_count)
 		{
+			struct node *n = stack[x].n;
+			printf("Pattern match with expression: ");
+			print_tree(n, 0, 0);
+			printf("\n");
 			found_match = 1;
 			break;
 		}
@@ -69,14 +59,15 @@ int
 algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 {
 	int top = 1;
+	int breadth_count = 0;
 	int next_state;
-	int i, node_cnt = 0;
+	int node_cnt = 0;
 	int *count;
 	struct stack_elem *stack;
 	const char *p;
 	int matched = 0;
 
-	renumber(t, &node_cnt);
+	node_cnt = node_count(t, 1);
 
 	stack = malloc(node_cnt * sizeof(struct stack_elem));
 	count = calloc(node_cnt, sizeof(int));
@@ -89,6 +80,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	stack[top].n = t;
 	stack[top].state_at_n = next_state;
 	stack[top].visited = 0;
+	stack[top].node_number = breadth_count++;
 
 	if (tabulate(g, stack, top, next_state, pat_path_cnt, count))
 	{
@@ -116,7 +108,6 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			}
 
 			next_node = (visited == 1)? this_node->left: this_node->right;
-			/* nxt_st = g->delta[intstate][(int)next_node->name]; */
 			nxt_st = intstate;
 			p = next_node->name;
 			while ('\0' != *p)
@@ -126,6 +117,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			stack[top].n = next_node;
 			stack[top].state_at_n = nxt_st;
 			stack[top].visited = 0;
+			stack[top].node_number = breadth_count++;
 
 			if (tabulate(g, stack, top, nxt_st, pat_path_cnt, count))
 			{
