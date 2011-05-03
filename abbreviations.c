@@ -46,7 +46,11 @@ abbreviation_lookup(const char *id)
 	/* make a "permanent" copy of the parse tree, so that
 	 * reduce_graph() can destructively reduce the resulting
 	 * parse tree. */
-	if (p) r = arena_copy_graph((struct node *)p);
+	if (p)
+	{
+		preallocate_nodes(((struct node *)p)->tree_size);
+		r = arena_copy_graph((struct node *)p);
+	}
 	return r;
 }
 
@@ -69,12 +73,15 @@ abbreviation_add(const char *id, struct node *expr)
 
 	free_graph((struct node *)n->data);
 
-	/* make a "permanent" copy of the parse tree, so that
-	 * reduce_graph() can destructively reduce the resulting
-	 * parse tree. */
+	/* Make a "permanent" copy of the parse tree, so that
+	 * we can reset the memory arena used in node.c at
+	 * will and not smash the tree held by the hashtable
+	 * as an abbreviation. */
 	n->data = (void *)copy_graph(expr);
 }
 
+/* Copy a parse tree/reduction graph into malloc'ed,
+ * *not* arena-allocated, memory. */
 struct node *
 copy_graph(struct node *p)
 {
@@ -94,11 +101,13 @@ copy_graph(struct node *p)
 		r->name = NULL;
 		r->left = copy_graph(p->left);
 		r->right = copy_graph(p->right);
+		r->tree_size = r->left->tree_size + r->right->tree_size + 1;
 		break;
 	case ATOM:
 		r->name = p->name;
 		r->cn = p->cn;
 		r->left = r->right = NULL;
+		r->tree_size = 1;
 		break;
 	}
 	return r;
@@ -107,14 +116,18 @@ copy_graph(struct node *p)
 void
 free_graph(struct node *p)
 {
-	if (!p) return;
+	while (p)
+	{
+		struct node *tmp = p->right;
 
-	free_graph(p->left);
-	free_graph(p->right);
+		free_graph(p->left);
 
-	p->name = NULL;
-	p->left = p->right = NULL;
-	p->typ = -1;
+		p->name = NULL;
+		p->left = p->right = NULL;
+		p->typ = -1;
 
-	free(p);
+		free(p);
+
+		p = tmp;
+	}
 }

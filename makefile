@@ -33,6 +33,8 @@ mudflap:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -fmudflap -Wall' LIBS=-lmudflap build
 coverage:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -fprofile-arcs -ftest-coverage' build
+profile:
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -pg' build
 lcc:
 	make CC=lcc YACC='yacc -d -v' CFLAGS='-I.' build
 tcc:

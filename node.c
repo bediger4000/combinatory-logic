@@ -204,6 +204,7 @@ new_node(void)
 	r->name = NULL;
 	r->updateable = NULL;
 	r->refcnt = 0;
+	r->tree_size = 0;
 
 	return r;
 }
@@ -312,3 +313,26 @@ free_node(struct node *node)
 		fprintf(stderr, "Freeing node %d, negative ref cnt %d\n",
 			node->sn, node->refcnt);
 }
+
+void
+preallocate_nodes(int pre_node_count)
+{
+	size_t sz = pre_node_count * sizeof(struct node);
+	struct node *node_ary = arena_alloc(arena, sz);
+	int i;
+
+	allocated_node_count += pre_node_count;
+
+	for (i = 0; i < pre_node_count; ++i)
+	{
+		struct node *n = &node_ary[i];
+		n->sn = ++sn_counter;
+		n->right_addr = &(n->right);
+		n->left_addr = &(n->left);
+		n->right = &node_ary[i+1];
+		n->tree_size = 0;
+	}
+	node_ary[pre_node_count - 1].right = node_free_list;
+	node_free_list = &node_ary[0];
+}
+

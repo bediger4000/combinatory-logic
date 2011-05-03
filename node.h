@@ -35,6 +35,7 @@ struct node {
 	struct node **left_addr;
 	struct node **right_addr;
 	int refcnt;
+	int tree_size;
 };
 
 struct node *new_application(struct node *left_child, struct node *right_child);
@@ -43,10 +44,9 @@ struct node *new_term(const char *name);
 
 void init_node_allocation(int memory_info_flag);
 void reset_node_allocation(void);
+void preallocate_nodes(int node_count);
 void print_tree(struct node *root, int reduction_node_sn, int current_node_sn);
 void free_all_nodes(int memory_info_flag);
 void free_node(struct node *root);
 
 struct node * arena_copy_graph(struct node *root);
-
-void copy_node_attrs(struct node *to, struct node *from);
