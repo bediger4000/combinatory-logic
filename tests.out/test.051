@@ -14,6 +14,10 @@ B (B W) (B B C) p q r
 p r (q r)
 B (B (B W) C) (B B) p q r
 p r (q r)
+elaborate on
+elaborate on
+elaborate off
+elaborate off
 C K K a
 elapsed time 0.000 seconds
 a
