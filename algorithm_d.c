@@ -34,21 +34,13 @@ tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_le
 
 	oxt = &(g->output[state]);
 
-	for (i = 0; i < oxt->len; ++i)
+	for (i = 0; i < oxt->len && !found_match; ++i)
 	{
 		int s = oxt->out[i];
 		int x = top - s + 1;
-		count[stack[x].node_number] += 1;
 
-		if (count[stack[x].node_number] == pat_leaf_count)
-		{
-			struct node *n = stack[x].n;
-			printf("Pattern match with expression: ");
-			print_tree(n);
-			printf("\n");
+		if (++count[stack[x].node_number] == pat_leaf_count)
 			found_match = 1;
-			break;
-		}
 	}
 
 	return found_match;
