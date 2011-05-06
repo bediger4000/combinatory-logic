@@ -1,39 +1,31 @@
 timer
-elaborate
 debug
 trace
 step
 timer on
 timer
-elaborate
 debug
 trace
 step
 timer off
-elaborate on
 timer
-elaborate
 debug
 trace
 step
-elaborate off
 debug on
 timer
-elaborate
 debug
 trace
 step
 debug off
 trace on
 timer
-elaborate
 debug
 trace
 step
 trace off
 step on
 timer
-elaborate
 debug
 trace
 step
