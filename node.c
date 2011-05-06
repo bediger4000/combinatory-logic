@@ -201,7 +201,7 @@ free_all_nodes(int memory_info_flag)
 void
 init_node_allocation(int memory_info_flag)
 {
-	arena = new_arena(memory_info_flag);
+	arena = new_arena();
 }
 
 void
