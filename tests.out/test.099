@@ -1,0 +1,19 @@
+S I I (x m)
+Matched pattern
+x m (x m)
+S I I (I x (K a b))
+Matched pattern
+x a (x a)
+S z I (I x (K a b))
+z (x a) (x a)
+x (I y) (x (K a b))
+Matched pattern
+x y (x (K* a b))
+z (I x (K a b)) (I (I x (K a b)))
+z (x a) (x a)
+S (S (S (S (K a) (S (K b) (S (K c) (S I I)))) (K d)) (K e)) (K f) (x p)
+Matched pattern
+a (b (c (x p (x p)))) (K* d (x p)) (K* e (x p)) (K* f (x p))
+S (S (S (S (K a) (S (K b) (S (K c) (S (S I (K z)) I)))) (K d)) (S I I)) (K f) (x p)
+Matched pattern
+a (b (c (x p z (x p)))) d (x p (x p)) (K* f (x p))

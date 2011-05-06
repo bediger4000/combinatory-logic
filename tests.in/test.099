@@ -1,0 +1,9 @@
+abstraction curry2
+match (x *)(x *)
+([x] x x)(x m)
+([x] x x)(I x (K a b))
+([a] z a a) (I x (K a b))
+x (I y) (x (K a b))
+z (I x (K a b)) (I (I x (K a b)))
+([x] a(b(c(x x)))d e f) (x p)
+([y] a(b(c(y z y)))d (y y) f) (x p)
