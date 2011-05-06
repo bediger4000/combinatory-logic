@@ -92,7 +92,6 @@ copy_graph(struct node *p)
 
 	r = malloc(sizeof(*r));
 	r->typ = p->typ;
-	r->sn = -666;
 	r->cn = COMB_NONE;
 
 	switch (p->typ)

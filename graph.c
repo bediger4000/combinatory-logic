@@ -41,7 +41,6 @@ extern int multiple_reduction_detection;
 extern int cycle_detection;
 extern int trace_reduction;
 extern int debug_reduction;
-extern int elaborate_output;
 extern int single_step;
 extern int stop_on_match;
 extern int pat_path_cnt;
@@ -64,9 +63,9 @@ extern struct gto *match_expr;
 void canonicalize(struct node *node, struct buffer *b);
 
 void
-print_graph(struct node *node, int sn_to_reduce, int current_sn)
+print_graph(struct node *node)
 {
-	print_tree(node, sn_to_reduce, current_sn);
+	print_tree(node);
 	putc('\n', stdout);
 }
 
@@ -127,7 +126,7 @@ reduce_graph(struct node *root)
 	root->updateable = root->left_addr;
 	pushnode(stack, root, 1);
 
-	D print_graph(root, 0, TOPNODE(stack)->sn);
+	D print_graph(root);
 
 	while (STACK_NOT_EMPTY(stack))
 	{
@@ -176,7 +175,7 @@ reduce_graph(struct node *root)
 					(cn == COMB_M? "M":
 					(cn == COMB_T? "T": TOPNODE(stack)->name))))))))),
 				 	DEPTH(stack));
-				print_graph(root->left, TOPNODE(stack)->sn, TOPNODE(stack)->sn);
+				print_graph(root->left);
 			}
 			switch (TOPNODE(stack)->cn)
 			{
@@ -360,7 +359,7 @@ reduce_graph(struct node *root)
 				}
 				break;
 			case COMB_NONE:  /* A combinator that's not a built-in */
-				D{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root->left, 0, TOPNODE(stack)->sn);}
+				D{printf("%s, no reduction: ", TOPNODE(stack)->name); print_graph(root->left);}
 				break;
 			}
 			if (performed_reduction) SS;
@@ -372,7 +371,7 @@ reduce_graph(struct node *root)
 			printf("%sperformed reduction, popped %d, stack depth now %d: ",
 				performed_reduction? "": "didn't ", pop_stack_cnt, DEPTH(stack)
 			);
-			print_graph(root, 0, TOPNODE(stack)->sn);
+			print_graph(root);
 			printf("direction %s\n", dir == DIR_LEFT? "left": dir == DIR_RIGHT? "right": "up");
 		}
 
@@ -424,7 +423,7 @@ reduce_graph(struct node *root)
 					(cn == COMB_M? "M":
 					(cn == COMB_T? "T": TOPNODE(stack)->name))))))))
 				);
-				print_graph(root->left, 0, TOPNODE(stack)->sn);
+				print_graph(root->left);
 			}
 
 			if (multiple_reduction_detection)
@@ -439,7 +438,7 @@ reduce_graph(struct node *root)
 					delete_buffer(b);
 				}
 			} else
-				T print_graph(root->left, 0, 0);
+				T print_graph(root->left);
 
 			if (cycle_detection && cycle_detector(root, max_redex_count))
 			{

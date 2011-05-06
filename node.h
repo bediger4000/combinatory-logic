@@ -25,7 +25,6 @@ enum nodeType { APPLICATION, ATOM };
 enum primitiveName { COMB_NONE = 0, COMB_S = 1, COMB_K = 2, COMB_I = 3, COMB_C = 4, COMB_B = 5, COMB_W = 6, COMB_T = 7, COMB_M  = 8, COMB_J = 9};
 
 struct node {
-	int sn;
 	enum nodeType typ;
 	enum primitiveName cn;
 	const char *name;
@@ -45,7 +44,7 @@ struct node *new_term(const char *name);
 void init_node_allocation(int memory_info_flag);
 void reset_node_allocation(void);
 void preallocate_nodes(int node_count);
-void print_tree(struct node *root, int reduction_node_sn, int current_node_sn);
+void print_tree(struct node *root);
 void free_all_nodes(int memory_info_flag);
 void free_node(struct node *root);
 

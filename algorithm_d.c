@@ -44,7 +44,7 @@ tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_le
 		{
 			struct node *n = stack[x].n;
 			printf("Pattern match with expression: ");
-			print_tree(n, 0, 0);
+			print_tree(n);
 			printf("\n");
 			found_match = 1;
 			break;

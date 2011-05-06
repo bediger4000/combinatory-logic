@@ -32,7 +32,6 @@
 #include <hashtable.h>
 #include <atom.h>
 
-extern int elaborate_output;
 extern int debug_reduction;
 
 static struct memory_arena *arena = NULL;
@@ -40,7 +39,7 @@ static struct memory_arena *arena = NULL;
 /* sn_counter - give a serial number (sn field) to
  * all nodes, so as to distinguish them in elaborate output.
  * Note that 0 constitutes a special value. */
-static int sn_counter = 0;
+static int new_node_counter = 0;
 static int reused_node_count = 0;
 static int allocated_node_count = 0;  /* Not total. In a particular arena. */
 static int new_node_cnt;
@@ -50,7 +49,6 @@ extern int reduction_interrupted;
 
 static struct node *node_free_list = NULL;
 
-int graph_graph(struct node *node, FILE *fout, int reduction_node_sn, int counter);
 struct node *new_node(void);
 
 struct node *
@@ -115,7 +113,7 @@ new_term(const char *name)
 }
 
 void
-print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
+print_tree(struct node *node)
 {
 	switch (node->typ)
 	{
@@ -124,25 +122,12 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 		if (!node->left && !node->right) return;
 
 		if (node != node->left)
-			print_tree(node->left, reduction_node_sn, current_node_sn);
+			print_tree(node->left);
 		else
-			printf("Left application loop: {%d}->{%d}\n",
-				node->sn, node->left->sn);
-		
-		if (elaborate_output)
-		{
-			printf(" {%d}", node->sn);
-			if (node->sn == current_node_sn)
-				printf("+ ");
-			else
-				putc(' ', stdout);
-		} else {
-			if (node->sn == current_node_sn)
-				printf(" + ");
-			else
-				putc(' ', stdout);
-		}
+			printf("Left application loop\n");
 
+		putc(' ', stdout);
+		
 		if (node != node->right)
 		{
 			if (node->right)
@@ -153,26 +138,16 @@ print_tree(struct node *node, int reduction_node_sn, int current_node_sn)
 					putc('(', stdout);
 					print_right_paren = 1;
 				}
-				print_tree(node->right, reduction_node_sn, current_node_sn);
+				print_tree(node->right);
 				if (print_right_paren)
 					putc(')', stdout);
-			} else if (elaborate_output)
-				printf(" {%d}", node->sn);
+			}
 		} else
-			printf("Right application loop: {%d}->{%d}\n",
-				node->sn, node->right->sn);
+			printf("Right application loop\n");
 
 		break;
 	case ATOM:
-		if (elaborate_output)
-			printf("%s{%d}", node->name, node->sn);
-		else
-			printf(
-				(node->sn != reduction_node_sn)? "%s": "%s*",
-				node->name
-			);
-		if (node->sn == current_node_sn)
-			putc('+', stdout);
+		printf("%s", node->name);
 		break;
 	}
 }
@@ -191,9 +166,8 @@ new_node(void)
 		++reused_node_count;
 	} else {
 		r = arena_alloc(arena, sizeof(*r));
-		++sn_counter;
+		++new_node_counter;
 		++allocated_node_count;
-		r->sn = sn_counter;
 		r->right_addr = &(r->right);
 		r->left_addr = &(r->left);
 	}
@@ -216,9 +190,9 @@ free_all_nodes(int memory_info_flag)
 	if (memory_info_flag)
 	{
 		fprintf(stderr, "Gave out %d nodes of %d bytes each in toto.\n",
-			new_node_cnt, sizeof(struct node));
+			new_node_cnt, (int)sizeof(struct node));
 		fprintf(stderr, "%d nodes allocated from arena, %d from free list\n",
-			sn_counter, reused_node_count);
+			new_node_counter, reused_node_count);
 			
 	}
 	deallocate_arena(arena, memory_info_flag);
@@ -310,8 +284,8 @@ free_node(struct node *node)
 		node->right = node_free_list;
 		node_free_list = node;
 	} else if (0 > node->refcnt)
-		fprintf(stderr, "Freeing node %d, negative ref cnt %d\n",
-			node->sn, node->refcnt);
+		fprintf(stderr, "Freeing node with negative ref cnt %d\n",
+			node->refcnt);
 }
 
 void
@@ -326,7 +300,6 @@ preallocate_nodes(int pre_node_count)
 	for (i = 0; i < pre_node_count; ++i)
 	{
 		struct node *n = &node_ary[i];
-		n->sn = ++sn_counter;
 		n->right_addr = &(n->right);
 		n->left_addr = &(n->left);
 		n->right = &node_ary[i+1];

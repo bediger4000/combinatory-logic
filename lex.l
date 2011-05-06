@@ -100,7 +100,6 @@ int old_prompting = -1;
 "debug"     { yylval.command = DEBUG_O; return TK_COMMAND; }
 "step"      { yylval.command = STEP_O; return TK_COMMAND; }
 "trace"     { yylval.command = TRACE_O; return TK_COMMAND; }
-"elaborate" { yylval.command = ELABORATE_O; return TK_COMMAND; }
 "detect"    { yylval.command = DETECT_O; return TK_COMMAND; }
 "load"      { return TK_LOAD; }
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }

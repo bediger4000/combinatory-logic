@@ -55,7 +55,6 @@ extern char *optarg;
 int cycle_detection  = 0;
 int multiple_reduction_detection  = 0;
 int debug_reduction  = 0;
-int elaborate_output = 0;
 int trace_reduction  = 0;
 int reduction_timer  = 0;
 int single_step      = 0;
@@ -183,7 +182,7 @@ stmnt
 	: expression TK_EOL
 		{
 			enum graphReductionResult grr;
-			print_graph($1, 0, 0); 
+			print_graph($1);
 			$$ = reduce_tree($1, &grr);
 			if (INTERRUPT != grr)
 			{
@@ -298,7 +297,7 @@ interpreter_command
 				printf("[%d] %s\n", n, b->buffer);
 				delete_buffer(b);
 			} else
-				print_graph($2, 0, 0); 
+				print_graph($2);
 			++$2->refcnt;
 			free_node($2);
 		}
@@ -459,7 +458,7 @@ main(int ac, char **av)
 	setup_abbreviation_table(h);
 	setup_atom_table(h);
 
-	while (-1 != (c = getopt(ac, av, "deL:mN:pstT:cC:B:x")))
+	while (-1 != (c = getopt(ac, av, "dL:mN:pstT:cC:B:x")))
 	{
 		switch (c)
 		{
@@ -468,9 +467,6 @@ main(int ac, char **av)
 			break;
 		case 'd':
 			debug_reduction = 1;
-			break;
-		case 'e':
-			elaborate_output = 1;
 			break;
 		case 'L':
 			p = malloc(sizeof(*p));
@@ -787,7 +783,6 @@ usage(char *progname)
 
 static int *command_variables[] = {
 	&debug_reduction,
-	&elaborate_output,
 	&trace_reduction,
 	&reduction_timer,
 	&single_step,
@@ -809,7 +804,6 @@ set_output_command(enum OutputModifierCommands cmd, const char *setting)
 
 const static char *command_phrases[] = {
 	"debugging output",
-	"elaborate debugging output",
 	"tracing",
 	"reduction timer",
 	"single-stepping",
