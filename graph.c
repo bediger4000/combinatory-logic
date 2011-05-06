@@ -215,8 +215,6 @@ reduce_graph(struct node *root)
 						);
 					++n4->right->refcnt;
 
-					/* n4->examined = 0; */
-
 					free_node(ltmp);
 					free_node(rtmp);
 					performed_reduction = 1;
@@ -467,7 +465,7 @@ reduce_graph(struct node *root)
 
 	r = NORMAL_FORM;
 
-	/* reaching reduction limit or finding a cycle */
+	/* reaching reduction limit or finding a cycle or a match */
 	exceptional_exit:
 
 	delete_spine_stack(stack);
