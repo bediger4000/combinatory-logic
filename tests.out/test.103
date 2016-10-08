@@ -1,0 +1,12 @@
+x (M M)
+Found a trivial cycle of length 1, 1 terms evaluated, ends with ".x.M M"
+[1] x (M* M)
+M M x
+Found a trivial cycle of length 1, 1 terms evaluated, ends with "..M M x"
+[1] M* M x
+y (W W W)
+Found a trivial cycle of length 1, 1 terms evaluated, ends with ".y..W W W"
+[1] y (W* W W)
+W W W y
+Found a trivial cycle of length 1, 1 terms evaluated, ends with "...W W W y"
+[1] W* W W y

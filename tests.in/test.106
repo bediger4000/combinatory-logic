@@ -1,0 +1,30 @@
+# Try patterns at "start", "middle" and "end" of a parse tree
+# when represented as a flat string.
+
+abstraction grz
+def F ([x,y] x x y y)
+
+match * (I y)
+F F y
+match * (I y) (I y)
+F F y
+match * (I y) (I y) (I y)
+F F y
+match  * y y *
+F F y
+match  * y y
+F F y
+match (I (I (I (B W (C (B B (B C (W (B (C I) I)))) I)))) (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (I (B W (C (B B (B C (W (B (C I) I)))) I))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) y (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y) (I y))
+F F y
+# Somewhere in the middle
+match (I (I (I (I (I (I (I (I (I (I *))))))))))
+F F y
+# At the front, after many contractions
+match C I (I (I (I (I (I (I (I (B W (C (B B (B C (W (B (C I) I)))) I)))))))))
+F F y
+# Ensure that "y y *" doesn't match middle-of-tree
+# * y y   should match after about  3 contractions
+# * y y * should match after about 13 contractions
+count 100
+match  y y *
+F F y

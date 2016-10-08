@@ -1,0 +1,7 @@
+# Trivial cycle detection code exercize
+cycles on
+detect on
+x (M M)
+(M M) x
+y (W W W)
+(W W W) y

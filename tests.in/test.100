@@ -1,0 +1,13 @@
+# Exercize a few code paths for coverage.
+debug on
+trace on
+cycles on
+I a
+T a b
+S a b c
+K a b
+B a b c
+C a b c
+W a b
+M a
+J a b c d

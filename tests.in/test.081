@@ -5,15 +5,15 @@ W I (W I)   # period 2   50% W, 50% I - WI
 W T (W T)   # period 2   50% W, 50% T - WT
 W C (W C) (W C) # period 2, pure - WC
 C W (C W) (C W) # period 2, pure - CW
+K M (K M) (K M (K M)) # period 2, KM
 B I M (B I M) # period 3 33.3% B, 33.3% I, 33.3% M - BIM
 W (W K) (W (W K)) # period 3  67% W, 33% K - WWK
 W (C K K) (W (C K K)) # period 3, pure - 33% W, 33% C, 33% K - WCK
 S T T (S T T)  # period 3  - STT
 S T I (S T I)  # period 3  - STI
-M (M (K M))    # period 3 - MMK
-M (M (B T M))  # period 3 - MMBT
-M (T T (K M))  # period 3 - MTK
-M (T K (K M))  # period 3 - MTK
+M (B T M) (M (B T M))  # period 3 - MMBT
+T T (K M) (T T (K M))  # period 3 - MTK
+T K (K M)  (T K (K M))  # period 3 - MTK
 W C (C (W C)) (W C) # period 3, pure - WCC, form of "X Y X"
 C (W C) x (C (W C)) # period 3, pure, CWC, form of "X Y X", where Y does nothing.
 B M T (B M T) (B M T) # period 4, pure, BMTK basis - BMTT
@@ -21,13 +21,13 @@ S T (I I) (S T (I I))  # period 4  - STII
 W (B (T M) K) (W (B (T M) K)) # period 4, WBTK
 B (W K) W (B (W K) W) (B (W K) W) # period 4, pure - BWKW
 W (C (C C)) (W (C (C C))) (W (C (C C))) (W (C (C C)))  # period 4, pure. WCCC
-M (T (B M T)) # period 4, pure, MTTB
+(T (B M T)) (T (B M T)) # period 4, pure, MTTB
 B W (C W) (C W) (B W)  # period 4, pure, BWCWBW.  Doesn't fit an X X, X X X, X X X X subterm scheme.
+T (K M) (T (K M)) (T (K M) (T (K M)))  # period 4, TKMT,  X X (X X) pattern
 T T (B M) (T T (B M)) # period 5, TBMTT
 B (T M) K (M (B (B (T M) K) M)) # period 5, BBTKM
 M (B (B M K) M)  # period 5 - MBBMK
 M (B M (B K M))  # period 5 - MBMBK
-M (M (T (K M)))  # period 5 - MMTTK
 B W W (K (B (B W W) K)) (B (B W W) K) # period 5, pure, BWWKB
 W (W (W (K (K W)))) (W (W (K (K W))))  # period 5, pure - WWWKK
 B I (C (W C)) I (B I (C (W C))) # period 5, pure, BICWC

@@ -1,0 +1,12 @@
+# Combine contraction-count-stop and stop-on-match,
+# see which one wins.
+def Ynonstd (B M (B (B M) B))
+match x *
+count 2
+Ynonstd x
+count 5  # Hits the pattern here, but reduction counting comes first in code.
+Ynonstd x
+count 7
+Ynonstd x
+count 0
+Ynonstd x

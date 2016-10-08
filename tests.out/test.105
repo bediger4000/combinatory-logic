@@ -1,0 +1,15 @@
+B M (B (B M) B) x
+Matched pattern
+x (B* M (B x) (B x (B M (B x))))
+B M (B (B M) B) x
+Matched pattern
+x (x (B* x (B M (B x)) (B x (B x (B M (B x))))))
+B M (B (B M) B) x
+Matched pattern
+x (x (x (B* M (B x) (B x (B x (B M (B x)))))))
+B M (B (B M) B) x
+Matched pattern
+x (x (x (x (x (x (x (x (x (x (x (B* x (B x (B x (B x (B M (B x))))) (B x (B x (B x (B x (B x (B M (B x))))))))))))))))))
+B M (B (B M) B) x
+Matched pattern
+x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (B* x (B x (B x (B x (B x (B M (B x)))))) (B x (B x (B x (B x (B x (B x (B M (B x))))))))))))))))))))))))

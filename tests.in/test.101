@@ -1,0 +1,7 @@
+# Try to trigger circular-buffer overflow in cb.c enqueue() function
+match ((a b b) (a b b) (a b b) ((a b b) (a b b)))
+unmatch
+match ((a b b) (a b b) (a b b) ((a b b) (a b b))) (((a b b) (a b b) (a b b) ((a b b) (a b b)))) (((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))))
+unmatch
+match (((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))) ((a b b) (a b b) (a b b) ((a b b) (a b b))))
+unmatch

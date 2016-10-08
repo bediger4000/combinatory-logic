@@ -1,0 +1,6 @@
+# Get some branch coverage
+unmatch
+#
+detect on
+def x W (W a b) b
+print x

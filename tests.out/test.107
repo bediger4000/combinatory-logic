@@ -1,0 +1,12 @@
+B M (B (B M) B) x
+Reduction limit
+B* M (B x) (B M (B x))
+B M (B (B M) B) x
+Reduction limit
+x (B* M (B x) (B x (B M (B x))))
+B M (B (B M) B) x
+Matched pattern
+x (B* M (B x) (B x (B M (B x))))
+B M (B (B M) B) x
+Matched pattern
+x (B* M (B x) (B x (B M (B x))))

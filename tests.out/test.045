@@ -2,23 +2,34 @@ reduction timer off
 debugging output off
 tracing off
 single-stepping off
+automatic parse-tree cleanup on
 reduction timer on
 debugging output off
 tracing off
 single-stepping off
+automatic parse-tree cleanup on
 reduction timer off
 debugging output off
 tracing off
 single-stepping off
+automatic parse-tree cleanup on
 reduction timer off
 debugging output on
 tracing off
 single-stepping off
+automatic parse-tree cleanup on
 reduction timer off
 debugging output off
 tracing on
 single-stepping off
+automatic parse-tree cleanup on
 reduction timer off
 debugging output off
 tracing off
 single-stepping on
+automatic parse-tree cleanup on
+reduction timer off
+debugging output off
+tracing off
+single-stepping off
+automatic parse-tree cleanup off

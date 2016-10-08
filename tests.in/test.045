@@ -2,31 +2,44 @@ timer
 debug
 trace
 step
+cleanup
 timer on
 timer
 debug
 trace
 step
+cleanup
 timer off
 timer
 debug
 trace
 step
+cleanup
 debug on
 timer
 debug
 trace
 step
+cleanup
 debug off
 trace on
 timer
 debug
 trace
 step
+cleanup
 trace off
 step on
 timer
 debug
 trace
 step
+cleanup
 step off
+cleanup off  # On by default
+timer
+debug
+trace
+step
+cleanup
+cleanup on

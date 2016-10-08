@@ -1,0 +1,506 @@
+I a
+I a ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: I a ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: I a ()
+direction left
+direction now left
+I reduction, stack depth 3, before: I a
+performed reduction, popped 2, stack depth now 1: a ()
+direction left
+direction now left
+I reduction, after: a
+a
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a ()
+direction left
+direction now left
+a reduction, stack depth 2, before: a
+a, no reduction: a
+didn't performed reduction, popped 1, stack depth now 1: a ()
+direction left
+direction now up
+a
+T a b
+T a b ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: T a b ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: T a b ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: T a b ()
+direction left
+direction now left
+T reduction, stack depth 4, before: T a b
+performed reduction, popped 3, stack depth now 1: b a ()
+direction left
+direction now left
+T reduction, after: b a
+b a
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: b a ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: b a ()
+direction left
+direction now left
+b reduction, stack depth 3, before: b a
+b, no reduction: b a
+didn't performed reduction, popped 1, stack depth now 2: b a ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: b a ()
+direction right
+direction now left
+a reduction, stack depth 2, before: b a
+a, no reduction: b a
+didn't performed reduction, popped 1, stack depth now 2: b a ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: b a ()
+direction up
+direction now up
+b a
+S a b c
+S a b c ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: S a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: S a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: S a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 5
+didn't performed reduction, popped 0, stack depth now 5: S a b c ()
+direction left
+direction now left
+S reduction, stack depth 5, before: S a b c
+performed reduction, popped 4, stack depth now 1: a c (b c) ()
+direction left
+direction now left
+S reduction, after: a c (b c)
+a c (b c)
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c (b c) ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a c (b c) ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: a c (b c) ()
+direction left
+direction now left
+a reduction, stack depth 4, before: a c (b c)
+a, no reduction: a c (b c)
+didn't performed reduction, popped 1, stack depth now 3: a c (b c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c (b c) ()
+direction right
+direction now left
+c reduction, stack depth 2, before: a c (b c)
+c, no reduction: a c (b c)
+didn't performed reduction, popped 1, stack depth now 3: a c (b c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a c (b c) ()
+direction up
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c (b c) ()
+direction right
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a c (b c) ()
+direction left
+direction now left
+b reduction, stack depth 3, before: a c (b c)
+b, no reduction: a c (b c)
+didn't performed reduction, popped 1, stack depth now 2: a c (b c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c (b c) ()
+direction right
+direction now left
+c reduction, stack depth 2, before: a c (b c)
+c, no reduction: a c (b c)
+didn't performed reduction, popped 1, stack depth now 2: a c (b c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a c (b c) ()
+direction up
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a c (b c) ()
+direction up
+direction now up
+a c (b c)
+K a b
+K a b ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: K a b ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: K a b ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: K a b ()
+direction left
+direction now left
+K reduction, stack depth 4, before: K a b
+performed reduction, popped 3, stack depth now 1: a ()
+direction left
+direction now left
+K reduction, after: a
+a
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a ()
+direction left
+direction now left
+a reduction, stack depth 2, before: a
+a, no reduction: a
+didn't performed reduction, popped 1, stack depth now 1: a ()
+direction left
+direction now up
+a
+B a b c
+B a b c ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: B a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: B a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: B a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 5
+didn't performed reduction, popped 0, stack depth now 5: B a b c ()
+direction left
+direction now left
+B reduction, stack depth 5, before: B a b c
+performed reduction, popped 3, stack depth now 2: a (b c) ()
+direction left
+direction now left
+B reduction, after: a (b c)
+a (b c)
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a (b c) ()
+direction left
+direction now left
+a reduction, stack depth 3, before: a (b c)
+a, no reduction: a (b c)
+didn't performed reduction, popped 1, stack depth now 2: a (b c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a (b c) ()
+direction right
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a (b c) ()
+direction left
+direction now left
+b reduction, stack depth 3, before: a (b c)
+b, no reduction: a (b c)
+didn't performed reduction, popped 1, stack depth now 2: a (b c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a (b c) ()
+direction right
+direction now left
+c reduction, stack depth 2, before: a (b c)
+c, no reduction: a (b c)
+didn't performed reduction, popped 1, stack depth now 2: a (b c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a (b c) ()
+direction up
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a (b c) ()
+direction up
+direction now up
+a (b c)
+C a b c
+C a b c ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: C a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: C a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: C a b c ()
+direction left
+direction now left
+push left branch on stack, depth now 5
+didn't performed reduction, popped 0, stack depth now 5: C a b c ()
+direction left
+direction now left
+C reduction, stack depth 5, before: C a b c
+performed reduction, popped 3, stack depth now 2: a c b ()
+direction left
+direction now left
+C reduction, after: a c b
+a c b
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a c b ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: a c b ()
+direction left
+direction now left
+a reduction, stack depth 4, before: a c b
+a, no reduction: a c b
+didn't performed reduction, popped 1, stack depth now 3: a c b ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c b ()
+direction right
+direction now left
+c reduction, stack depth 2, before: a c b
+c, no reduction: a c b
+didn't performed reduction, popped 1, stack depth now 3: a c b ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a c b ()
+direction up
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a c b ()
+direction right
+direction now left
+b reduction, stack depth 2, before: a c b
+b, no reduction: a c b
+didn't performed reduction, popped 1, stack depth now 2: a c b ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a c b ()
+direction up
+direction now up
+a c b
+W a b
+W a b ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: W a b ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: W a b ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: W a b ()
+direction left
+direction now left
+W reduction, stack depth 4, before: W a b
+performed reduction, popped 2, stack depth now 2: a b b ()
+direction left
+direction now left
+W reduction, after: a b b
+a b b
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a b b ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: a b b ()
+direction left
+direction now left
+a reduction, stack depth 4, before: a b b
+a, no reduction: a b b
+didn't performed reduction, popped 1, stack depth now 3: a b b ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b b ()
+direction right
+direction now left
+b reduction, stack depth 2, before: a b b
+b, no reduction: a b b
+didn't performed reduction, popped 1, stack depth now 3: a b b ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a b b ()
+direction up
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b b ()
+direction right
+direction now left
+b reduction, stack depth 2, before: a b b
+b, no reduction: a b b
+didn't performed reduction, popped 1, stack depth now 2: a b b ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a b b ()
+direction up
+direction now up
+a b b
+M a
+M a ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: M a ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: M a ()
+direction left
+direction now left
+M reduction, stack depth 3, before: M a
+performed reduction, popped 2, stack depth now 1: a a ()
+direction left
+direction now left
+M reduction, after: a a
+a a
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a a ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a a ()
+direction left
+direction now left
+a reduction, stack depth 3, before: a a
+a, no reduction: a a
+didn't performed reduction, popped 1, stack depth now 2: a a ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a a ()
+direction right
+direction now left
+a reduction, stack depth 2, before: a a
+a, no reduction: a a
+didn't performed reduction, popped 1, stack depth now 2: a a ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a a ()
+direction up
+direction now up
+a a
+J a b c d
+J a b c d ()
+push left branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: J a b c d ()
+direction left
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: J a b c d ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: J a b c d ()
+direction left
+direction now left
+push left branch on stack, depth now 5
+didn't performed reduction, popped 0, stack depth now 5: J a b c d ()
+direction left
+direction now left
+push left branch on stack, depth now 6
+didn't performed reduction, popped 0, stack depth now 6: J a b c d ()
+direction left
+direction now left
+J reduction, stack depth 6, before: J a b c d
+performed reduction, popped 4, stack depth now 2: a b (a d c) ()
+direction left
+direction now left
+@ reduction, after: a b (a d c)
+a b (a d c)
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a b (a d c) ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: a b (a d c) ()
+direction left
+direction now left
+a reduction, stack depth 4, before: a b (a d c)
+a, no reduction: a b (a d c)
+didn't performed reduction, popped 1, stack depth now 3: a b (a d c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b (a d c) ()
+direction right
+direction now left
+b reduction, stack depth 2, before: a b (a d c)
+b, no reduction: a b (a d c)
+didn't performed reduction, popped 1, stack depth now 3: a b (a d c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a b (a d c) ()
+direction up
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b (a d c) ()
+direction right
+direction now left
+push left branch on stack, depth now 3
+didn't performed reduction, popped 0, stack depth now 3: a b (a d c) ()
+direction left
+direction now left
+push left branch on stack, depth now 4
+didn't performed reduction, popped 0, stack depth now 4: a b (a d c) ()
+direction left
+direction now left
+a reduction, stack depth 4, before: a b (a d c)
+a, no reduction: a b (a d c)
+didn't performed reduction, popped 1, stack depth now 3: a b (a d c) ()
+direction left
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b (a d c) ()
+direction right
+direction now left
+d reduction, stack depth 2, before: a b (a d c)
+d, no reduction: a b (a d c)
+didn't performed reduction, popped 1, stack depth now 3: a b (a d c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a b (a d c) ()
+direction up
+direction now right
+push right branch on stack, depth now 2
+didn't performed reduction, popped 0, stack depth now 2: a b (a d c) ()
+direction right
+direction now left
+c reduction, stack depth 2, before: a b (a d c)
+c, no reduction: a b (a d c)
+didn't performed reduction, popped 1, stack depth now 2: a b (a d c) ()
+direction left
+direction now up
+didn't performed reduction, popped 1, stack depth now 2: a b (a d c) ()
+direction up
+direction now up
+didn't performed reduction, popped 1, stack depth now 1: a b (a d c) ()
+direction up
+direction now up
+a b (a d c)

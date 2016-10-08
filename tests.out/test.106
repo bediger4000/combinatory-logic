@@ -1,0 +1,27 @@
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+B* C (W (B (C I) I)) (B W (C (B B (B C (W (B (C I) I)))) I)) (I* y) y
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+W* (B (C I) I) (I* (B W (C (B B (B C (W (B (C I) I)))) I))) y (I* y) (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+W* (B (C I) I) (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I)))) y (I* y) (I* y) (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+C* (B B (B C (W (B (C I) I)))) I (I* (B W (C (B B (B C (W (B (C I) I)))) I))) y y (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+C* (B B (B C (W (B (C I) I)))) I (B W (C (B B (B C (W (B (C I) I)))) I)) y y
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I)))) (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) y (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+C* I (I* (I* (I* (I* (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I)))))))))))) (I* (I* (I* (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I))))))))))) y (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Matched pattern
+C* I (I* (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I))))))))) (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I)))))))) y (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y)
+B W (C (B B (B C (W (B (C I) I)))) I) (B W (C (B B (B C (W (B (C I) I)))) I)) y
+Reduction limit
+B* B (B C (W (B (C I) I))) (I* (I* (I* (I* (I* (I* (I* (B W (C (B B (B C (W (B (C I) I)))) I))))))))) I y y (I* y) (I* y) (I* y) (I* y) (I* y) (I* y) (I* y)

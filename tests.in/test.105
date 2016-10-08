@@ -1,0 +1,12 @@
+# Try to trick stop-on-match code
+def Ynonstd (B M (B (B M) B))
+match x *
+Ynonstd x
+match x(x *)
+Ynonstd x
+match x(x(x *))
+Ynonstd x
+match x (x (x (x (x (x (x (x (x (x (x *))))))))))
+Ynonstd x
+match x (x (x (x (x (x (x (x (x (x (x (x (x (x (x (x *)))))))))))))))
+Ynonstd x
