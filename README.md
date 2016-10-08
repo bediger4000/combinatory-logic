@@ -64,15 +64,17 @@ and "applicative order".
 
 I built-in 9 primitive combinators. They contract like this:
 
-+ *I* a &rarr; a
-+ *K* a b &rarr; a
-+ *S* a b c &rarr; a c (b c)
-+ *B* a b c &rarr; a (b c)
-+ *C* a b c &rarr; a c b
-+ *W* a b &rarr; a b b
-+ *T* a b &rarr; b a
-+ *M* a &rarr; a a
-+ *J* a b c d &rarr; a b (a d c)
+* _I_ a &rarr; a
+* _K_ a b &rarr; a
+* _S_ a b c &rarr; a c (b c)
+* _B_ a b c &rarr; a (b c)
+* _C_ a b c &rarr; a c b
+* _W_ a b &rarr; a b b
+* _T_ a b &rarr; b a
+* _M_ a &rarr; a a
+* _J_ a b c d &rarr; a b (a d c)
+
+Where `a, b, c, d` represent any CL term.
 
 This set of built-ins lets you use `{S, K}`, `{S, K, I}`,
 `{B, W, C, K}`, `{B, M, T, K}` bases for &lambda;K calculi,
