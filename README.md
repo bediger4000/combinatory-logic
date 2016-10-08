@@ -91,3 +91,70 @@ command line option (`X` is any of the nine built-in combinators).
 No interpreter command exists to turn off or on a combinator during a session.
 
 
+###Bracket Abstraction
+
+Bracket abstraction names the process of creating from an original CL expression, a
+CL expression without specified variables, that when evaluated with appropriate arguments, ends up
+giving you the original expression with argument(s) in the place of the specified variables.
+
+The <kbd>cl</kbd> interpreter uses the conventional square-bracket
+notation.  For example, to create an expression that will duplicate
+its single argument, one would type:
+
+> CL> [x] x x
+
+You can use more than one variable inside square brackets, separated
+with commas:
+
+> CL> [a, b, c] a (b c)
+
+The above square-bracketed expression ends up working through three
+bracket abstraction operations, abstracting `c` from `a (b c)`,
+`b` from the resulting expression, and `a` from
+that expression. You can nest bracket abstractions: `[a][b][c] a (b c)`
+should produce the same expression as the example above.
+
+A bracket abstraction makes an expression, so you can use them where ever
+you might use any other simple or complex expression, defining an abbreviation,
+a sub-expression of a much larger expression, as an expression to evaluate
+immediately, or inside another bracket abstraction.
+For example, you could create Turing's fixed-point combinator like this:
+
+    CL> def U [x][y] (x(y y x))
+    CL> def Yturing (U U)
+
+####Bracket Abstraction Algorithms
+
+`cl` offers seven bracket abstraction algorithms:
+
+* `curry` - classic, minimalistic three-rule system for {S,K,I} basis.
+* `curry2` - four-rule system for {S,K,I} basis. Hindley and Seldin's Definition 2.18
+* `tromp` - John Tromp's nine-rule system for compact results in the {S,K,I} basis.
+* `turner` - Simplified Turner algorithm, using S,B,C,K,I combinators.
+* `grz` - the Grzegorczyk algorithm for {B,W,C,K} basis.
+* `btmk` - my homegrown algorithm for {B,T,M,K} basis.
+* `church` - algorithm for {I,J} basis.
+
+
+You can set a default algorithm with the this command: `abstraction name`. For
+*name*, substitute one of the seven algorithm names above.  `cl` starts with
+`curry` as the default bracket abstraction algorithm.
+
+You can specify the abstraction algorithm next to the abstracted variable:
+
+    CL> [x]btmk (x (K x))
+
+###Defining abbreviations
+
+* `define name expression`
+* `def name expression`
+* `reduce expression`
+
+These usages allow a user to introduce abbreviations
+to the input. Each time the abbreviation appears in input, `cl` makes a copy
+of the expression so abbreviated, and puts that copy in the input.
+No matter how complex the expression, an
+abbreviation still comprises a single term. Effectively, the interpreter puts
+the expanded abbreviation in a pair of parentheses.
+
+`def` makes an easy-to-type abbreviation of `define`.
