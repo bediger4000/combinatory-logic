@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -49,11 +49,18 @@ struct memory_arena {
 	int sz;                     /* max free size */
 	int remaining;              /* how many bytes remain in allocation */
 	struct memory_arena *next;
+	int allocation_count;
 };
 
 static int pagesize = 0;
 static int headersize = 0;
 static int combosize = 0;
+
+size_t
+arena_get_size(size_t proposed_size)
+{
+	return roundup(proposed_size, sizeof(union combo));
+}
 
 /* Public way to get a new struct memory_arena
  * The first struct memory_arena in a chain constitutes a "dummy",
@@ -67,7 +74,7 @@ new_arena(void)
 	struct memory_arena *ra = NULL;
 
 	combosize = sizeof(union combo);
-	pagesize = getpagesize();
+	pagesize = 8 * getpagesize();
 	headersize = roundup(sizeof(struct memory_arena), combosize);
 
 	ra = malloc(sizeof(*ra));
@@ -76,6 +83,7 @@ new_arena(void)
 	ra->remaining = 0;
 	ra->first_allocation = ra->next_allocation = NULL;
 	ra->next = NULL;
+	ra->allocation_count = 0;
 
 	return ra;
 }
@@ -149,9 +157,24 @@ arena_alloc(struct memory_arena *ma, size_t size)
 		/* create a new struct memory_arena of at least 1 page */
 		size_t arena_size = roundup((nsize + headersize), pagesize);
 
-		pagesize *= 2;  /* make next allocation twice as large */
+		if (pagesize < 1073741824)
+			pagesize *= 2;  /* make next allocation twice as large */
+
+		++ma->allocation_count;
 
 		tmp = malloc(arena_size);
+		if (!tmp)
+			fprintf(stderr, "Memory allocation failure\n");
+
+		while (!tmp && pagesize > 0) {
+			pagesize /= 2;
+			arena_size = roundup((nsize + headersize), pagesize);
+			tmp = malloc(arena_size);
+		}
+
+		if (!tmp)
+			fprintf(stderr, "Ultimate memory allocation failure\n");
+			/* XXX - what to do here? */
 
 		tmp->first_allocation = ((char *)tmp) + headersize;
 		tmp->next_allocation = tmp->first_allocation;

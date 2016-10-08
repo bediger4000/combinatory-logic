@@ -1,3 +1,23 @@
+/*
+	Copyright (C) 2011, Bruce Ediger
+
+    This file is part of cl.
+
+    cl is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    cl is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with cl; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+*/
 #include <stdio.h>
 #include <stdlib.h>  /* free() */
 #include <string.h>
@@ -12,6 +32,7 @@ static char **paths = NULL;
 static int path_cnt = 0;
 static int paths_used = 0;
 
+/* Used in algorithm_d() itself */
 struct stack_elem {
 	struct node *n; /* 1 */
 	int state_at_n; /* 2 */
@@ -19,11 +40,28 @@ struct stack_elem {
 	int node_number;
 };
 
+static unsigned int stack_sz = 0;  /* number of elements in both count[], stack[] */
+static int *count = NULL;
+static struct stack_elem *stack = NULL;
+
 void calculate_strings(struct node *node, struct buffer *buf);
-int tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_leaf_count, int *count);
+int tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int *count);
+
+void
+match_cleanup(void)
+{
+	if ((stack || count) && stack_sz == 0)
+		fprintf(stderr, "Problem: non-NULL matching stack (%p) or count (%p) arrays, stack_sz %d\n", stack, count, stack_sz);
+	if ((stack == NULL || count == NULL ) && stack_sz != 0)
+		fprintf(stderr, "Problem: NULL matching stack (%p) or count (%p) arrays, stack_sz %d\n", stack, count, stack_sz);
+	if (stack) free(stack);
+	if (count) free(count);
+	stack = NULL;
+	count = NULL;
+}
 
 int
-tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_leaf_count, int *count)
+tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int *count)
 {
 	int found_match = 0;
 	int i;
@@ -39,7 +77,7 @@ tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_le
 		int s = oxt->out[i];
 		int x = top - s + 1;
 
-		if (++count[stack[x].node_number] == pat_leaf_count)
+		if (++count[stack[x].node_number] == g->pattern_path_cnt)
 			found_match = 1;
 	}
 
@@ -48,21 +86,29 @@ tabulate(struct gto *g, struct stack_elem *stack, int top, int state, int pat_le
 
 
 int
-algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
+algorithm_d(struct gto *g, struct node *t)
 {
 	int top = 1;
 	int breadth_count = 0;
 	int next_state;
-	int node_cnt = 0;
-	int *count;
-	struct stack_elem *stack;
 	const char *p;
 	int matched = 0;
+	/* stack[] 0-indexed, but use starts at index 1 */
+	int node_cnt = node_count(t, 1) + 1;
 
-	node_cnt = node_count(t, 1);
+	if (node_cnt > stack_sz)
+	{
+		if (node_cnt < 100)
+			stack_sz = 100;
+		else
+			stack_sz = node_cnt;
+		if (stack) free(stack);
+		stack = malloc(stack_sz * sizeof(struct stack_elem));
+		if (count) free(count);
+		count = malloc(stack_sz * sizeof(int));
+	}
 
-	stack = malloc(node_cnt * sizeof(struct stack_elem));
-	count = calloc(node_cnt, sizeof(int));
+	memset(count, 0, stack_sz * sizeof(int));
 
 	next_state = 0;
 	p = t->name;
@@ -74,7 +120,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	stack[top].visited = 0;
 	stack[top].node_number = breadth_count++;
 
-	if (tabulate(g, stack, top, next_state, pat_path_cnt, count))
+	if (tabulate(g, stack, top, next_state, count))
 	{
 		matched = 1;
 		goto matched_pattern;
@@ -93,7 +139,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			stack[top].visited = visited;
 			intstate = g->delta[this_state][visited == 1?'1':'2'];
 
-			if (tabulate(g, stack, top, intstate, pat_path_cnt, count))
+			if (tabulate(g, stack, top, intstate, count))
 			{
 				matched = 1;
 				goto matched_pattern;
@@ -111,7 +157,7 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 			stack[top].visited = 0;
 			stack[top].node_number = breadth_count++;
 
-			if (tabulate(g, stack, top, nxt_st, pat_path_cnt, count))
+			if (tabulate(g, stack, top, nxt_st, count))
 			{
 				matched = 1;
 				goto matched_pattern;
@@ -120,9 +166,6 @@ algorithm_d(struct gto *g, struct node *t, int pat_path_cnt)
 	}
 
 	matched_pattern:
-
-	free(stack);
-	free(count);
 
 	return matched;
 }

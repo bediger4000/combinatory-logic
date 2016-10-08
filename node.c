@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -198,7 +198,7 @@ free_all_nodes(int memory_info_flag)
 }
 
 void
-init_node_allocation(int memory_info_flag)
+init_node_allocation(void)
 {
 	arena = new_arena();
 }

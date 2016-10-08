@@ -1,6 +1,6 @@
 %{
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -60,7 +60,6 @@ int single_step      = 0;
 int memory_info      = 0;
 int count_reductions = 0;    /* produce a count of reductions */
 int stop_on_match    = 0;
-int pat_path_cnt;
 
 int found_binary_command = 0;  /* lex and yacc coordinate on this */
 int look_for_algorithm = 0;
@@ -184,6 +183,7 @@ stmnt
 		{
 			enum graphReductionResult grr;
 			print_graph($1);
+			fflush(stdout);
 			$$ = reduce_tree($1, &grr);
 			if (INTERRUPT != grr)
 			{
@@ -202,6 +202,7 @@ stmnt
 				if (multiple_reduction_detection)
 					printf("[%d] ", redex_count);
 				printf("%s\n", b->buffer);
+				fflush(stdout);
 
 				delete_buffer(b);
 
@@ -248,7 +249,6 @@ interpreter_command
 			}
 
 			stop_on_match = 0;
-			pat_path_cnt = 0;
 		}
 	| TK_MATCH TK_EOL
 		{
@@ -263,6 +263,7 @@ interpreter_command
 	| TK_MATCH expression TK_EOL
 		{
 			char **paths;
+			int pat_path_cnt;
 
 			free_paths();
 
@@ -287,6 +288,7 @@ interpreter_command
 			free_node($2);
 
 			match_expr = init_goto();
+			match_expr->pattern_path_cnt = pat_path_cnt;
 			construct_goto(paths, pat_path_cnt, match_expr);
 			construct_failure(match_expr);
 			construct_delta(match_expr);
@@ -558,7 +560,7 @@ main(int ac, char **av)
 		}
 	}
 
-	init_node_allocation(memory_info);
+	init_node_allocation();
 
 	if (load_files)
 	{
@@ -606,6 +608,7 @@ main(int ac, char **av)
 
 	if (memory_info) fprintf(stderr, "Memory usage indicators:\n");
 	free_all_nodes(memory_info);
+	match_cleanup();
 	free_hashtable(h);
 	free_all_spine_stacks(memory_info);
 	if (cycle_detection) free_detection();
@@ -628,7 +631,7 @@ main(int ac, char **av)
 void
 top_level_cleanup(int syntax_error_occurred)
 {
-	if (reset_after_reduction)
+	if (reset_after_reduction || reduction_interrupted)
 		reset_node_allocation();
 	reduction_interrupted = 0;
 	if (prompting && !syntax_error_occurred) printf("CL> ");

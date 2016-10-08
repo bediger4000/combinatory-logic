@@ -1,11 +1,11 @@
 /*
 Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
-*/
 %a 10000
 %o 10000
+*/
 %{
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 

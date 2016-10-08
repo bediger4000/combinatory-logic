@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -42,7 +42,6 @@ extern int trace_reduction;
 extern int debug_reduction;
 extern int single_step;
 extern int stop_on_match;
-extern int pat_path_cnt;
 
 extern int max_reduction_count;
 
@@ -453,7 +452,7 @@ reduce_graph(struct node *root)
 
 			if (stop_on_match)
 			{
-				if (algorithm_d(match_expr, root->left, pat_path_cnt))
+				if (algorithm_d(match_expr, root->left))
 				{
 					r = MATCHED_PATTERN;
 					goto exceptional_exit;

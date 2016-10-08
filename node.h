@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2007-2009, Bruce Ediger
+	Copyright (C) 2007-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -40,7 +40,7 @@ struct node *new_application(struct node *left_child, struct node *right_child);
 struct node *new_combinator(enum primitiveName cn);
 struct node *new_term(const char *name);
 
-void init_node_allocation(int memory_info_flag);
+void init_node_allocation(void);
 void reset_node_allocation(void);
 void preallocate_nodes(int node_count);
 void print_tree(struct node *root);

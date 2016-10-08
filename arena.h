@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2009, Bruce Ediger
+	Copyright (C) 2008-2011, Bruce Ediger
 
     This file is part of cl.
 
@@ -26,3 +26,4 @@ void deallocate_arena(struct memory_arena *ma, int memory_info_flag);
 
 void *arena_alloc(struct memory_arena *ma, size_t size);
 
+size_t arena_get_size(size_t proposed_size);

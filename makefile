@@ -28,7 +28,7 @@ all:
 cc:
 	make CC=cc YACC='yacc -d -v' LEX=lex CFLAGS='-I. -g' build
 gnu:
-	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall  ' build
+	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g  -Wall ' build
 mudflap:
 	make CC=gcc YACC='bison -d -b y' LEX=flex CFLAGS='-I. -g -fmudflap -Wall' LIBS=-lmudflap build
 coverage:
@@ -80,6 +80,7 @@ spine_stack.o: spine_stack.c spine_stack.h
 cb.o: cb.c cb.h
 aho_corasick.o: aho_corasick.c  aho_corasick.h cb.h
 algorithm_d.o: algorithm_d.c algorithm_d.h node.h buffer.h aho_corasick.h
+abbreviations.o: abbreviations.c node.h hashtable.h
 
 cl: y.tab.o lex.yy.o $(OBJS)
 	$(CC) $(CFLAGS) -g -o cl y.tab.o lex.yy.o $(OBJS) $(LIBS)

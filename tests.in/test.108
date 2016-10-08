@@ -1,0 +1,5 @@
+# $Id: test.108,v 1.1 2011/07/18 17:51:34 bediger Exp $
+# Caused a segfault in algorithm_d() - 0-indexed,
+# but code starts use at index 1.
+match a (a (a (a (a (a *)))))
+K S K

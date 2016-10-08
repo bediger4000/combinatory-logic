@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2009, Bruce Ediger
+	Copyright (C) 2008-2011, Bruce Ediger
 
     This file is part of cl.
 
