@@ -97,7 +97,7 @@ Bracket abstraction names the process of creating from an original CL expression
 CL expression without specified variables, that when evaluated with appropriate arguments, ends up
 giving you the original expression with argument(s) in the place of the specified variables.
 
-The <kbd>cl</kbd> interpreter uses the conventional square-bracket
+The `cl` interpreter uses the conventional square-bracket
 notation.  For example, to create an expression that will duplicate
 its single argument, one would type:
 
@@ -167,7 +167,7 @@ a bracket abstraction.
 
 ###Information about expressions
 
-* `size expression` - print the number of atoms in <em>expression</em>.
+* `size expression` - print the number of atoms in *expression*.
 * `length expression` - print the number of atoms plus number of applications in *expression*.
 * `print expression` - print human-readable representation of *expression*, with abbreviations expanded, but without evaluation.
 * `redexes expression` - print a count of possible contractions in *expression*, regardless of order of evaluation.
@@ -206,3 +206,33 @@ print the intermediate expression, and wait, at a `?` prompt
 for user input. Hitting return goes to the next contraction, `n`
 or `q` terminates the reduction, and `c` causes it
 to quit single-stepping.
+
+###Reduction information and control
+
+* `timer on|off` - turn on/off per-reduction elapsed time output.
+* `timeout 0|N`- stop reducing after *N* seconds.
+* `count 0|N` - stop reducing after *N* contractions.
+* `cycles on|off`
+* `detect on|off`
+
+You can turn time outs off by using a 0 (zero) second timeout.
+Similarly, you can turn contraction-count-limited-evaluation off
+with a 0 (zero) count.
+
+`timer on` also times bracket abstraction.
+
+Some CL expressions end up creating a cycle: `M M` or `W W W`
+or `B (W K) (W (W K)) (B (W K) (W (W K)))`.  After a certain number of
+contractions, the interpreter ends up with an expression it has already encountered.
+If you issue the `cycles on` command, the interpreter keeps track of
+every expression in the current reduction, and stops when it detects a cyclical
+reduction.
+
+detect on` causes the interpreter to count and mark primitives eligible
+for contraction (with an asterisk),
+regardless of reduction order.  It does "normal order" reduction, but ignores that
+for the contraction count. This only has utility with `trace on`.
+
+Turning cycle detection on will add time to an
+expression's reduction, as will possible contraction detection.
+
