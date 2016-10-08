@@ -158,3 +158,10 @@ abbreviation still comprises a single term. Effectively, the interpreter puts
 the expanded abbreviation in a pair of parentheses.
 
 `def` makes an easy-to-type abbreviation of `define`.
+
+The `reduce` command produces an expression by performing normal order
+contractions on the expression, out-of-order from the usual contractions.
+Unlike `define` or `def`, you can use `reduce` anywhere an expression would
+fit, as part of a larger expression, as part of an abbreviation, or as part of
+a bracket abstraction.
+
