@@ -6,10 +6,10 @@ formal systems. It doesn't exactly interpret any "Combinatory Logic" in that
 it runs on computers with finite CPU speed and a finite memory.
 Most or all formal systems fail to take these limits into account.
 
-I started writing this interpreter as a way to test the "graph reduction"
-implementation of a lambda calculator.  Along the way, I bought a copy
-of Raymond Smullyan's
-[To Mock A Mockingbird](http://www.amazon.com/Mock-Mockingbird-Raymond-M-Smullyan/dp/0192801422/ref=sr_1_3?ie=UTF8&amp;s=books&amp;qid=1226791982&amp;sr=8-3)
+I started writing this interpreter as a way to test a graph reduction
+implementation of a [lambda calculator](https://github.com/bediger4000/lambda-calculator).
+Along the way, I bought a copy of Raymond Smullyan's
+[To Mock A Mockingbird](http://www.amazon.com/Mock-Mockingbird-Raymond-M-Smullyan/dp/0192801422/ref=sr_1_3?ie=UTF8&amp;s=books&amp;qid=1226791982&amp;sr=8-3) .
 While working that book's problems,
 I ended up making `cl` into a reasonably complete and usable system.
 
@@ -23,7 +23,7 @@ Try one of these commands:
 
 For most or all Linux distros with development tools installed, `make gnu` should work.
 The last time I had access to Solaris, `make cc` worked. I believe it will work on *BSD
-systems.  `make clan` is for those upright citizens with Clang installed.
+systems.  `make clang` is for those upright citizens with the Clang compiler set installed.
 
 At this point, you can test the newly-compiled executable.
 From the command line: `./runtests`  .  Most of the tests should
@@ -64,15 +64,15 @@ and "applicative order".
 
 I built-in 9 primitive combinators. They contract like this:
 
-    *I* a &rarr; a
-    *K* a b &rarr; a
-    *S* a b c &rarr; a c (b c)
-    *B* a b c &rarr; a (b c)
-    *C* a b c &rarr; a c b
-    *W* a b &rarr; a b b
-    *T* a b &rarr; b a
-    *M* a &rarr; a a
-    *J* a b c d &rarr; a b (a d c)
++ *I* a &rarr; a
++ *K* a b &rarr; a
++ *S* a b c &rarr; a c (b c)
++ *B* a b c &rarr; a (b c)
++ *C* a b c &rarr; a c b
++ *W* a b &rarr; a b b
++ *T* a b &rarr; b a
++ *M* a &rarr; a a
++ *J* a b c d &rarr; a b (a d c)
 
 This set of built-ins lets you use `{S, K}`, `{S, K, I}`,
 `{B, W, C, K}`, `{B, M, T, K}` bases for &lambda;K calculi,
