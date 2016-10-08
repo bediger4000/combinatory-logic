@@ -182,3 +182,27 @@ sides of an "=", otherwise, no evaluation takes place.
 `size` and `length` seem redundant, but authorities
 measure CL expressions different ways.  These two methods should cover the
 vast majority of cases.
+
+###Intermediate output and single-stepping
+
+* `trace on|off`
+* `debug on|off`
+* `step on|off`
+
+You can issue any of these commands without an "on" or "off" argument
+to inquire about the current state of the directive.
+
+`trace` and `debug` make for
+increasingly verbose output. `trace` shows the expression
+after each contraction, `debug` adds information about which
+branch of an application it evaluates.
+
+`detect` causes `trace` to also print a count
+of possible contractions (not all of them normal order reductions),
+and mark contractable primitives with an asterisk.
+
+`step on` causes the interpreter to stop after each contraction,
+print the intermediate expression, and wait, at a `?` prompt
+for user input. Hitting return goes to the next contraction, `n`
+or `q` terminates the reduction, and `c` causes it
+to quit single-stepping.
