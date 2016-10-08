@@ -82,13 +82,14 @@ int interpreter_interrupted = 0;  /* communicates with spine_stack.c code */
 int reduction_interrupted = 0;    /* communicates with reset_node_allocation() */
 
 void top_level_cleanup(int syntax_error_processing);
+int reset_after_reduction = 1;
 
 /* related to "output_command" non-terminal */
 void set_output_command(enum OutputModifierCommands cmd, const char *setting);
 void show_output_command(enum OutputModifierCommands cmd);
-int *find_cmd_variable(enum OutputModifierCommands cmd);
 
 struct gto *match_expr = NULL;
+struct node *match_parse_tree = NULL;
 
 void print_commands(void);
 
@@ -151,16 +152,17 @@ int as_combinator[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 
 %token TK_EOL TK_COUNT_REDUCTIONS TK_SIZE TK_LENGTH
+%token TK_CLEANUP TK_MEMORY
 %token TK_LPAREN TK_RPAREN TK_LBRACK TK_RBRACK TK_COMMA
+%token TK_DEF TK_LOAD TK_GRAPH TK_MATCH TK_UNMATCH
+%token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 %token <identifier> TK_IDENTIFIER
 %token <cn> TK_PRIMITIVE
 %token <string_constant> FILE_NAME
 %token <node> TK_REDUCE TK_TIMEOUT
 %token <numerical_constant> NUMERICAL_CONSTANT
 %token <identifier> TK_ALGORITHM_NAME
-%token TK_DEF TK_LOAD TK_HELP TK_GRAPH TK_MATCH TK_UNMATCH TK_MEMORY
 %token <command> TK_COMMAND
-%token TK_MAX_COUNT TK_SET_BRACKET_ABSTRACTION  TK_EQUALS TK_PRINT TK_CANONICALIZE
 %token <string_constant> BINARY_MODIFIER
 
 %type <node> expression stmnt application term constant interpreter_command
@@ -226,7 +228,6 @@ stmnt
 interpreter_command
 	: output_command BINARY_MODIFIER TK_EOL { found_binary_command = 0; set_output_command($1, $2); }
 	| output_command TK_EOL { found_binary_command = 0; show_output_command($1); }
-	| TK_HELP TK_EOL { print_commands(); }
 	| TK_LOAD {looking_for_filename = 1; } FILE_NAME TK_EOL { looking_for_filename = 0; push_and_open($3); }
 	| TK_TIMEOUT NUMERICAL_CONSTANT TK_EOL { reduction_timeout = $2; }
 	| TK_TIMEOUT TK_EOL { printf("reduction runs for %d seconds\n", reduction_timeout); }
@@ -240,8 +241,24 @@ interpreter_command
 				match_expr = NULL;
 			}
 
+			if (match_parse_tree)
+			{
+				free_graph(match_parse_tree);
+				match_parse_tree = NULL;
+			}
+
 			stop_on_match = 0;
 			pat_path_cnt = 0;
+		}
+	| TK_MATCH TK_EOL
+		{
+			if (match_parse_tree)
+			{
+				printf("Reduction stops when it matches: ");
+				print_graph(match_parse_tree);
+			} else {
+				printf("No matching currently set\n");
+			}
 		}
 	| TK_MATCH expression TK_EOL
 		{
@@ -252,12 +269,19 @@ interpreter_command
 			if (match_expr)
 				destroy_goto(match_expr);
 
+			if (match_parse_tree)
+				free_graph(match_parse_tree);
+
 			match_expr = NULL;
+			match_parse_tree = NULL;
 
 			stop_on_match = 1;
 
 			pat_path_cnt = set_pattern_paths($2);
 			paths = get_pat_paths();
+
+			match_parse_tree = copy_graph($2);
+			++match_parse_tree->refcnt;
 
 			++$2->refcnt;
 			free_node($2);
@@ -311,10 +335,12 @@ interpreter_command
 		}
 	| TK_COUNT_REDUCTIONS expression TK_EOL {
 			int ignore;
-			int cnt = reduction_count($2, 0, &ignore, NULL);
+			struct buffer *b = new_buffer(256);
+			int cnt = reduction_count($2, 0, &ignore, b);
 			printf("Found %d possible reductions\n", cnt);
 			++$2->refcnt;
 			free_node($2);
+			delete_buffer(b);
 		}
 	| TK_LENGTH expression TK_EOL {
 			int cnt = node_count($2, 0);  /* only count atoms. */
@@ -587,16 +613,23 @@ main(int ac, char **av)
 	{
 		destroy_goto(match_expr);
 		match_expr = NULL;
-		free_paths();
+	}
+	free_paths();
+	if (match_parse_tree)
+	{
+		free_graph(match_parse_tree);
+		match_parse_tree = NULL;
 	}
 	reset_yyin();
 
 	return r;
 }
 
-void top_level_cleanup(int syntax_error_occurred)
+void
+top_level_cleanup(int syntax_error_occurred)
 {
-	reset_node_allocation();
+	if (reset_after_reduction)
+		reset_node_allocation();
 	reduction_interrupted = 0;
 	if (prompting && !syntax_error_occurred) printf("CL> ");
 }
@@ -786,19 +819,14 @@ static int *command_variables[] = {
 	&reduction_timer,
 	&single_step,
 	&cycle_detection,
-	&multiple_reduction_detection
+	&multiple_reduction_detection,
+	&reset_after_reduction
 };
-
-int *
-find_cmd_variable(enum OutputModifierCommands cmd)
-{
-	return command_variables[cmd];
-}
 
 void
 set_output_command(enum OutputModifierCommands cmd, const char *setting)
 {
-	*(find_cmd_variable(cmd)) = strcmp(setting, "on")? 0: 1;
+	*(command_variables[cmd]) = strcmp(setting, "on")? 0: 1;
 }
 
 const static char *command_phrases[] = {
@@ -807,18 +835,12 @@ const static char *command_phrases[] = {
 	"reduction timer",
 	"single-stepping",
 	"reduction cycle detection",
-	"non-head reduction detection"
+	"non-head reduction detection",
+	"automatic parse-tree cleanup"
 };
 
 void
 show_output_command(enum OutputModifierCommands cmd)
 {
-	printf("%s %s\n", command_phrases[cmd], *(find_cmd_variable(cmd))? "on": "off");
+	printf("%s %s\n", command_phrases[cmd], *(command_variables[cmd])? "on": "off");
 }
-
-void
-print_commands(void)
-{
-	printf("Help Section\n");
-}
-

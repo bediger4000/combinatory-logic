@@ -48,8 +48,6 @@ struct hashtable {
 	
 	struct hashnode **buckets;    /* array of hash chains */
 	struct hashnode **sentinels;  /* array of hash chains */
-
-	int flags;
 };
 
 /* number of buckets has to be a power of 2 for this to work */

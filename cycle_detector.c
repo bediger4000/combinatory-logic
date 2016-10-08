@@ -92,16 +92,9 @@ cycle_detector(struct node *root, int max_redex_count)
 	{
 		if (cycle_stack_depth == cycle_stack_size)
 		{
-			int new_size = cycle_stack_size + 10;
-			char **new_array = realloc(cycle_stack, new_size*sizeof(cycle_stack[0]));
-
-			if (new_array)
-			{
-				cycle_stack = new_array;
-				cycle_stack_size = new_size;
-			}
-			/* If realloc() returns NULL, something's gone haywire.
-			 * Not sure what to do here. */
+			cycle_stack_size += 10;
+			cycle_stack = realloc(cycle_stack,
+				cycle_stack_size*sizeof(cycle_stack[0]));
 		}
 
 		cycle_stack[cycle_stack_depth++] = graph;

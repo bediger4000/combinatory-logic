@@ -102,8 +102,6 @@ canonicalize(struct node *node, struct buffer *b)
 	case ATOM:
 		buffer_append(b, node->name, strlen(node->name));
 		break;
-	default:
-		break;
 	}
 }
 
@@ -394,10 +392,12 @@ reduce_graph(struct node *root)
 				else {
 					if (topnode->updateable == topnode->left_addr)
 						dir = DIR_RIGHT;
-					else if (topnode->updateable == topnode->right_addr)
-						dir = DIR_UP;
-					else
-						dir = DIR_LEFT;
+					/* if (topnode->updateable == topnode->right_addr)
+					 * then leave dir value at DIR_UP: we've already
+					 * traversed the left and right sides of the parse tree/
+					 * reduction graph.  If updateable has neither left_addr
+					 * nor right_addr values, your guess is as good as mine.
+					 */
 				}
 			} else
 				dir = DIR_LEFT;
@@ -597,19 +597,16 @@ node_count(struct node *node, int count_interior_nodes)
 {
 	int count = 0;
 
-	if (node)
+	switch (node->typ)
 	{
-		switch (node->typ)
-		{
-		case APPLICATION:
-			if (count_interior_nodes) ++count;
-			count += node_count(node->left, count_interior_nodes);
-			count += node_count(node->right, count_interior_nodes);
-			break;
-		case ATOM:
-			count = 1;
-			break;
-		}
+	case APPLICATION:
+		if (count_interior_nodes) ++count;
+		count += node_count(node->left, count_interior_nodes);
+		count += node_count(node->right, count_interior_nodes);
+		break;
+	case ATOM:
+		count = 1;
+		break;
 	}
 
 	return count;

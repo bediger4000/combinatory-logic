@@ -49,16 +49,9 @@ var_appears_in_graph(struct node *var, struct node *tree)
 	case ATOM:
 		if (var->cn == tree->cn)
 		{
-			if (COMB_NONE == var->cn)
-			{
-				if (var->name == tree->name)
-					r = 1;
-			} else 
+			if (var->name == tree->name)
 				r = 1;
-		} else if (var->name == tree->name)
-			r = 1;
-		break;
-	default:
+		}
 		break;
 	}
 	return r;
@@ -82,8 +75,6 @@ free_var_appears_in_graph(struct node *tree)
 	case ATOM:
 		if (COMB_NONE == tree->cn)
 			r = 1;
-		break;
-	default:
 		break;
 	}
 	return r;
@@ -124,8 +115,6 @@ curry_bracket_abstraction(struct node *var, struct node *tree)
 				new_combinator(COMB_K),
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
-		break;
-	default:
 		break;
 	}
 	return r;
@@ -175,8 +164,6 @@ curry2_bracket_abstraction(struct node *var, struct node *tree)
 				new_combinator(COMB_K),
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
-		break;
-	default:
 		break;
 	}
 
@@ -253,8 +240,6 @@ turner_bracket_abstraction(struct node *var, struct node *tree)
 				new_combinator(COMB_K),
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
-		break;
-	default:
 		break;
 	}
 	return r;
@@ -341,8 +326,6 @@ grzegorczyk_bracket_abstraction(struct node *var, struct node *tree)
 				new_combinator(COMB_K),
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
-		break;
-	default:
 		break;
 	}
 	return r;
@@ -462,8 +445,6 @@ btmk_bracket_abstraction(struct node *var, struct node *tree)
 				new_combinator(COMB_K),
 				COMB_NONE == tree->cn? new_term(tree->name): new_combinator(tree->cn)
 			);
-		break;
-	default:
 		break;
 	}
 	return r;
@@ -783,8 +764,6 @@ ij_bracket_abstraction(struct node *var, struct node *tree)
 		else {
 			/* another invalid expression for Lambda-I calculus. */
 		}
-		break;
-	default:
 		break;
 	}
 	return r;

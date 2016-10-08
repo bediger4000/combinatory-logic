@@ -236,12 +236,10 @@ arena_copy_graph(struct node *p)
 {
 	struct node *r = NULL;
 
-	if (!p)
-		return r;
-
 	r = new_node();
 
 	r->typ = p->typ;
+	r->name = p->name;
 
 	switch (p->typ)
 	{
@@ -252,15 +250,7 @@ arena_copy_graph(struct node *p)
 		++r->right->refcnt;
 		break;
 	case ATOM:
-		r->name = p->name;
 		r->cn = p->cn;
-		break;
-	default:
-		printf("Copying n node of unknown (%d) type\n", p->typ);
-		r->left = arena_copy_graph(p->left);
-		++r->left->refcnt;
-		r->right = arena_copy_graph(p->right);
-		++r->right->refcnt;
 		break;
 	}
 	return r;

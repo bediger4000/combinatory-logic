@@ -22,5 +22,3 @@ void construct_failure(struct gto *g);
 void construct_delta(struct gto *g);
 struct gto *init_goto(void);
 void        destroy_goto(struct gto *);
-
-void perform_match(struct gto *g, FILE *in_stream);

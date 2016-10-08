@@ -26,4 +26,4 @@
  * Enum names have a value assigned so as to use them as array indexes, too.
  */
 
-enum OutputModifierCommands {DEBUG_O = 0, TRACE_O = 1, TIME_O = 2, STEP_O = 3, CYCLES_O = 4, DETECT_O = 5};
+enum OutputModifierCommands {DEBUG_O = 0, TRACE_O = 1, TIME_O = 2, STEP_O = 3, CYCLES_O = 4, DETECT_O = 5, CLEANUP_O = 6};

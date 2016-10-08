@@ -37,3 +37,12 @@ do
 		echo "No desired output specified for $OUTPUT"
 	fi
 done
+
+# Run some instances with all command line flags, some
+# nonsense options, etc, for code coverage.
+./cl -m <  /dev/null > /dev/null 2>&1
+./cl -c -d -L tests.in/test.001 -m -p -s -T -t -x -B curry2 -B q -N 10 < /dev/null > /dev/null 2>&1
+./cl -t -B curry -t -CX -N 53 < /dev/null > /dev/null 2>&1
+./cl -t -B smidgeon -t -C X -N 10 < /dev/null > /dev/null 2>&1
+./cl -C S -C K -C I -C B -C C -C W -C M -C T -C J < /dev/null > /dev/null 2>&1
+./cl -p -L tests.in/test.001 -L tests.in/test.002 < /dev/null > /dev/null 2>&1

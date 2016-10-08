@@ -249,28 +249,6 @@ construct_failure(struct gto *g)
 }
 
 void
-perform_match(struct gto *g, FILE *in)
-{
-	int state = 0;
-	int n = 1;
-	int a;
-
-	while ((a = fgetc(in)) != -1)
-	{
-		state = g->delta[state][a];
-
-		if (0 < g->output[state].len)
-		{
-			int i;
-
-			for (i = 0; i < g->output[state].len; ++i)
-				printf("match path of length %d at line %d\n",
-					g->output[state].out[i], n);
-		}
-	}
-}
-
-void
 destroy_goto(struct gto *p)
 {
 	int i;

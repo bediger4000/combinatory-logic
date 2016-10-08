@@ -203,12 +203,8 @@ calculate_strings(struct node *node, struct buffer *b)
 			else
 				tmp = malloc(alloc_bytes);
 
-			if (tmp)
-			{
-				paths = tmp;
-				path_cnt += 4;
-			} else
-				fprintf(stderr, "Failed to alloc/realloc pattern paths array, size %d\n", path_cnt + 4);
+			paths = tmp;
+			path_cnt += 4;
 		}
 
 		/* XXX - If a realloc() fails, this could overwrite paths[] */

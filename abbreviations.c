@@ -92,17 +92,16 @@ copy_graph(struct node *p)
 	r = malloc(sizeof(*r));
 	r->typ = p->typ;
 	r->cn = COMB_NONE;
+	r->name = p->name; /* For APPLICATION, "@" from atom table */
 
 	switch (p->typ)
 	{
 	case APPLICATION:
-		r->name = NULL;
 		r->left = copy_graph(p->left);
 		r->right = copy_graph(p->right);
 		r->tree_size = r->left->tree_size + r->right->tree_size + 1;
 		break;
 	case ATOM:
-		r->name = p->name;
 		r->cn = p->cn;
 		r->left = r->right = NULL;
 		r->tree_size = 1;
@@ -118,10 +117,12 @@ free_graph(struct node *p)
 	{
 		struct node *tmp = p->right;
 
+		p->right = NULL;
+
 		free_graph(p->left);
 
 		p->name = NULL;
-		p->left = p->right = NULL;
+		p->left = NULL;
 		p->typ = -1;
 
 		free(p);

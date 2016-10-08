@@ -1,8 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include <cb.h>
+
+/*
+ * These two need to constitute 2 bit patterns:
+ * CBUFSIZE  100...0
+ * CBUFMASK   11...1
+ *
+ * Actual value of CBUFSIZE mostly constitutes a guess.
+ */
+#define CBUFSIZE 0x020
+#define CBUFMASK 0x01f
+
+struct queue_node {
+	int state;
+	struct queue_node *next;
+};
+
+struct queue {
+	int *cbuf;
+	int  in;
+	int  out;
+	struct queue_node *ovfhead;
+	struct queue_node *ovftail;
+	int size;
+};
+
+
 
 struct queue *
 queueinit()
@@ -10,54 +35,36 @@ queueinit()
 	struct queue *r;
 
 	r = malloc(sizeof(*r));
-	assert(NULL != r);
 
 	r->cbuf = malloc(CBUFSIZE*sizeof(int));
-	assert(NULL != r->cbuf);
 
 	r->in = 0;
 	r->out = 0;
 	r->ovfhead = r->ovftail = NULL;
 	r->size = 0;
-	r->max_size = 0;
 
 	return r;
 }
 
 void
-empty_error(struct queue *q)
-{
-	fprintf(stderr, "Tried to get off empty queue: in %d, out %d\n", q->in, q->out);
-	exit(9);
-}
-
-void
 enqueue(struct queue *q, int state)
 {
-	struct queue_node *newnode;
-
-	assert(NULL != q);
 
 	++q->size;
-	if (q->size > q->max_size) q->max_size = q->size;
 
 	if (((q->in + 1)&CBUFMASK) != q->out)
 	{
-		assert(NULL != q->cbuf);
 		q->cbuf[q->in] = state;
 		q->in = (q->in+1)&CBUFMASK;
 
 	} else {
-
-		newnode = malloc(sizeof *newnode);
-		assert(NULL != newnode);
+		struct queue_node *newnode = malloc(sizeof *newnode);
 		newnode->state = state;
 		newnode->next = NULL;
 
 		if (NULL == q->ovftail)
-		{
 			q->ovfhead = q->ovftail = newnode;
-		} else {
+		else {
 			q->ovftail->next = newnode;
 			q->ovftail = newnode;
 		}
@@ -67,20 +74,13 @@ enqueue(struct queue *q, int state)
 int
 queueempty(struct queue *q)
 {
-	assert(NULL != q);
 	return (q->in == q->out);
 }
 
 int
 dequeue(struct queue *q)
 {
-	int r;
-
-	assert(NULL != q);
-	if (q->in == q->out) empty_error(q);
-
-	assert(NULL != q->cbuf);
-	r = q->cbuf[q->out];
+	int r = q->cbuf[q->out];
 
 	q->out = (q->out + 1)&CBUFMASK;
 	--q->size;
@@ -103,8 +103,6 @@ dequeue(struct queue *q)
 void
 queuedestroy(struct queue *q)
 {
-	assert(NULL != q);
-
 	if (NULL != q->cbuf) free(q->cbuf);
 
 	while (NULL != q->ovfhead)

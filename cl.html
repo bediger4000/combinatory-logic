@@ -2,32 +2,35 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "file:///home/bediger/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
-<title>Combinatory Logic Interpreter v1.5</title>
+<title>Combinatory Logic Interpreter v1.6</title>
 </head>
 <body>
 <h1>cl: Combinatory Logic Interpreter</h1>
-<h2>version 1.5</h2>
-<em>last revision: 2010-08-03</em>
+<h2>version 1.6</h2>
+<em>last revision: 2011-05-21</em>
 <p><a href="mailto:bediger@stratigery.com">Bruce Ediger</a></p>
 <h1>Table of contents</h1>
 <ol>
 	<li><a href="#INTRO">Introduction</a></li>
 	<li><a href="#STARTING">Starting</a></li>
 	<li><a href="#RUNNING">Using</a></li>
+	<li><a href="#BUILTINS">Built-in Primitives</a></li>
 	<li><a href="#BRACKETS">Bracket Abstraction</a></li>
 	<li><a href="#INSTALL">Building and installing</a></li>
 </ol>
 <h1><a name="INTRO">Introduction</a></h1>
 <p>
-This document describes how to build and use <kbd>cl</kbd> v1.5. <kbd>cl</kbd> interprets
+This document describes how to build and use <kbd>cl</kbd> v1.6. <kbd>cl</kbd> interprets
 a programming language with a lot of similarities to various "Combinatory Logic" (CL)
 formal systems. It doesn't exactly interpret any "Combinatory Logic" in that
 it runs on computers with finite CPU speed and a finite memory.
 Most or all formal systems fail to take these limits into account.
 </p>
 <p>
-Release 1.5 fixes a few minor bugs, and adds a <a href="BRACKETS">bracket abstraction algorithm</a>
-for the <kbd>{<strong>I</strong>, <strong>J</strong>}</kbd> &lambda;I basis.
+Release 1.6 fixes a few bugs, tries to improve performance
+by eliminating code from the most common execution path
+and adds a way to stop a reduction when the result
+<a href="#MATCHING">matches a pattern</a>.
 </p>
 <p>
 I started writing this interpreter as a way to test the "graph reduction"
@@ -69,28 +72,28 @@ reduces it to normal form, and prints a text representation of the normal form.
 It prints a prompt, and waits for another user input.
 </p>
 <p>
-<kbd>cl</kbd> does "normal order" evaluation: the leftmost outermost expression
+<kbd>cl</kbd> does "normal order" evaluation: the leftmost outermost redex
 gets evaluated first.  This seems like the standard for CL, unlike
-for lambda calculus, where a lot of ink gets expended distinguishing between "normal order"
+for lambda calculus, where a lot of ink gets expended distinguishing between
+"normal order"
 and "applicative order".
 </p>
 <h2>Command line options</h2>
 <table border="0">
 <tr><td>-c</td><td>enable reduction cycle detection</td></tr>
-<tr><td>-d</td><td>debug reductions</td></tr>
-<tr><td>-e</td><td>elaborate output</td></tr>
+<tr><td>-d</td><td>debug contractions</td></tr>
 <tr><td>-L  <em>filename</em></td><td>Interpret a file named <em>filename</em> before reading user input</td></tr>
 <tr><td>-m</td><td>on exit, print memory usage summary</td></tr>
-<tr><td>-N <em>number</em></td><td>perform up to <em>number</em> reductions</td></tr>
+<tr><td>-N <em>number</em></td><td>perform up to <em>number</em> contractions</td></tr>
 <tr><td>-p</td><td>Don't print any prompt.</td></tr>
-<tr><td>-s</td><td>single-step reductions</td></tr>
+<tr><td>-s</td><td>single-step contractions</td></tr>
 <tr><td>-T <em>number</em></td><td>evaluate an expression for up to <em>number</em> seconds</td></tr>
-<tr><td>-t</td><td>trace reductions</td></tr>
+<tr><td>-t</td><td>trace contractions</td></tr>
 <tr><td>-C <em>combinator</em></td><td>treat <em>combinator</em> as a non-primitive. <em>Combinator</em> one of S, K, I, B, C, W, M, T, J</td></tr>
 <tr><td>-B <em>algorithm</em></td><td>Use <em>algorithm</em> as default for bracket abstraction.  One of <em>curry</em>, <em>curry2</em>, <em>church</em>, <em>tromp</em>, <em>grz</em>, <em>btmk</em>, <em>turner</em></td></tr>
 </table>
 <p>
-The <kbd>-e</kbd> or <kbd>-s</kbd> options have no use without the <kbd>-t</kbd> option, but <kbd>-t</kbd> alone can perform
+The <kbd>-s</kbd> option has no use without the <kbd>-t</kbd> option, but <kbd>-t</kbd> alone can perform
 handy tasks.
 </p>
 <p>
@@ -109,7 +112,7 @@ user input.
 I designed <kbd>cl</kbd> for use as an interactive system, with a user typing
 CL expressions at a prompt. The interpreter reduces the expression
 to a normal form (if it has one), or hits some other limit, like a pre-set
-timeout, count of allowed reductions or the user's patience.
+timeout, count of allowed contractions or the user's patience.
 </p>
 <p>
 The built-in prompt for input is the string "<kbd>CL&gt;</kbd>".
@@ -128,7 +131,7 @@ prompt will cause the interpreter to exit.
 <h3>Non-interactive input</h3>
 <p>
 The <kbd>-p</kbd> command line option causes the interpreter to not print a
-prompt. This probably only has use for non-interactive input. The interpreter
+prompt. This might only have use for non-interactive input. The interpreter
 does read from stdin and write to stdout. You can use it as a non-interactive
 "filter", with input and output redirection.
 </p>
@@ -137,19 +140,19 @@ does read from stdin and write to stdout. You can use it as a non-interactive
 Expressions consist of either a single term, or two (perhaps implicitly
 parenthesized) terms.
 Terms consist of either a
-<a href="#BUILTINS">built-in primitive</a> or a variable, or a parenthesize
-expression.
+<a href="#BUILTINS">built-in primitive</a> or a variable, or a
+parenthesized expression.
 </p>
 <p>
-Built-in combinators have names consisting of a single upper-case letter.
+Built-in pimitives have names consisting of a single upper-case letter.
 Variables (which can also serve as <a href="#ABBREVS">abbreviations</a>)
 can look like C or Java style identifiers: a letter, followed by zero
 or more letters or underscores.
 You cannot define a variable (or an abbreviation) with the same name
-as a built-in combinator.
+as a built-in pimitive.
 </p>
 <p>
-The interpreter treats combinators and variables as "left associative",
+The interpreter treats primitives and variables as "left associative",
 the standard in the Combinatory Logic literature.
 That means that an expression like this:
 <kbd>I a b c d</kbd> ends up getting treated as though it had parentheses
@@ -178,7 +181,7 @@ any previous output.
 </p>
 <h2><a name="BUILTINS">Built-in Primitives</a></h2>
 <p>
-I built-in 9 primitive combinators. They reduce like this:
+I built-in 9 primitive combinators. They contract like this:
 </p>
 <table border="0">
 	<tr><td align="left"><strong>I</strong> a &rarr; a</td></tr>
@@ -199,7 +202,7 @@ or
 </p>
 <p>
 Built-in combinators require a certain number (one to four) of arguments
-to cause a reduction.  They just sit there without that number of arguments.
+to cause a contraction.  They just sit there without that number of arguments.
 </p>
 <p>
 You can "turn off" any of the nine combinators as built-ins with a <kbd>-C <em>X</em></kbd>
@@ -210,7 +213,7 @@ No interpreter command exists to turn off or on a combinator during a session.
 <p>
 "Bracket abstraction" names the process of creating a CL
 expression without specified variables, that when evaluated with appropriate arguments, ends up
-giving you the original expression with the specified variables.
+giving you the original expression with argument(s) in the place of the specified variables.
 </p>
 <p>
 The <kbd>cl</kbd> interpreter uses the conventional square-bracket
@@ -231,7 +234,8 @@ with commas:
 The above square-bracketed expression ends up working through three
 bracket abstractions, abstracting <kbd>c</kbd> from <kbd>a (b c)</kbd>,
 <kbd>b</kbd> from the resulting expression, and <kbd>a</kbd> from
-that expression.
+that expression. You can nest bracket abstractions: <kbd>[a][b][c] a (b c)</kbd>
+should produce the same expression as the example above.
 </p>
 <p>
 A bracket abstraction makes an expression, so you can use them where ever
@@ -248,7 +252,7 @@ Note the use of nested bracket abstractions.  The abstraction of <kbd>y</kbd>
 occurs first, then <kbd>x</kbd> gets abstracted from the resulting expression.
 </p>
 <p>
-You could alternately express <kbd>[x][y] (x(y y x))</kbd> 
+You could express <kbd>[x][y] (x(y y x))</kbd> 
 as <kbd>[x,y] (x(y y x))</kbd>.  The same nested abstraction occurs.
 </p>
 <h3>Algorithms</h3>
@@ -295,14 +299,14 @@ pair of square brackets. The resulting expression may not make any sense.
 </ol>
 <p>
 Hindley &amp; Seldin call this "Definition 2.18" in the 2008 edition of
-<em>Lambda Calculus and Combinators: An Introduction</em>..
+<a href="http://www.amazon.com/Lambda-Calculus-Combinators-Introduction-Roger-Hindley/dp/0521898854"><em>Lambda Calculus and Combinators: An Introduction</em></a>.
 This algorithm has the distinct advantage of giving back a single combinator
 when you ask for that combinator's definition as a bracket abstraction.
 <kbd>[p,q,r] p r (q r)</kbd> works out to <strong>S</strong>, and so forth.
 </p>
 <h4><kbd><a name="btmk">btmk</a></kbd></h4>
 <p>
-I put in an algorithm that only uses <strong>B</strong>, <strong>T</strong>,
+I put in an algorithm that uses <strong>B</strong>, <strong>T</strong>,
 <strong>M</strong> and <strong>K</strong> combinators. I devised it,
 but presumably someone
 else has come up with this same algorithm in the past.
@@ -320,7 +324,7 @@ The {B, T, M, K} basis is not unknown.
 <p>
 <kbd>cl</kbd> includes an implementation of
 M. Price and H. Simmon's reconstruction of Grzegorcyzk's "g" algorithm, using
-only <strong>B</strong>, <strong>C</strong>, <strong>K</strong>, <strong>W</strong>, <strong>I</strong> combinators.
+<strong>B</strong>, <strong>C</strong>, <strong>K</strong>, <strong>W</strong>, <strong>I</strong> combinators.
 </p>
 <ol>
 	<li>[x] x   &rarr; <strong>I</strong></li>
@@ -332,12 +336,14 @@ only <strong>B</strong>, <strong>C</strong>, <strong>K</strong>, <strong>W</stro
 </ol>
 <p>
 If you consider <strong>W K</strong> as a replacement for <strong>I</strong>,
-you can get away with only using <strong>B</strong>, <strong>C</strong>, <strong>K</strong>
+you can get away with using <strong>B</strong>, <strong>C</strong>, <strong>K</strong>
 and <strong>W</strong>.
 </p>
 <h4><kbd><a name="church">church</a></kbd></h4>
 <p>
-Abstraction for I,J basis from A. Church, <em>A Proof of Freedom From Contraction</em>,
+Abstraction for I,J basis from A. Church,
+<em><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1076585/pdf/pnas01757-0043.pdf
+">A Proof of Freedom From Contradiction</a></em>,
 Proceedings of National Academy of Sciences, Vol 21, 1935, page 275.
 </p>
 <ol>
@@ -349,20 +355,22 @@ Proceedings of National Academy of Sciences, Vol 21, 1935, page 275.
 </ol>
 <p>
 The {I,J} basis constitutes a "&lambda;I" basis.  All well-formed abstractions
-contain the abstracted variable.  The above algorithm will not work correctly given input like <kbd>[x,y]x</kbd>.
+contain the abstracted variable in the "body" of the abstraction.
+The above algorithm will not work given input like <kbd>[x,y]x</kbd>,
+where the abstracted variable <kbd>y</kbd> does not appear in the expression
+out of which <kbd>y</kbd> gets abstracted.
 In fact, that input crashes the interpreter.
 </p>
-<h4><kbd>tromp</kbd></h4>
+<h4><a name="tromp"><kbd>tromp</kbd></a></h4>
 <p>
-John Tromp created a nine rule algorithm which optimizes for the minimum number of
+John Tromp created a nine rule algorithm
+(in <a href="http://homepages.cwi.nl/~tromp/cl/LC.pdf">Binary Lambda Calculus and Combinatory Logic</a>)
+which optimizes for the minimum number of
 <strong>S</strong> and <strong>K</strong> combinators in the abstracted
 expression.  Tromp wants to get a small self-interpreter, and he confines
 himself to just <strong>S</strong> and <strong>K</strong> combinators.
 For example, the "S K M &rarr; S K" rule could change to "S K M &rarr; K I",
 if you have an <strong>I</strong> primitive.
-Also, the "(M L)(N L) &rarr; S M N L" rule undoes a reduction that
-might get re-done at reduction-time anyway.
-This seems like a classic time versus space tradeoff in the small, to me.
 </p>
 <ol>
 	<li>[x](<strong>S</strong> <strong>K</strong> M)        &rarr; <strong>S</strong> <strong>K</strong>                  <em>(For all M)</em></li>
@@ -376,13 +384,18 @@ This seems like a classic time versus space tradeoff in the small, to me.
 	<li>[x] M N           &rarr; <strong>S</strong> ([x] M) ([x] N)</li>
 </ol>
 <p>
-I don't entirely understand what phrases like <em>M, N combinators</em> means in rules 6, 7 and 8.
-I chose to interpret those phrases as "M, N represent single, built-in primitives".
-I also implemented rule 8 by doing a depth-first traversal of parts of parse trees to
-determine if the potential "L" portions of the rule really do equate.
+Phrases like <em>M, N combinators</em> in rules 6, 7 and 8
+mean "M, N have no variables, free or otherwise".  This abstraction algorithm has the
+goal of smallest resulting expression. For Tromp's purposes, any variable exists
+for the purpose of abstracting it out of the expression. These rules don't produce
+the smallest resulting expression if you abstract another variable from them.
+</p>
+<p>
+I implemented rule 8 by doing a depth-first traversal of parts of parse trees to
+determine if the potential "L" portions of the rule equate.
 A faster method of doing that may exist.
 </p>
-<h4><kbd>turner</kbd></h4>
+<h4><a name="turner"><kbd>turner</kbd></a></h4>
 <ol>
 	<li>[x] x   &rarr; <strong>I</strong></li>
 	<li>[x] N x &rarr; N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>x not appearing in N</em></li>
@@ -413,7 +426,7 @@ A name in interpreter input has the same format as a Java or C identifier:
 a letter, followed by zero or more letters, digits or underscores.
 </p>
 <p>
-The <kbd>reduce</kbd> command actually produces an expression, just
+The <kbd>reduce</kbd> command produces an expression, just
 like a bracket abstraction.  Unlike <kbd>define</kbd> or <kbd>def</kbd>,
 you can use <kbd>reduce</kbd> anywhere
 an expression would fit, as part of a larger expression, as part of an
@@ -425,7 +438,7 @@ abbreviation, or as part of a bracket abstraction.
 		<li><kbd><a name="LENGTH">length</a> <em>expression</em></kbd> - print the number of atoms plus number of applications in <em>expression</em>.</li>
 		<li><kbd><a name="PRINT">print</a> <em>expression</em></kbd> - print human-readable representation, with abbreviations expanded, but without evaluation.</li>
 		<li><kbd><a name="PRINTC">printc</a> <em>expression</em></kbd> - print <a href="#CANON">canonical</a> representation, with abbreviations substituted, but without evaluation.</li>
-		<li><kbd>redexes <em>expression</em></kbd> - print a count of possible reductions in <em>expression</em>, regardless of order of evaluation.</li>
+		<li><kbd>redexes <em>expression</em></kbd> - print a count of possible contractions in <em>expression</em>, regardless of order of evaluation.</li>
 		<li><kbd><em>expression</em> = <em>expression</em></kbd> - determine lexical equivalence of any two expressions, after abbreviation substitution, but without evaluation.</li>
 	</ul>
 <p>
@@ -436,36 +449,13 @@ You can put in explicit <kbd>reduce</kbd> commands on both sides of an "=",
 otherwise, no evaluation takes place.
 </p>
 <p>
-<kbd>size</kbd> and <kbd>length</kbd> seem slightly redundant, but authorities
+<kbd>size</kbd> and <kbd>length</kbd> seem redundant, but authorities
 measure CL expressions different ways.  These two methods should cover the
 vast majority of cases.
-</p>
-<h2>Detecting reduction cycles</h2>
-	<ul>
-		<li><kbd>cycles on|off</kbd></li>
-		<li><kbd>detect on|off</kbd></li>
-	</ul>
-<p>
-Some CL expressions end up creating a cycle: <kbd>M M</kbd> or <kbd>W W W</kbd>
-or <kbd>B (W K) (W (W K)) (B (W K) (W (W K)))</kbd>.  After a certain number of
-reductions, the interpreter ends up with an expression it has already encountered.
-If you issue the <kbd>cycles on</kbd> command, the interpreter keeps track of 
-every expression in the current reduction, and stops when it detects a cyclical
-reduction.
-</p>
-<p><kbd>detect on</kbd> causes the interpreter to count and mark possible reductions (with an asterisk),
-regardless of reduction order.  It does "normal order" reduction, but ignores that
-for the reduction count. This probably only has use with <kbd>cycles on</kbd>
-or <kbd>trace on</kbd>.
-</p>
-<p>
-Turning cycle detection on will add time to an
-expression's reduction, as will possible reduction detection.
 </p>
 <h2>Intermediate output and single-stepping</h2>
 	<ul>
 		<li><kbd>trace on|off</kbd></li>
-		<li><kbd>elaborate on|off</kbd></li>
 		<li><kbd>debug on|off</kbd></li>
 		<li><kbd>step on|off</kbd></li>
 	</ul>
@@ -474,21 +464,20 @@ You can issue any of these commands without an "on" or "off" argument
 to inquire about the current state of the directive.
 </p>
 <p>
-<kbd>trace</kbd>, <kbd>debug</kbd> and <kbd>elaborate</kbd> provide
+<kbd>trace</kbd> and <kbd>debug</kbd> make for
 increasingly verbose output. <kbd>trace</kbd> shows the expression
-after each reduction, <kbd>debug</kbd> adds information about which
-branch of an application it evaluates, and <kbd>elaborate</kbd>
-adds to that information useful in debugging memory allocation problems.
+after each contraction, <kbd>debug</kbd> adds information about which
+branch of an application it evaluates.
 </p>
 <p>
 <kbd>detect</kbd> causes <kbd>trace</kbd> to also print a count
-of possible reductions (not all of them normal order reductions),
-and mark reducible primitives with an asterisk.
+of possible contractions (not all of them normal order reductions),
+and mark contractable primitives with an asterisk.
 </p>
 <p>
-<kbd>step on</kbd> causes the interpreter to stop after each reduction,
+<kbd>step on</kbd> causes the interpreter to stop after each contraction,
 print the intermediate expression, and wait, at a <kbd>?</kbd> prompt
-for user input. Hitting return goes to the next reduction, <kbd>n</kbd>
+for user input. Hitting return goes to the next contraction, <kbd>n</kbd>
 or <kbd>q</kbd> terminates the reduction, and <kbd>c</kbd> causes it
 to quit single-stepping.
 </p>
@@ -496,22 +485,64 @@ to quit single-stepping.
 	<ul>
 		<li><kbd>timer on|off</kbd> - turn on/off per-reduction elapsed time output.</li>
 		<li><kbd>timeout 0|N</kbd>- stop reducing after <kbd>N</kbd> seconds.</li>
-		<li><kbd>count 0|N</kbd> - stop reducing after <kbd>N</kbd> reductions.</li>
+		<li><kbd>count 0|N</kbd> - stop reducing after <kbd>N</kbd> contractions.</li>
+		<li><kbd>cycles on|off</kbd></li>
+		<li><kbd>detect on|off</kbd></li>
 	</ul>
 <p>
 You can turn time outs off by using a 0 (zero) second timeout.
-Similarly, you can turn reduction-count-limited evaluation off
+Similarly, you can turn contraction-count-limited-evaluation off
 with a 0 (zero) count.
 </p>
-<p>
 <kbd>timer on</kbd> also times <a href="#BRACKETS">bracket abstraction</a>.
+	</ul>
+<p>
+Some CL expressions end up creating a cycle: <kbd>M M</kbd> or <kbd>W W W</kbd>
+or <kbd>B (W K) (W (W K)) (B (W K) (W (W K)))</kbd>.  After a certain number of
+contractions, the interpreter ends up with an expression it has already encountered.
+If you issue the <kbd>cycles on</kbd> command, the interpreter keeps track of 
+every expression in the current reduction, and stops when it detects a cyclical
+reduction.
+</p>
+<p><kbd>detect on</kbd> causes the interpreter to count and mark primitives eligible
+for contraction (with an asterisk),
+regardless of reduction order.  It does "normal order" reduction, but ignores that
+for the contraction count. This only has utility with <kbd>trace on</kbd>.
+</p>
+<p>
+Turning cycle detection on will add time to an
+expression's reduction, as will possible contraction detection.
+</p>
+<h2><a name="MATCHING">Matching a pattern during reduction</a></h2>
+<p>
+<kbd>cl</kbd> v1.6 adds a way to control reduction: stop when the (partially) 
+reduced expression matches a pattern.
+<kbd>cl</kbd> can perform pattern matching after each contraction, when
+the user sets a pattern using the <kbd>match</kbd> command.
+<kbd>unmatch</kbd> destroys the internal state created by <kbd>match</kbd>,
+so the user can't recall a previous <kbd>match</kbd> except by complete
+re-entry of the command.
+</p>
+	<ul>
+		<li><kbd>match <em>pattern</em></kbd> - stop reduction if and when <em>pattern</em> appears.</li>
+		<li><kbd>unmatch</kbd> - relieve the interpreter of checking for a pattern match during reduction. </li>
+	</ul>
+<p>
+Patterns look like <a href="#GRAMMAR">expressions</a> with one exception.
+An asterisk ('*') acts as a wildcard, matching any expression.
+Any other variable or built-in primitive ocurring in the pattern matches
+itself literally.
+</p>
+<p>
+For example, issuing the command <kbd>match S K K</kbd> would cause the reduction of
+<kbd>S (I K) (S K) K</kbd> to stop after a single contraction.
 </p>
 <h2>Reading in files</h2>
 	<ul>
 		<li><kbd>load "<em>filename</em>"</kbd></li>
 	</ul>
 <p>
-You only have to double-quote filenames with whitespace or
+You have to double-quote filenames with whitespace or
 non-alphanumeric characters in them.
 You can use absolute filenames (beginning with "/") or you can 
 filenames relative to the current working directory of the <kbd>cl</kbd>
@@ -534,35 +565,29 @@ variant, semantically-equivalent parentheses don't appear.
 </p>
 <h1><a name="INSTALL">Building and installing</a></h1>
 <p>
-I developed this program on Slackware Linuxes, v9, 10.1 and 12.0.
-I used the C compilers GCC, <a href="http://www.cs.princeton.edu/software/lcc/">LCC</a>,
-<a href="http://pcc.ludd.ltu.se/">PCC</a>, <a href="http://bellard.org/tcc/">TCC</a>
+I developed this program on Slackware and Arch Linuxes.
+I used versions of the C compilers GCC,
+<a href="http://www.cs.princeton.edu/software/lcc/">LCC</a>,
+<a href="http://pcc.ludd.ltu.se/">PCC</a>,
+<a href="http://bellard.org/tcc/">TCC</a>
 and <a href="http://clang.llvm.org/">Clang</a>.
 I tried to make it as ANSI-C
 as possible by using various compilers, not allowing any compiler warnings
 when building, and using as many warning flags for GCC compiles as possible.
 </p>
 <p>
-In addition, I have built it under Redhat linux on a 64-bit "Opteron" system,
-and a Solaris 2.9 SPARC-based system under GCC (32 and 64 bit compiles).
-I was unable to get HP's ghastly "c89" to compile it - the signal handling
-is apparently not ANSI-standard, but there's no way to get ANSI-style function
-definitions to compile outside of the "c89" abortion.
-</p>
-<p>
-I expect it will build easily on any *BSD-based system, but I haven't
-actually tried that.
+I expect it will build on any *BSD-based system, but I haven't tried that.
 </p>
 <ol>
 	<li>Get the source code. You can:
 		<ul>
-			<li><a href="cl-1.5.tar.gz">Download</a> via your browser.</li>
-			<li>Download using wget: <kbd>wget http://www.stratigery.com/cl-1.5.tar.gz</kbd></li>
+			<li><a href="cl-1.6.tar.gz">Download</a> via your browser.</li>
+			<li>Download using wget: <kbd>wget http://www.stratigery.com/cl-1.6.tar.gz</kbd></li>
 		</ul>
 	</li>
-	<li>Unpack source code.  From the command line: <kbd>tar xzf cl-1.5.tar.gz</kbd>
+	<li>Unpack source code.  From the command line: <kbd>tar xzf cl-1.6.tar.gz</kbd>
 	</li>
-	<li>Change directory.  From the command line: <kbd>cd cl-1.5</kbd>
+	<li>Change directory.  From the command line: <kbd>cd cl-1.6</kbd>
 	</li>
 	<li>Compile source code. From the command line: <kbd>make gnu</kbd>.<br/>
 	That target ("gnu") should work for almost every linux or BSD computer.
@@ -574,7 +599,7 @@ actually tried that.
 	<li>At this point, you can test the newly-compiled executable.
 	From the command line: <kbd>./runtests</kbd>.  Most of the tests should
 	run quite rapidly, in under a second.  At least two of the tests run
-	for 30 seconds or so, and at least one of the tests deliberately provokes
+	for 30 seconds or so, and at least one of the tests provokes
 	a syntax error message from the interpreter.
 	</li>
 	<li>Install the interpreter if you want, or you can execute it in-place.

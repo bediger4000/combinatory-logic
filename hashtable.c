@@ -1,5 +1,4 @@
-/*
-	Copyright (C) 2007-2009, Bruce Ediger
+/* Copyright (C) 2007-2009, Bruce Ediger
 
     This file is part of cl.
 
@@ -55,8 +54,6 @@ init_hashtable(int buckets, int maxload)
 	struct hashtable *h;
 
 	h = malloc(sizeof(*h));
-
-	h->flags = 0;
 
 	/* Insure that bucket array size is always a multiple of 2.
 	 * This amounted to about 10% run-time savings for small files
@@ -138,13 +135,6 @@ rehash_hashtable(struct hashtable *h)
 
 	newindex = h->p + h->maxp;
 
-	if (h->flags > 1)
-	{
-		printf("# %d rehashes, %d total nodes, old bucket %d, new bucket %d\n",
-			h->rehash_cnt, h->node_cnt, h->p, newindex);
-		printf("# %d nodes in old bucket\n", oldbucket->nodes_in_chain);
-	}
-
 	oldbucket->nodes_in_chain = 0;  /* may not be any lines in chain after rehash */
 	++oldbucket->value;      /* number of splits */
 
@@ -176,12 +166,6 @@ rehash_hashtable(struct hashtable *h)
 		}
 
 		l = t;
-	}
-
-	if (h->flags > 1)
-	{
-		printf("# split: %d in old chain, %d in new chain\n",
-			oldbucket->nodes_in_chain, h->buckets[newindex]->nodes_in_chain);
 	}
 }
 
@@ -228,40 +212,16 @@ reallocate_buckets(struct hashtable *h)
 const char *
 add_string(struct hashtable *h, const char *string)
 {
-	return (const char *)add_data(h, string, NULL);
-}
-
-void *
-add_data(struct hashtable *h, const char *string, void *data)
-{
 	struct hashnode *n, *head;
 	int bucket_index;
 	unsigned int hv;
-	int hash_mod;
 
 	if((n = node_lookup(h, string, &hv)))
-	{
-		void *r = NULL;
-		if (data)
-		{
-			r = (void *)n->data;
-			n->data = data;
-		} else {
-			r = (void *)n->string;
-		}
-		return r;
-	}
+		return n->string;
 
 	bucket_index = MOD(hv, h->maxp);
-	hash_mod = h->maxp;
 	if (bucket_index < h->p)
-	{
 		bucket_index = MOD(hv, (2*h->maxp));
-		hash_mod = 2*h->maxp;
-	}
-
-	if (h->flags > 1)
-		printf("# \"%s\": hash value %u, base %d, bucket %d\n", string, hv, hash_mod, bucket_index);
 
 	/* allocate new node */
 	n = (struct hashnode *)malloc(sizeof(*n));
@@ -270,8 +230,8 @@ add_data(struct hashtable *h, const char *string, void *data)
 	n->value = hv;
 	n->string_length = strlen(string);
 	n->string = malloc(n->string_length+1);
+	n->data = NULL;
 	memcpy(n->string, string, n->string_length+1);
-	n->data = data;
 
 	/* add newly allocated node to appropriate chain */
 	head = h->buckets[bucket_index];
@@ -290,7 +250,7 @@ add_data(struct hashtable *h, const char *string, void *data)
 	if (h->node_cnt/h->currentsize > h->maxload)
 		rehash_hashtable(h);
 
-	return (NULL == data)? (void *)n->string: NULL;
+	return n->string;
 }
 
 void free_hashtable(struct hashtable *h)

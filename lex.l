@@ -95,11 +95,11 @@ int old_prompting = -1;
 "timer"     { yylval.command = TIME_O; return TK_COMMAND; }
 "cycles"    { yylval.command = CYCLES_O; return TK_COMMAND; }
 "timeout"   { return TK_TIMEOUT; }
-"help"      { return TK_HELP; }
 "debug"     { yylval.command = DEBUG_O; return TK_COMMAND; }
 "step"      { yylval.command = STEP_O; return TK_COMMAND; }
 "trace"     { yylval.command = TRACE_O; return TK_COMMAND; }
 "detect"    { yylval.command = DETECT_O; return TK_COMMAND; }
+"cleanup"   { yylval.command = CLEANUP_O; return TK_COMMAND; }
 "load"      { return TK_LOAD; }
 "abstraction" { return TK_SET_BRACKET_ABSTRACTION; }
 "count" { return TK_MAX_COUNT; }

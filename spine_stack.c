@@ -75,14 +75,11 @@ pushnode(struct spine_stack *ss, struct node *n, int mark)
 	if (ss->top >= ss->size)
 	{
 		/* resize the allocation pointed to by stack */
-		struct spine_stack_element *old_stack = ss->stack;
 		size_t new_size = ss->size * 2;  /* XXX !!! */
 		++spine_stack_resizes;
-		ss->stack = realloc(old_stack, sizeof(struct spine_stack_element)*new_size);
-		if (!ss->stack)
-			ss->stack = old_stack;  /* realloc failed */
-		else
-			ss->size = new_size;
+		ss->stack = realloc(ss->stack, sizeof(struct spine_stack_element)*new_size);
+		ss->size = new_size;
+		/* assumes that realloc() never fails. */
 	}
 }
 
