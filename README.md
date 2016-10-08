@@ -60,6 +60,44 @@ for lambda calculus, where a lot of ink gets expended distinguishing between
 "normal order"
 and "applicative order".
 
+Expressions consist of either a single term, or two (perhaps implicitly
+parenthesized) terms.
+Terms consist of either a
+built-in primitive or a variable, or a
+parenthesized expression.
+
+Built-in pimitives have names consisting of a single upper-case letter.
+Variables (which can also serve as abbreviations)
+can look like C or Java style identifiers: a letter, followed by zero
+or more letters or underscores.
+You cannot define a variable (or an abbreviation) with the same name
+as a built-in pimitive.
+
+The interpreter treats primitives and variables as "left associative",
+the standard in the Combinatory Logic literature.
+That means that an expression like this:
+`I a b c d` ends up getting treated as though it had parentheses
+like this: `((((I a) b) c) d)`
+
+To apply one complex term to another, the user must use parentheses.
+Applying `W (W K)` to `C W` would look like this:
+`(W (W K)) (C W)`.
+
+####Parentheses
+
+Users can parenthesize input expressions as much or as little as they desire,
+up to the limits of left-association and the meaning they wish to convey
+to the interpreter.
+The grammar used by `cl` does not
+allow single terms inside paired parentheses. It considers strings
+like `(I)` as syntax errors. You have to put at least two terms
+inside a pair of parentheses, and parentheses must have matches.
+
+The interpreter prints out normal forms in minimal-parentheses style.
+Users have the ability to cut-n-paste output back into the input,
+as output has valid syntax.  No keyboard shortcuts exist to re-use 
+any previous output.
+
 ###Built-in Primitives
 
 I built-in 9 primitive combinators. They contract like this:
@@ -236,7 +274,7 @@ for the contraction count. This only has utility with `trace on`.
 Turning cycle detection on will add time to an
 expression's reduction, as will possible contraction detection.
 
-###Matching a pattern during reduction
+####Matching a pattern during reduction
 
 `cl` v1.6 adds a way to control reduction: stop when the (partially)
 reduced expression matches a pattern.
@@ -257,3 +295,17 @@ itself literally.
 For example, issuing the command `match S K K` would cause the reduction of
 `S (I K) (S K) K` to stop after a single contraction.
 
+###Reading in files
+
+* `load "filename"`
+
+You have to double-quote filenames with whitespace or
+non-alphanumeric characters in them.
+You can use absolute filenames (beginning with "/") or you can
+filenames relative to the current working directory of the `cl`
+process.
+
+The `load` command works during a session.  You can get the same
+effect at interpreter start-up with the `-L filename` command line flag.
+
+##Examples
