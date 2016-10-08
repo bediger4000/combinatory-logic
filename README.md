@@ -37,3 +37,25 @@ copy the executable to where ever you want it.  It does not care what
 directory it resides in, and it does not look for configuration files
 anywhere.
 
+## Using the interpreter
+
+The interpreter uses `CL>` as its prompt for user input.
+`cl` has a strict grammar, so you must type either
+a term for reduction, or an interpreter command,
+or a command to examine a term.
+
+You have to use keyboard end-of-file (usually control-D) to exit `cl`
+
+Giving the interpreter a CL term causes it to execute
+a read-eval-print loop.
+After reading and parsing the input,
+the interpreter prints the input in a minimally-parenthesized representation,
+reduces it to normal form, and prints a text representation of the normal form.
+It prints a prompt, and waits for another user input.
+
+
+`cl` does "normal order" evaluation: the leftmost outermost redex
+gets evaluated first.  This seems like the standard for CL, unlike
+for lambda calculus, where a lot of ink gets expended distinguishing between
+"normal order"
+and "applicative order".
