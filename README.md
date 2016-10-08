@@ -165,3 +165,20 @@ Unlike `define` or `def`, you can use `reduce` anywhere an expression would
 fit, as part of a larger expression, as part of an abbreviation, or as part of
 a bracket abstraction.
 
+###Information about expressions
+
+* `size expression` - print the number of atoms in <em>expression</em>.
+* `length expression` - print the number of atoms plus number of applications in *expression*.
+* `print expression` - print human-readable representation of *expression*, with abbreviations expanded, but without evaluation.
+* `redexes expression` - print a count of possible contractions in *expression*, regardless of order of evaluation.
+* `expression1 = expression2` - determine lexical equivalence of any two expressions, after abbreviation substitution, but without evaluation.
+
+`print` lets you see what abbreviations expand to, without evaluation.  The "="
+sign lets you determine lexical equality.  All combinators, variables
+and parentheses have to match as strings, otherwise "=" deems the expressions
+not equivalent.  You can put in explicit `reduce` commands on both
+sides of an "=", otherwise, no evaluation takes place.
+
+`size` and `length` seem redundant, but authorities
+measure CL expressions different ways.  These two methods should cover the
+vast majority of cases.
