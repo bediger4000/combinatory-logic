@@ -50,13 +50,16 @@ static struct node *node_free_list = NULL;
 
 struct node *new_node(void);
 
+/* Since algorithm_d() looks at a pattern on a character-by-character
+ * basis, it's OK to use r->name = "@" instead of r->name = atom_string("@")
+ */
 struct node *
 new_application(struct node *left_child, struct node *right_child)
 {
 	struct node *r = new_node();
 
 	r->typ = APPLICATION;
-	r->name = Atom_string("@");  /* algorithm_d() uses this */
+	r->name = "@";  /* algorithm_d() uses this */
 	r->cn = COMB_NONE;
 	r->right = right_child;
 	r->left  = left_child;
