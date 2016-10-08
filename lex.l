@@ -25,7 +25,6 @@ Solaris 2.8, probably original AT&T Bell Labs lex, needed this:
 
 */
 
-/* $Id$ */
 
 
 #include <stdio.h>

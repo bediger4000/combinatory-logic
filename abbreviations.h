@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 void setup_abbreviation_table(struct hashtable *h);
 

@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 
 #include <stdio.h>  /* NULL */

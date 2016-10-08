@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 struct spine_stack_element {
 	struct node *node;

@@ -27,7 +27,6 @@
  * form.  ".K I" on stdin ends up as "K I" on stdout.
  */
 
-/* $Id$ */
 
 #include <stdio.h>
 #include <string.h>  /* strlen() */

@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 /*
  * Enums to allow lexer code (in lex.l) and parser code (in grammar.y) to

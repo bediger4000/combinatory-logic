@@ -20,7 +20,6 @@
 
 */
 
-/* $Id$ */
 
 
 #include <stdio.h>

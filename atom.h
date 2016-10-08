@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 void        setup_atom_table(struct hashtable *h);
 const char *Atom_string(const char *str);

@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 struct hashnode {
 	struct hashnode *next, *prev;  /* hash chain */

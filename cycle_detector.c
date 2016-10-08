@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 #include <stdio.h>
 #include <setjmp.h>  /* sigjmp_buf, siglongjmp() */

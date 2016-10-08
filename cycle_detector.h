@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 void reset_detection(void);
 void free_detection(void);

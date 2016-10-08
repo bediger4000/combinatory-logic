@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 struct memory_arena *new_arena(void);
 void free_arena_contents(struct memory_arena *ma);

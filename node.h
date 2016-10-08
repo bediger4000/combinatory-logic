@@ -19,7 +19,6 @@
 
 */
 
-/* $Id$ */
 
 enum nodeType { APPLICATION, ATOM };
 enum primitiveName { COMB_NONE = 0, COMB_S = 1, COMB_K = 2, COMB_I = 3, COMB_C = 4, COMB_B = 5, COMB_W = 6, COMB_T = 7, COMB_M  = 8, COMB_J = 9};
