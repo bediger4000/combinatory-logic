@@ -1,8 +1,8 @@
 # cl - combinatory logic interpreter
 
 This document describes how to build and use `cl`. `cl` interprets
-a programming language with a lot of similarities to various "Combinatory Logic" (CL)
-formal systems. It doesn't exactly interpret any "Combinatory Logic" in that
+a programming language with a lot of similarities to various Combinatory Logic (CL)
+formal systems. It doesn't exactly interpret any Combinatory Logic formal system in that
 it runs on computers with finite CPU speed and a finite memory.
 Most or all formal systems fail to take these limits into account.
 
@@ -235,4 +235,25 @@ for the contraction count. This only has utility with `trace on`.
 
 Turning cycle detection on will add time to an
 expression's reduction, as will possible contraction detection.
+
+###Matching a pattern during reduction
+
+`cl` v1.6 adds a way to control reduction: stop when the (partially)
+reduced expression matches a pattern.
+`cl` can perform pattern matching after each contraction, when
+the user sets a pattern using the `match` command.
+`unmatch` destroys the internal state created by `match`,
+so the user can't recall a previous `match` except by complete
+re-entry of the command.
+
+* `match pattern` - stop reduction if and when pattern</em> appears.
+* `unmatch` - relieve the interpreter of checking for a pattern match during reduction.
+
+Patterns look like expressions with one exception.
+An asterisk ('*') acts as a wildcard, matching any expression.
+Any other variable or built-in primitive ocurring in the pattern matches
+itself literally.
+
+For example, issuing the command `match S K K` would cause the reduction of
+`S (I K) (S K) K` to stop after a single contraction.
 
