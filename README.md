@@ -59,3 +59,33 @@ gets evaluated first.  This seems like the standard for CL, unlike
 for lambda calculus, where a lot of ink gets expended distinguishing between
 "normal order"
 and "applicative order".
+
+###Built-in Primitives
+
+I built-in 9 primitive combinators. They contract like this:
+
+    *I* a &rarr; a
+    *K* a b &rarr; a
+    *S* a b c &rarr; a c (b c)
+    *B* a b c &rarr; a (b c)
+    *C* a b c &rarr; a c b
+    *W* a b &rarr; a b b
+    *T* a b &rarr; b a
+    *M* a &rarr; a a
+    *J* a b c d &rarr; a b (a d c)
+
+This set of built-ins lets you use `{S, K}`, `{S, K, I}`,
+`{B, W, C, K}`, `{B, M, T, K}` bases for &lambda;K calculi,
+or
+`{J, I}`, `{B, C, W, I}` and `{I, B, C, S}` as bases for &lambda;I calculi.
+
+
+Built-in combinators require a certain number (one to four) of arguments
+to cause a contraction.  They just sit there without that number of arguments.
+
+
+You can "turn off" any of the nine combinators as built-ins with a `-C X`
+command line option (`X` is any of the nine built-in combinators).
+No interpreter command exists to turn off or on a combinator during a session.
+
+
