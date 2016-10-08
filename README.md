@@ -16,6 +16,7 @@ I ended up making `cl` into a reasonably complete and usable system.
 ## Building and installing
 
 Try one of these commands:
+
     make cc       # very generic, Solaris or *BSD
     make gnu      # all GNU, most/all linux distros
     make clang    # clang compiler
