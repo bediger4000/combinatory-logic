@@ -309,3 +309,21 @@ The `load` command works during a session.  You can get the same
 effect at interpreter start-up with the `-L filename` command line flag.
 
 ##Examples
+
+The `tests.in/` directory of this repository has a lot of files. Some are just
+to ensure that old bugs don't show up again, some just test single features.
+Other files are decent examples
+* `tests.in/test.033`: Church numerals and Ackermann function
+* `tests.in/test.043`: Scott numerals
+* `tests.in/test.044`: Scott numerals with a "non-standard" fixed point combinator
+* `tests.in/test.059`: Scott numerals with lots of unusual fixed point combinators
+* `tests.in/test.063`: Ogre, eater or Egocentric Bird terms
+* `tests.in/test.065`: An abuse of fixed point combinators
+* `tests.in/test.076`: "Monsters" constructed only from S combinators
+* `tests.in/test.077`: Peculiar terms from Johannes Waldemann's doctoral thesis
+* `tests.in/test.079`: More Ogre, eater or Egocentric Bird terms, all with BWICK combinators
+* `tests.in/test.080`: Arithmetic from "Lambda-Calculus and Combinators, an Introduction", Hindley and Seldin, chapter 4
+* `tests.in/test.081`: Amusing cyclic terms
+* `tests.in/test.085`: Section 24, "Birds that can do arithmetic" from "To Mock a Mockingbird"
+* `tests.in/test.087`: Klein Fourgroup, from  Barendregdt's 1988 "Juggling With Combinators"
+* `tests.in/test.088`: Mayer Goldberg's D numerals
