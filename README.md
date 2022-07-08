@@ -83,7 +83,7 @@ To apply one complex term to another, the user must use parentheses.
 Applying `W (W K)` to `C W` would look like this:
 `(W (W K)) (C W)`.
 
-####Parentheses
+#### Parentheses
 
 Users can parenthesize input expressions as much or as little as they desire,
 up to the limits of left-association and the meaning they wish to convey
@@ -98,7 +98,7 @@ Users have the ability to cut-n-paste output back into the input,
 as output has valid syntax.  No keyboard shortcuts exist to re-use 
 any previous output.
 
-###Built-in Primitives
+### Built-in Primitives
 
 I built-in 9 primitive combinators. They contract like this:
 
@@ -129,7 +129,7 @@ command line option (`X` is any of the nine built-in combinators).
 No interpreter command exists to turn off or on a combinator during a session.
 
 
-###Bracket Abstraction
+### Bracket Abstraction
 
 Bracket abstraction names the process of creating from an original CL expression, a
 CL expression without specified variables, that when evaluated with appropriate arguments, ends up
@@ -161,7 +161,7 @@ For example, you could create Turing's fixed-point combinator like this:
     CL> def U [x][y] (x(y y x))
     CL> def Yturing (U U)
 
-####Bracket Abstraction Algorithms
+#### Bracket Abstraction Algorithms
 
 `cl` offers seven bracket abstraction algorithms:
 
@@ -182,7 +182,7 @@ You can specify the abstraction algorithm next to the abstracted variable:
 
     CL> [x]btmk (x (K x))
 
-###Defining abbreviations
+### Defining abbreviations
 
 * `define name expression`
 * `def name expression`
@@ -203,7 +203,7 @@ Unlike `define` or `def`, you can use `reduce` anywhere an expression would
 fit, as part of a larger expression, as part of an abbreviation, or as part of
 a bracket abstraction.
 
-###Information about expressions
+### Information about expressions
 
 * `size expression` - print the number of atoms in *expression*.
 * `length expression` - print the number of atoms plus number of applications in *expression*.
@@ -221,7 +221,7 @@ sides of an "=", otherwise, no evaluation takes place.
 measure CL expressions different ways.  These two methods should cover the
 vast majority of cases.
 
-###Intermediate output and single-stepping
+### Intermediate output and single-stepping
 
 * `trace on|off`
 * `debug on|off`
@@ -245,7 +245,7 @@ for user input. Hitting return goes to the next contraction, `n`
 or `q` terminates the reduction, and `c` causes it
 to quit single-stepping.
 
-###Reduction information and control
+### Reduction information and control
 
 * `timer on|off` - turn on/off per-reduction elapsed time output.
 * `timeout 0|N`- stop reducing after *N* seconds.
@@ -274,7 +274,7 @@ for the contraction count. This only has utility with `trace on`.
 Turning cycle detection on will add time to an
 expression's reduction, as will possible contraction detection.
 
-####Matching a pattern during reduction
+#### Matching a pattern during reduction
 
 `cl` v1.6 adds a way to control reduction: stop when the (partially)
 reduced expression matches a pattern.
@@ -295,7 +295,7 @@ itself literally.
 For example, issuing the command `match S K K` would cause the reduction of
 `S (I K) (S K) K` to stop after a single contraction.
 
-###Reading in files
+### Reading in files
 
 * `load "filename"`
 
@@ -308,7 +308,7 @@ process.
 The `load` command works during a session.  You can get the same
 effect at interpreter start-up with the `-L filename` command line flag.
 
-##Examples
+## Examples
 
 The `tests.in/` directory of this repository has a lot of files. Some are just
 to ensure that old bugs don't show up again, some just test single features.
